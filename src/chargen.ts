@@ -1,7 +1,11 @@
 import { Navy, Marines, Army, Scouts, Merchants, Other } from "./careers";
 import type { Career } from "./careers";
+import { Random, MersenneTwister19937, createEntropy, nativeMath } from "random-js";
 
 class Character {
+    seed: number;
+    random: Random;
+    
     age: number;
 
     attributes: {
@@ -25,21 +29,24 @@ class Character {
     commissioned = false;
 
 
-    constructor() {
+    constructor(seed?: number) {
+        this.seed = seed ? seed : createEntropy(nativeMath, 1)[0];
+        this.random = new Random(MersenneTwister19937.seed(this.seed));
+
         this.age = 18;
 
         this.attributes = {
-            strength: roll(2),
-            dexterity: roll(2),
-            endurance: roll(2),
-            intelligence: roll(2),
-            education: roll(2),
-            socialStanding: roll(2)
+            strength: this.roll(2),
+            dexterity: this.roll(2),
+            endurance: this.roll(2),
+            intelligence: this.roll(2),
+            education: this.roll(2),
+            socialStanding: this.roll(2)
         };
 
         console.log(`UPP ${this.upp}`);
 
-        this.gender = getRandomFromArray([Gender.Male, Gender.Female]);
+        this.gender = this.random.pick([Gender.Male, Gender.Female]);
         this.title = this.generateTitle();
 
         // name
@@ -49,20 +56,20 @@ class Character {
         this.age += 4;
         this.terms += 1;
         // survival
-        if (roll() + this.career.survivalDM(this) < this.career.survival) {
+        if (this.roll() + this.career.survivalDM(this) < this.career.survival) {
             const dead = true;
             console.log("YOU DIED");
         }
 
         // commission
-        if (this.commissioned == false && (this.drafted == false || this.terms > 1) && this.career.commission !== null && roll() + this.career.commissionDM(this) >= this.career.commission) {
+        if (this.commissioned == false && (this.drafted == false || this.terms > 1) && this.career.commission !== null && this.roll() + this.career.commissionDM(this) >= this.career.commission) {
             this.commissioned = true;
             this.rank = 1;
             console.log(`Character was commissioned to ${this.career.ranks![this.rank-1]}`);
         }
         
         // promotion
-        if (this.commissioned == true && this.rank < this.career.ranks!.length && roll() + this.career.promotionDM(this) >= this.career.promotion!) {
+        if (this.commissioned == true && this.rank < this.career.ranks!.length && this.roll() + this.career.promotionDM(this) >= this.career.promotion!) {
             this.rank += 1;
             console.log(`Character was promoted to rank ${this.rank} (${this.career.ranks![this.rank-1]})`);
         }
@@ -70,7 +77,7 @@ class Character {
         // skills and training
         
         // reenlistment
-        let reenlistmentThrow = roll(2);
+        let reenlistmentThrow = this.roll(2);
         if (reenlistmentThrow < this.career.reenlist) {
             // failed reenlistment
         }
@@ -93,6 +100,10 @@ class Character {
 
     }
 
+    roll(dice: number = 1):number {
+        return this.random.dice(6, dice).reduce((a,b) => a+b, 0);
+    }
+
     protected enlist(): Career {
         const throws = careers.map((c) => c.enlistment - c.
         enlistmentDM(this));
@@ -108,15 +119,15 @@ class Character {
             }
         });
 
-        const preferredCareer = careers[(preferredCareerIndexes.length > 1) ? getRandomFromArray(preferredCareerIndexes) : preferredCareerIndexes[0]];
+        const preferredCareer = careers[(preferredCareerIndexes.length > 1) ? this.random.pick(preferredCareerIndexes) : preferredCareerIndexes[0]];
 
-        if (roll() + preferredCareer.enlistmentDM(this) >= preferredCareer.enlistment) {
+        if (this.roll() + preferredCareer.enlistmentDM(this) >= preferredCareer.enlistment) {
             console.log(`Character was accepted to ${preferredCareer.name}`);
 
             return preferredCareer;
         } else {
             this.drafted = true;
-            let draft = roll();
+            let draft = this.roll();
             let draftedService = careers.filter((c) => c.draft == draft)[0];
             console.log(`Character was rejected from ${preferredCareer.name} and was drafted to ${draftedService.name}`);
 
@@ -133,7 +144,7 @@ class Character {
     // if character has the nobility of a Baron but doesn't use the title
     protected prefix(): string {
         if (this.attributes.socialStanding == 12 && this.title == "") {
-            return getRandomFromArray(["von ", "hault-", "haut-"]);
+            return this.random.pick(["von ", "hault-", "haut-"]);
         } else {
             return "";
         }
@@ -148,11 +159,11 @@ class Character {
                     return "Dame";
                 }
             case 12:
-                if (getRandomInt(1, 2) <= 2) {
+                if (this.random.integer(1, 2) <= 2) {
                     if (this.gender == Gender.Male) {
                         return "Baron";
                     } else {
-                        return getRandomFromArray(["Baronet", "Baroness"]);
+                        return this.random.pick(["Baronet", "Baroness"]);
                     }
                 } else {
                     // in lieu of title, use prefix in name
@@ -162,7 +173,7 @@ class Character {
                 if (this.gender == Gender.Male) {
                     return "Marquis";
                 } else {
-                    return getRandomFromArray(["Marquesa", "Marchioness"]);
+                    return this.random.pick(["Marquesa", "Marchioness"]);
                 }
             case 14:
                 if (this.gender == Gender.Male) {
@@ -187,34 +198,9 @@ enum Gender {
     Female
 }
 
-
-// FIXME: switch to random.js for seeds
-// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random#getting_a_random_number_between_two_values
-function getRandomInt(min: number, max: number): number {
-    min = Math.ceil(min);
-    max = Math.floor(max);
-
-    return Math.floor(Math.random() * (max - min) + min);
-}
-
-function getRandomFromArray<Type>(arr: Type[]): Type {
-    const i = getRandomInt(1, arr.length);
-
-    return arr[i - 1];
-}
-
-function roll(dice: number = 1): number {
-    let sum = 0;
-    for (let i = 0; i < dice; i++) {
-        sum += getRandomInt(1, 7);
-    }
-
-    return sum;
-}
-
 const careers: Career[] = [Navy, Marines, Army, Scouts, Merchants, Other];
 
 console.log("Traveller Chargen");
-let c = new Character();
+let c = new Character(106671514);
 
 export { Character };
