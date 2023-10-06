@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "random-js": "^2.1.0",
+    "typescript": "^5.2.2"
+  }
+}
