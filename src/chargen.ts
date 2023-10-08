@@ -28,6 +28,7 @@ class Character {
     drafted = false;
     commissioned = false;
 
+    skills: Record<string, number> = {};
 
     constructor(seed?: number) {
         this.seed = seed ? seed : createEntropy(nativeMath, 1)[0];
@@ -52,6 +53,7 @@ class Character {
         // name
 
         this.career = this.enlist();
+        this.career.rankAndServiceSkills(c); // add automatic skills for service (rank = 0)
 
         this.age += 4;
         this.terms += 1;
@@ -66,12 +68,14 @@ class Character {
             this.commissioned = true;
             this.rank = 1;
             console.log(`Character was commissioned to ${this.career.ranks![this.rank-1]}`);
+            this.career.rankAndServiceSkills(c); // automatic skills for rank = 1
         }
         
         // promotion
         if (this.commissioned == true && this.rank < this.career.ranks!.length && this.roll() + this.career.promotionDM(this) >= this.career.promotion!) {
             this.rank += 1;
             console.log(`Character was promoted to rank ${this.rank} (${this.career.ranks![this.rank-1]})`);
+            this.career.rankAndServiceSkills(c);
         }
         
         // skills and training
@@ -102,6 +106,14 @@ class Character {
 
     roll(dice: number = 1):number {
         return this.random.dice(6, dice).reduce((a,b) => a+b, 0);
+    }
+
+    addSkill(skill: string) {
+        if (skill in this.skills) {
+            this.skills[skill] += 1;
+        } else {
+            this.skills[skill] = 1;
+        }
     }
 
     protected enlist(): Career {

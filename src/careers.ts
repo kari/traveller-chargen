@@ -19,6 +19,7 @@ type Career = {
     promotionDM(c: Character): number;
     personalDevelopment(c: Character): void;
     benefitsTable(c: Character): void;
+    rankAndServiceSkills(c: Character): void;
 }
 
 const Navy: Career = {
@@ -67,6 +68,11 @@ const Navy: Career = {
     },
     benefitsTable(c) {
 
+    },
+    rankAndServiceSkills(c) {
+        if (c.rank == 5 || c.rank == 6) { // Navy Captain / Admiral
+            c.attributes.socialStanding += 1        
+        }
     }
 }
 
@@ -116,6 +122,13 @@ const Marines: Career = {
     },
     benefitsTable(c) {
 
+    },
+    rankAndServiceSkills(c) {
+        if (c.rank == 0) { // Marine
+            c.addSkill('Cutlass');
+        } else if (c.rank == 1) { // Marine Lt
+            c.addSkill('Revolver');
+        }
     }
 }
 
@@ -165,6 +178,13 @@ const Army: Career = {
     },
     benefitsTable(c) {
 
+    },
+    rankAndServiceSkills(c) {
+        if (c.rank == 0) { // Army
+            c.addSkill('Rifle');
+        } else if (c.rank == 1) { // Army Lt
+            c.addSkill('SMG');
+        }
     }
 }
 
@@ -208,7 +228,13 @@ const Scouts: Career = {
     },
     benefitsTable(c) {
 
+    },
+    rankAndServiceSkills(c) {
+        if (c.rank == 0) { // Scout
+            c.addSkill('Pilot');
+        }
     }
+
 }
 
 const Merchants: Career = {
@@ -257,7 +283,13 @@ const Merchants: Career = {
     },
     benefitsTable(c) {
 
+    },
+    rankAndServiceSkills(c) {
+        if (c.rank == 4) { // Merchant 1st Officer
+            c.addSkill('Pilot');
+        }
     }
+
 }
 
 const Other: Career = {
@@ -293,6 +325,9 @@ const Other: Career = {
     },
     benefitsTable(c) {
 
+    },
+    rankAndServiceSkills(_c) {
+        // no skills
     }
 }
 
