@@ -57,6 +57,14 @@ class Character {
 
         this.age += 4;
         this.terms += 1;
+        let eligibleSkills = 0;
+
+        if (this.terms == 1) {
+            eligibleSkills += 2;
+        } else {
+            eligibleSkills = 1;
+        }
+
         // survival
         if (this.roll() + this.career.survivalDM(this) < this.career.survival) {
             const dead = true;
@@ -69,6 +77,7 @@ class Character {
             this.rank = 1;
             console.log(`Character was commissioned to ${this.career.ranks![this.rank-1]}`);
             this.career.rankAndServiceSkills(c); // automatic skills for rank = 1
+            eligibleSkills += 1;
         }
         
         // promotion
@@ -76,9 +85,13 @@ class Character {
             this.rank += 1;
             console.log(`Character was promoted to rank ${this.rank} (${this.career.ranks![this.rank-1]})`);
             this.career.rankAndServiceSkills(c);
+            eligibleSkills += 1;
         }
         
         // skills and training
+        while (eligibleSkills > 0) {
+            eligibleSkills -= 1;
+        }
         
         // reenlistment
         let reenlistmentThrow = this.roll(2);
@@ -210,6 +223,9 @@ enum Gender {
     Female
 }
 
+// for weapons, add strength requirements for DM, only choose skills in weapons for which strength+ is met or at least strength- is not met 
+const bladeSkills = ["Dagger", "Blade", "Foil", "Sword", "Cutlass", "Broadsword", "Bayonet", "Spear", "Halberd", "Pike", "Cudgel"];
+const gunSkills = ["Body Pistol", "Auto Pistol", "Revolver", "Carbine", "Rifle", "Auto Rifle", "Shotgun", "SMG", "Laser Carbine", "Laser Rifle"];
 const careers: Career[] = [Navy, Marines, Army, Scouts, Merchants, Other];
 
 console.log("Traveller Chargen");
