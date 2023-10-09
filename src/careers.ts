@@ -1,4 +1,4 @@
-import type { Character } from "./chargen";
+import { ScoutCourier, type Character, FreeTrader } from "./chargen";
 
 type Career = {
     name: string,
@@ -13,12 +13,13 @@ type Career = {
     skillsTable: string[];
     advancedEducationTable: string[];
     advancedEducationTable8: string[];
+    retirementPay: boolean;
     enlistmentDM(c: Character): number;
     survivalDM(c: Character): number;
     commissionDM(c: Character): number;
     promotionDM(c: Character): number;
-    personalDevelopment(c: Character): void;
-    benefitsTable(c: Character): void;
+    personalDevelopment(c: Character, i: number): void;
+    benefitsTable(c: Character, i: number): void;
     rankAndServiceSkills(c: Character): void;
 }
 
@@ -30,6 +31,7 @@ const Navy: Career = {
     commission: 10,
     promotion: 8,
     reenlist: 6,
+    retirementPay: true,
     ranks: ["Ensign", "Lieutenant", "Lt Cmdr", "Commander", "Captain", "Admiral"],
     cashTable: [1000, 5000, 5000, 10_000, 20_000, 50_000, 50_000],
     skillsTable: ["Ship's Boat", "Vacc Suit", "Fwd Obsvr", "Gunnery", "Blade Cbt", "Gun Cbt"],
@@ -63,11 +65,52 @@ const Navy: Career = {
         }
         return 0;
     },
-    personalDevelopment(c) {
-
+    personalDevelopment(c, i) {
+        switch (i) {
+            case 1: 
+                c.attributes.strength += 1;
+                break;
+            case 2:
+                c.attributes.dexterity += 1;
+                break;
+            case 3:
+                c.attributes.endurance += 1;
+                break;
+            case 4:
+                c.attributes.intelligence += 1;
+                break;
+            case 5:
+                c.attributes.education += 1;
+                break;
+            case 6:
+                c.attributes.socialStanding += 1;
+                break;
+        }
     },
-    benefitsTable(c) {
-
+    benefitsTable(c, i) {
+        switch (i) {
+            case 1: 
+                c.addItem('Low Psg');
+                break;
+            case 2:
+                c.attributes.intelligence += 1;
+                break;
+            case 3:
+                c.attributes.education += 2;
+                break;
+            case 4:
+                c.addBlade();
+                break;
+            case 5:
+                c.addItem("Travellers'");
+                break;
+            case 6:
+                c.addItem('High Psg');
+                break;
+            case 7:
+                c.attributes.socialStanding += 2;
+                break;
+        }
     },
     rankAndServiceSkills(c) {
         if (c.rank == 5 || c.rank == 6) { // Navy Captain / Admiral
@@ -84,6 +127,7 @@ const Marines: Career = {
     commission: 9,
     promotion: 9,
     reenlist: 6,
+    retirementPay: true,
     ranks: ["Lieutenant", "Captain", "Force Cmdr", "Lt Colonel", "Colonel", "Brigadier"],
     cashTable: [2000, 5000, 5000, 10_000, 20_000, 30_000, 40_000],
     skillsTable: ["Vehicle", "Vacc Suit", "Blade Cbt", "Gun Cbt", "Blade Cbt", "Gun Cbt"],
@@ -117,11 +161,52 @@ const Marines: Career = {
         }
         return 0;
     },
-    personalDevelopment(c) {
-
+    personalDevelopment(c, i) {
+        switch (i) {
+            case 1: 
+                c.attributes.strength += 1;
+                break;
+            case 2:
+                c.attributes.dexterity += 1;
+                break;
+            case 3:
+                c.attributes.endurance += 1;
+                break;
+            case 4:
+                c.addSkill('Gambling');
+                break;
+            case 5:
+                c.addSkill('Brawling');
+                break;
+            case 6:
+                c.addItem('Blade Cbt');
+                break;
+        }
     },
-    benefitsTable(c) {
-
+    benefitsTable(c, i) {
+        switch (i) {
+            case 1: 
+                c.addItem('Low Psg');
+                break;
+            case 2:
+                c.attributes.intelligence += 2;
+                break;
+            case 3:
+                c.attributes.education += 1;
+                break;
+            case 4:
+                c.addBlade();
+                break;
+            case 5:
+                c.addItem("Travellers'");
+                break;
+            case 6:
+                c.addItem('High Psg');
+                break;
+            case 7:
+                c.attributes.socialStanding += 2;
+                break;
+        }
     },
     rankAndServiceSkills(c) {
         if (c.rank == 0) { // Marine
@@ -140,6 +225,7 @@ const Army: Career = {
     commission: 5,
     promotion: 6,
     reenlist: 7,
+    retirementPay: true,
     ranks: ["Lieutenant", "Captain", "Major", "Lt Colonel", "Colonel", "General"],
     cashTable: [2000, 5000, 10_000, 10_000, 10_000, 20_000, 30_000],
     skillsTable: ["Vehicle", "Air/Raft", "Gun Cbt", "Fwd Obsvr", "Blade Cbt", "Gun Cbt"],
@@ -173,11 +259,52 @@ const Army: Career = {
         }
         return 0;
     },
-    personalDevelopment(c) {
-
+    personalDevelopment(c, i) {
+        switch (i) {
+            case 1: 
+                c.attributes.strength += 1;
+                break;
+            case 2:
+                c.attributes.dexterity += 1;
+                break;
+            case 3:
+                c.attributes.endurance += 1;
+                break;
+            case 4:
+                c.addSkill('Gambling');
+                break;
+            case 5:
+                c.attributes.education += 1;
+                break;
+            case 6:
+                c.addSkill('Brawling');
+                break;
+        }
     },
-    benefitsTable(c) {
-
+    benefitsTable(c, i) {
+        switch (i) {
+            case 1: 
+                c.addItem('Low Psg');
+                break;
+            case 2:
+                c.attributes.intelligence += 1;
+                break;
+            case 3:
+                c.attributes.education += 2;
+                break;
+            case 4:
+                c.addGun();
+                break;
+            case 5:
+                c.addItem("High Psg");
+                break;
+            case 6:
+                c.addItem('Mid Psg');
+                break;
+            case 7:
+                c.attributes.socialStanding += 1;
+                break;
+        }
     },
     rankAndServiceSkills(c) {
         if (c.rank == 0) { // Army
@@ -197,6 +324,7 @@ const Scouts: Career = {
     promotion: null,
     reenlist: 3,
     ranks: null,
+    retirementPay: false,
     cashTable: [20_000, 20_000, 30_000, 30_000, 50_000, 50_000, 50_000],
     skillsTable: ["Vehicle", "Vacc Suit", "Mechanical", "Navigation", "Electronics", "Jack-o-T"],
     advancedEducationTable: ["Vehicle", "Mechanical", "Electronic", "Jack-o-T", "Gunnery", "Medical"],
@@ -223,11 +351,54 @@ const Scouts: Career = {
     promotionDM(c) {
         return 0;
     },
-    personalDevelopment(c) {
-
+    personalDevelopment(c, i) {
+        switch (i) {
+            case 1: 
+                c.attributes.strength += 1;
+                break;
+            case 2:
+                c.attributes.dexterity += 1;
+                break;
+            case 3:
+                c.attributes.endurance += 1;
+                break;
+            case 4:
+                c.attributes.intelligence += 1;
+                break;
+            case 5:
+                c.attributes.education += 1;
+                break;
+            case 6:
+                c.addSkill('Gun Cbt');
+                break;
+        }
     },
-    benefitsTable(c) {
-
+    benefitsTable(c, i) {
+        switch (i) {
+            case 1: 
+                c.addItem('Low Psg');
+                break;
+            case 2:
+                c.attributes.intelligence += 2;
+                break;
+            case 3:
+                c.attributes.education += 2;
+                break;
+            case 4:
+                c.addBlade();
+                break;
+            case 5:
+                c.addGun();
+                break;
+            case 6:
+                if (!c.ship) {
+                    c.ship = new ScoutCourier();
+                }
+                break;
+            case 7:
+                // no benefit
+                break;
+        }
     },
     rankAndServiceSkills(c) {
         if (c.rank == 0) { // Scout
@@ -245,6 +416,7 @@ const Merchants: Career = {
     commission: 4,
     promotion: 10,
     reenlist: 4,
+    retirementPay: true,
     ranks: ["4th Officer", "3rd Officer", "2nd Officer", "1st Officer", "Captain"],
     cashTable: [1000, 5000, 10_000, 20_000, 20_000, 40_000, 40_000],
     skillsTable: ["Vehicle", "Vacc Suit", "Jack-o-T", "Steward", "Electronics", "Gun Cbt"],
@@ -278,13 +450,59 @@ const Merchants: Career = {
         }
         return 0;
     },
-    personalDevelopment(c) {
-
+    personalDevelopment(c, i) {
+        switch (i) {
+            case 1: 
+                c.attributes.strength += 1;
+                break;
+            case 2:
+                c.attributes.dexterity += 1;
+                break;
+            case 3:
+                c.attributes.endurance += 1;
+                break;
+            case 4:
+                c.attributes.strength += 1;
+                break;
+            case 5:
+                c.addSkill('Blade Cbt');
+                break;
+            case 6:
+                c.addSkill('Bribery');
+                break;
+        }
     },
-    benefitsTable(c) {
-
-    },
-    rankAndServiceSkills(c) {
+    benefitsTable(c, i) {
+        switch (i) {
+            case 1: 
+                c.addItem('Low Psg');
+                break;
+            case 2:
+                c.attributes.intelligence += 1;
+                break;
+            case 3:
+                c.attributes.education += 1;
+                break;
+            case 4:
+                c.addGun();
+                break;
+            case 5:
+                c.addBlade();
+                break;
+            case 6:
+                c.addItem('Low Psg');
+                break;
+            case 7:
+                if (!c.ship) {
+                    c.ship = new FreeTrader();
+                } else if (c.ship.mortgage!.maturity > 0) {
+                    // pay off mortgage
+                    c.ship.age += 10;
+                    c.ship.mortgage!.maturity -= 10; // Shouldn't go below zero, requires five throws on benefit to zero out.
+                }
+                break;
+        }
+    },    rankAndServiceSkills(c) {
         if (c.rank == 4) { // Merchant 1st Officer
             c.addSkill('Pilot');
         }
@@ -301,6 +519,7 @@ const Other: Career = {
     promotion: null,
     reenlist: 5,
     ranks: null,
+    retirementPay: false,
     cashTable: [1000, 5000, 10_000, 10_000, 10_000, 50_000, 100_000],
     skillsTable: ["Vehicle", "Gambling", "Brawling", "Bribert", "Blade Cbt", "Gun Cbt"],
     advancedEducationTable: ["Streetwise", "Mechanical", "Electronic", "Gambling", "Brawling", "Forgery"],
@@ -320,12 +539,53 @@ const Other: Career = {
     promotionDM(_c) {
         return 0;
     },
-    personalDevelopment(c) {
-
+    personalDevelopment(c, i) {
+        switch (i) {
+            case 1: 
+                c.attributes.strength += 1;
+                break;
+            case 2:
+                c.attributes.dexterity += 1;
+                break;
+            case 3:
+                c.attributes.endurance += 1;
+                break;
+            case 4:
+                c.addSkill('Blade Cbt');
+                break;
+            case 5:
+                c.addSkill('Brawling');
+                break;
+            case 6:
+                c.attributes.socialStanding -= 1;
+                break;
+        }
     },
-    benefitsTable(c) {
-
-    },
+    benefitsTable(c, i) {
+        switch (i) {
+            case 1: 
+                c.addItem('Low Psg');
+                break;
+            case 2:
+                c.attributes.intelligence += 1;
+                break;
+            case 3:
+                c.attributes.education += 1;
+                break;
+            case 4:
+                c.addGun();
+                break;
+            case 5:
+                c.addItem("High Psg");
+                break;
+            case 6:
+                // no benefit
+                break;
+            case 7:
+                // no benefit
+                break;
+        }
+    },    
     rankAndServiceSkills(_c) {
         // no skills
     }
