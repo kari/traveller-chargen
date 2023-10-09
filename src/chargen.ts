@@ -34,6 +34,7 @@ class Character {
     skills: Record<string, number> = {};
     items: Record<string, number> = {};
     ship: Ship | null = null;
+    credits = 0;
 
     constructor(seed?: number) {
         this.seed = seed ? seed : createEntropy(nativeMath, 1)[0];
@@ -63,7 +64,7 @@ class Character {
 
         let activeDuty = true;
         do {
-            console.debug('Strating a term of service');
+            console.debug('Starting a term of service');
 
             this.age += 4;
             this.terms += 1;
@@ -81,7 +82,7 @@ class Character {
             if (this.roll() + this.career.survivalDM(this) < this.career.survival) {
                 this.dead = true;
                 activeDuty = false;
-                console.warn("YOU DIED");
+                console.warn("Character didn't survive the term of service");
                 break;
             }
 
@@ -105,7 +106,27 @@ class Character {
             // skills and training
             while (eligibleSkills > 0) {
                 eligibleSkills -= 1;
-                // pick a skill from tables
+                // FIXME: pick a skill from tables
+                switch(this.roll(1)) {
+                    case 1:
+                    case 2:
+                        this.career.personalDevelopment(this, this.roll(1));
+                        break;
+                    case 3:
+                    case 4:
+                        this.addSkill(this.career.skillsTable[this.roll(1)-1]);
+                    case 5:
+                    case 6:
+                        if (this.attributes.education >= 8) {
+                            if (this.roll(1) >= 4) {
+                                this.addSkill(this.career.advancedEducationTable8[this.roll(1)-1]);
+                            } else {
+                                this.addSkill(this.career.advancedEducationTable[this.roll(1)-1]);  
+                            }
+                        } else {
+                            this.addSkill(this.career.advancedEducationTable[this.roll(1)-1]);
+                        }
+                }
             }
 
             // reenlistment
@@ -126,7 +147,7 @@ class Character {
 
             // retirement pay
             if (this.retired && this.career.retirementPay) {
-                const retirementPay = [4_000, 6_000, 8_000, 10_000];
+                const retirementPay = [4_000, 6_000, 8_000, 10_000]; // retirement pay is 2_000 + 2_000 * terms 5+
                 this.retirementPay = retirementPay[this.terms-5];
                 if (this.terms > 8) {
                     this.retirementPay += (this.terms-8) * 2_000;
@@ -134,14 +155,51 @@ class Character {
             }
 
             // mustering out, if leaving
+            if (activeDuty == false) {
+                let benefits = this.terms;
+                switch (this.rank) {
+                    case 1:
+                    case 2:
+                        benefits += 1;
+                        break;
+                    case 3:
+                    case 4:
+                        benefits += 2;
+                        break;
+                    case 5:
+                    case 6:
+                        benefits += 3;
+                        break;
+                }
+                let benefitsDM = (this.rank >= 5) ? 1 : 0;
+                let cashDM = ('Gambling' in this.skills) ? 1 : 0;
+                while (benefits > 0) {
+                    benefits -= 1;
+                    if (this.roll(1) >= 4) {
+                        // benefits
+                        this.career.benefitsTable(this, this.roll(1)+benefitsDM-1);
+                    } else {
+                        // cash table
+                        // FIXME: probably should hit cash table at least once
+                        this.credits += this.career.cashTable[this.roll(1)+cashDM-1];
+                    }
+                }
+                if (this.ship) {
+                    // FIXME: convert passages to money if the player has a ship.
+                }
+
+            }
 
             // aging
             this.aging();
             if (this.dead) {
-                console.log(`Character died of old age at ${this.age}.`)
+                console.log(`Character died of old age at ${this.age}`)
                 activeDuty = false;
             }
         } while (activeDuty == true)
+
+        console.log(`${this.career.name}${this.career.ranks && this.rank > 0 ? " " + this.career.ranks[this.rank-1] : ""} Alexander Jamison ${this.upp} Age ${this.age} ${this.terms} terms Cr${this.credits}`);
+        console.log(this.skills)
     }
 
     roll(dice: number = 2): number { // default roll is two dice
@@ -149,6 +207,7 @@ class Character {
     }
 
     addSkill(skill: string) {
+        // FIXME: Handle Blade and Gun skills
         if (skill in this.skills) {
             this.skills[skill] += 1;
         } else {
@@ -165,23 +224,20 @@ class Character {
     }
 
     addBlade() {
-
+        // FIXME
     }
 
     addGun() {
-
+        // FIXME
     }
 
     protected enlist(): Career {
         const throws = careers.map((c) => c.enlistment - c.
             enlistmentDM(this));
-        // const minThrow = Math.min(...throws);
         let preferredCareerIndexes: number[] = [];
 
-        // FIXME: Army and Other are dominating if looking for easiest
-        // either just filter off "too difficult" (throw > 7) or do something else
+        // filter off "too difficult" (throw > 7) and randomly choose one
         throws.forEach((el, i) => {
-            // if (el == minThrow) { // choose easiest
             if (el <= 7) {
                 preferredCareerIndexes.push(i);
             }
@@ -261,7 +317,6 @@ class Character {
                 this.attributes.strength = 1;
             } else {
                 this.attributes.strength = 0;
-                console.warn('YOU DIED');
                 this.dead = true;
             }
         }
@@ -270,7 +325,6 @@ class Character {
                 this.attributes.dexterity = 1;
             } else {
                 this.attributes.dexterity = 0;
-                console.warn('YOU DIED');
                 this.dead = true;
             }
         }
@@ -279,7 +333,6 @@ class Character {
                 this.attributes.endurance = 1;
             } else {
                 this.attributes.endurance = 0;
-                console.warn('YOU DIED');
                 this.dead = true;
             }
         }
@@ -288,7 +341,6 @@ class Character {
                 this.attributes.intelligence = 1;
             } else {
                 this.attributes.intelligence = 0;
-                console.warn('YOU DIED');
                 this.dead = true;
             }
         }
@@ -386,7 +438,7 @@ class Mortgage {
 }
 
 console.log("Traveller Chargen");
-let c = new Character();
+let c = new Character(); // 348320716);
 
 export { Character };
 export { FreeTrader, ScoutCourier };

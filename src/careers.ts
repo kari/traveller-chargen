@@ -35,7 +35,7 @@ const Navy: Career = {
     ranks: ["Ensign", "Lieutenant", "Lt Cmdr", "Commander", "Captain", "Admiral"],
     cashTable: [1000, 5000, 5000, 10_000, 20_000, 50_000, 50_000],
     skillsTable: ["Ship's Boat", "Vacc Suit", "Fwd Obsvr", "Gunnery", "Blade Cbt", "Gun Cbt"],
-    advancedEducationTable: ["Vacc Suit", "Mechanical", "Electronic", "Engineering", "Gunnery", "Jack-o-T"],
+    advancedEducationTable: ["Vacc Suit", "Mechanical", "Electronics", "Engineering", "Gunnery", "Jack-o-T"],
     advancedEducationTable8: ["Medical", "Navigation", "Engineering", "Computer", "Pilot", "Admin"],
     enlistmentDM(c) {
         let dm = 0;
@@ -131,7 +131,7 @@ const Marines: Career = {
     ranks: ["Lieutenant", "Captain", "Force Cmdr", "Lt Colonel", "Colonel", "Brigadier"],
     cashTable: [2000, 5000, 5000, 10_000, 20_000, 30_000, 40_000],
     skillsTable: ["Vehicle", "Vacc Suit", "Blade Cbt", "Gun Cbt", "Blade Cbt", "Gun Cbt"],
-    advancedEducationTable: ["Vehicle", "Mechanical", "Electronic", "Tactics", "Blade Cbt", "Gun Cbt"],
+    advancedEducationTable: ["Vehicle", "Mechanical", "Electronics", "Tactics", "Blade Cbt", "Gun Cbt"],
     advancedEducationTable8: ["Medical", "Tactics", "Tactics", "Computer", "Leader", "Admin"],
     enlistmentDM(c) {
         let dm = 0;
@@ -229,7 +229,7 @@ const Army: Career = {
     ranks: ["Lieutenant", "Captain", "Major", "Lt Colonel", "Colonel", "General"],
     cashTable: [2000, 5000, 10_000, 10_000, 10_000, 20_000, 30_000],
     skillsTable: ["Vehicle", "Air/Raft", "Gun Cbt", "Fwd Obsvr", "Blade Cbt", "Gun Cbt"],
-    advancedEducationTable: ["Vehicle", "Mechanical", "Electronic", "Tactics", "Blade Cbt", "Gun Cbt"],
+    advancedEducationTable: ["Vehicle", "Mechanical", "Electronics", "Tactics", "Blade Cbt", "Gun Cbt"],
     advancedEducationTable8: ["Medical", "Tactics", "Tactics", "Computer", "Leader", "Admin"],
     enlistmentDM(c) {
         let dm = 0;
@@ -327,7 +327,7 @@ const Scouts: Career = {
     retirementPay: false,
     cashTable: [20_000, 20_000, 30_000, 30_000, 50_000, 50_000, 50_000],
     skillsTable: ["Vehicle", "Vacc Suit", "Mechanical", "Navigation", "Electronics", "Jack-o-T"],
-    advancedEducationTable: ["Vehicle", "Mechanical", "Electronic", "Jack-o-T", "Gunnery", "Medical"],
+    advancedEducationTable: ["Vehicle", "Mechanical", "Electronics", "Jack-o-T", "Gunnery", "Medical"],
     advancedEducationTable8: ["Medical", "Navigation", "Engineering", "Computer", "Pilot", "Jack-o-T"],
     enlistmentDM(c) {
         let dm = 0;
@@ -420,7 +420,7 @@ const Merchants: Career = {
     ranks: ["4th Officer", "3rd Officer", "2nd Officer", "1st Officer", "Captain"],
     cashTable: [1000, 5000, 10_000, 20_000, 20_000, 40_000, 40_000],
     skillsTable: ["Vehicle", "Vacc Suit", "Jack-o-T", "Steward", "Electronics", "Gun Cbt"],
-    advancedEducationTable: ["Streetwise", "Mechanical", "Electronic", "Navigation", "Gunnery", "Medical"],
+    advancedEducationTable: ["Streetwise", "Mechanical", "Electronics", "Navigation", "Gunnery", "Medical"],
     advancedEducationTable8: ["Medical", "Navigation", "Engineering", "Computer", "Pilot", "Admin"],
     enlistmentDM(c) {
         let dm = 0;
@@ -502,7 +502,8 @@ const Merchants: Career = {
                 }
                 break;
         }
-    },    rankAndServiceSkills(c) {
+    },    
+    rankAndServiceSkills(c) {
         if (c.rank == 4) { // Merchant 1st Officer
             c.addSkill('Pilot');
         }
@@ -522,7 +523,7 @@ const Other: Career = {
     retirementPay: false,
     cashTable: [1000, 5000, 10_000, 10_000, 10_000, 50_000, 100_000],
     skillsTable: ["Vehicle", "Gambling", "Brawling", "Bribert", "Blade Cbt", "Gun Cbt"],
-    advancedEducationTable: ["Streetwise", "Mechanical", "Electronic", "Gambling", "Brawling", "Forgery"],
+    advancedEducationTable: ["Streetwise", "Mechanical", "Electronics", "Gambling", "Brawling", "Forgery"],
     advancedEducationTable8: ["Medical", "Forgery", "Electronics", "Computer", "Streetwise", "Jack-o-T"],
     enlistmentDM(_c) {
         return 0;
