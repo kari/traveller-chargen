@@ -345,10 +345,12 @@ const Scouts: Career = {
         }
         return 0;
     },
-    commissionDM(c) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    commissionDM(_c) {
         return 0;
     },
-    promotionDM(c) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    promotionDM(_c) {
         return 0;
     },
     personalDevelopment(c, i) {
@@ -525,6 +527,7 @@ const Other: Career = {
     skillsTable: ["Vehicle", "Gambling", "Brawling", "Bribert", "Blade Cbt", "Gun Cbt"],
     advancedEducationTable: ["Streetwise", "Mechanical", "Electronics", "Gambling", "Brawling", "Forgery"],
     advancedEducationTable8: ["Medical", "Forgery", "Electronics", "Computer", "Streetwise", "Jack-o-T"],
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     enlistmentDM(_c) {
         return 0;
     },
@@ -534,9 +537,11 @@ const Other: Career = {
         }
         return 0;
     },
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     commissionDM(_c) {
         return 0;
     },
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     promotionDM(_c) {
         return 0;
     },
@@ -587,6 +592,7 @@ const Other: Career = {
                 break;
         }
     },    
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     rankAndServiceSkills(_c) {
         // no skills
     }

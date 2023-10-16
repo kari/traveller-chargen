@@ -115,6 +115,7 @@ class Character {
                     case 3:
                     case 4:
                         this.addSkill(this.career.skillsTable[this.roll(1)-1]);
+                        break;
                     case 5:
                     case 6:
                         if (this.attributes.education >= 8) {
@@ -126,11 +127,12 @@ class Character {
                         } else {
                             this.addSkill(this.career.advancedEducationTable[this.roll(1)-1]);
                         }
+                        break;
                 }
             }
 
             // reenlistment
-            let reenlistmentThrow = this.roll();
+            const reenlistmentThrow = this.roll();
             if (reenlistmentThrow < this.career.reenlist) {
                 activeDuty = false;
                 console.log('Character failed reenlistment')
@@ -171,8 +173,8 @@ class Character {
                         benefits += 3;
                         break;
                 }
-                let benefitsDM = (this.rank >= 5) ? 1 : 0;
-                let cashDM = ('Gambling' in this.skills) ? 1 : 0;
+                const benefitsDM = (this.rank >= 5) ? 1 : 0;
+                const cashDM = ('Gambling' in this.skills) ? 1 : 0;
                 while (benefits > 0) {
                     benefits -= 1;
                     if (this.roll(1) >= 4) {
@@ -234,7 +236,7 @@ class Character {
     protected enlist(): Career {
         const throws = careers.map((c) => c.enlistment - c.
             enlistmentDM(this));
-        let preferredCareerIndexes: number[] = [];
+        const preferredCareerIndexes: number[] = [];
 
         // filter off "too difficult" (throw > 7) and randomly choose one
         throws.forEach((el, i) => {
@@ -251,8 +253,8 @@ class Character {
             return preferredCareer;
         } else {
             this.drafted = true;
-            let draft = this.roll(1);
-            let draftedService = careers.filter((c) => c.draft == draft)[0];
+            const draft = this.roll(1);
+            const draftedService = careers.filter((c) => c.draft == draft)[0];
             console.log(`Character was rejected from ${preferredCareer.name} and was drafted to ${draftedService.name}`);
 
             return draftedService;
@@ -438,7 +440,8 @@ class Mortgage {
 }
 
 console.log("Traveller Chargen");
-let c = new Character(); // 348320716);
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const c = new Character(); // 348320716);
 
 export { Character };
 export { FreeTrader, ScoutCourier };
