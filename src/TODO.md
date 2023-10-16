@@ -1,11 +1,11 @@
 # TODO
 
-## CHARGEN 
+## CHARGEN
 
 - verbose mode
 - debug mode
 - personal history
-  - random charts for lore, look at throw 
+  - random charts for lore, look at throw / roll difference
 - add get/set to attributes
   - to ensure they are in the allowed range
 - skills and training
@@ -27,4 +27,6 @@
 
 ## WORLDGEN
 
-- create worlds as in book3
+- create communication routes
+- select capital world
+- create name for the world
