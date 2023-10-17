@@ -2,29 +2,28 @@
 
 ## CHARGEN
 
-- verbose mode
-- debug mode
-- personal history
-  - random charts for lore, look at throw / roll difference
-- add get/set to attributes
-  - to ensure they are in the allowed range
-- skills and training
-  - skills to enums?
+References:
+
+- https://github.com/makhidkarun/travellercharactergenerator
+
+Todo:
+
 - reenlistment, retiring and mustering out
   - benefit behavior
     - choose skills if avg skill < low?
     - take money at least once?
-- survival behavior
-- weapons
-  - if has a weapon with weapon-0, get it to weapon-2
-  - if have weapon-1+ but no weapon, pick that weapon
-  - otherwise pick random skill or gun
-    - while preferring weapons for which strength DM benefit and avoiding ones with penalty
+- survival behavior, when to retire voluntarily?
+- add get/set to attributes
+  - to ensure they are in the allowed range
+- verbose/debug mode
+- personal history
+  - random charts for lore, look at throw / roll difference
+- skills and training
+  - skills to enums?
 - names
   - social standing before and after service can change, and so nobility
   - random names, markov chain? swn?
 - go through character generation in the book to find missing details
-  - scouts had some skill earning difference because no ranks?
 
 ## WORLDGEN
 
