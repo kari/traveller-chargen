@@ -1,4 +1,5 @@
-import { ScoutCourier, type Character, FreeTrader } from "./chargen";
+import { ScoutCourier, FreeTrader } from "./ships";
+import { type Character } from "./character";
 
 type Career = {
     name: string,
@@ -67,7 +68,7 @@ const Navy: Career = {
     },
     personalDevelopment(c, i) {
         switch (i) {
-            case 1: 
+            case 1:
                 c.attributes.strength += 1;
                 break;
             case 2:
@@ -89,7 +90,7 @@ const Navy: Career = {
     },
     benefitsTable(c, i) {
         switch (i) {
-            case 1: 
+            case 1:
                 c.addItem('Low Psg');
                 break;
             case 2:
@@ -114,7 +115,7 @@ const Navy: Career = {
     },
     rankAndServiceSkills(c) {
         if (c.rank == 5 || c.rank == 6) { // Navy Captain / Admiral
-            c.attributes.socialStanding += 1        
+            c.attributes.socialStanding += 1
         }
     }
 }
@@ -163,7 +164,7 @@ const Marines: Career = {
     },
     personalDevelopment(c, i) {
         switch (i) {
-            case 1: 
+            case 1:
                 c.attributes.strength += 1;
                 break;
             case 2:
@@ -185,7 +186,7 @@ const Marines: Career = {
     },
     benefitsTable(c, i) {
         switch (i) {
-            case 1: 
+            case 1:
                 c.addItem('Low Psg');
                 break;
             case 2:
@@ -261,7 +262,7 @@ const Army: Career = {
     },
     personalDevelopment(c, i) {
         switch (i) {
-            case 1: 
+            case 1:
                 c.attributes.strength += 1;
                 break;
             case 2:
@@ -283,7 +284,7 @@ const Army: Career = {
     },
     benefitsTable(c, i) {
         switch (i) {
-            case 1: 
+            case 1:
                 c.addItem('Low Psg');
                 break;
             case 2:
@@ -355,7 +356,7 @@ const Scouts: Career = {
     },
     personalDevelopment(c, i) {
         switch (i) {
-            case 1: 
+            case 1:
                 c.attributes.strength += 1;
                 break;
             case 2:
@@ -377,7 +378,7 @@ const Scouts: Career = {
     },
     benefitsTable(c, i) {
         switch (i) {
-            case 1: 
+            case 1:
                 c.addItem('Low Psg');
                 break;
             case 2:
@@ -454,7 +455,7 @@ const Merchants: Career = {
     },
     personalDevelopment(c, i) {
         switch (i) {
-            case 1: 
+            case 1:
                 c.attributes.strength += 1;
                 break;
             case 2:
@@ -476,7 +477,7 @@ const Merchants: Career = {
     },
     benefitsTable(c, i) {
         switch (i) {
-            case 1: 
+            case 1:
                 c.addItem('Low Psg');
                 break;
             case 2:
@@ -497,14 +498,17 @@ const Merchants: Career = {
             case 7:
                 if (!c.ship) {
                     c.ship = new FreeTrader();
-                } else if (c.ship.mortgage!.maturity > 0) {
+                } else if (c.ship.mortgage) {
                     // pay off mortgage
                     c.ship.age += 10;
-                    c.ship.mortgage!.maturity -= 10; // Shouldn't go below zero, requires five throws on benefit to zero out.
+                    c.ship.mortgage.maturity -= 10;
+                    if (c.ship.mortgage.maturity <= 0) {
+                        c.ship.mortgage = undefined;
+                    }
                 }
                 break;
         }
-    },    
+    },
     rankAndServiceSkills(c) {
         if (c.rank == 4) { // Merchant 1st Officer
             c.addSkill('Pilot');
@@ -524,7 +528,7 @@ const Other: Career = {
     ranks: null,
     retirementPay: false,
     cashTable: [1000, 5000, 10_000, 10_000, 10_000, 50_000, 100_000],
-    skillsTable: ["Vehicle", "Gambling", "Brawling", "Bribert", "Blade Cbt", "Gun Cbt"],
+    skillsTable: ["Vehicle", "Gambling", "Brawling", "Bribery", "Blade Cbt", "Gun Cbt"],
     advancedEducationTable: ["Streetwise", "Mechanical", "Electronics", "Gambling", "Brawling", "Forgery"],
     advancedEducationTable8: ["Medical", "Forgery", "Electronics", "Computer", "Streetwise", "Jack-o-T"],
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -547,7 +551,7 @@ const Other: Career = {
     },
     personalDevelopment(c, i) {
         switch (i) {
-            case 1: 
+            case 1:
                 c.attributes.strength += 1;
                 break;
             case 2:
@@ -569,7 +573,7 @@ const Other: Career = {
     },
     benefitsTable(c, i) {
         switch (i) {
-            case 1: 
+            case 1:
                 c.addItem('Low Psg');
                 break;
             case 2:
@@ -591,7 +595,7 @@ const Other: Career = {
                 // no benefit
                 break;
         }
-    },    
+    },
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     rankAndServiceSkills(_c) {
         // no skills
