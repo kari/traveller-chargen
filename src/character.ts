@@ -3,6 +3,17 @@ import type { Career } from "./careers";
 import type { Ship } from "./ships";
 import { Random, MersenneTwister19937, createEntropy, nativeMath } from "random-js";
 
+type Attributes = {
+    strength: number,
+    dexterity: number,
+    endurance: number,
+    intelligence: number,
+    education: number,
+    socialStanding: number
+};
+
+type Attribute = keyof Attributes;
+
 class Character {
     seed: number;
     random: Random;
@@ -12,14 +23,7 @@ class Character {
     retired = false;
     retirementPay = 0;
 
-    attributes: {
-        strength: number,
-        dexterity: number,
-        endurance: number,
-        intelligence: number,
-        education: number,
-        socialStanding: number
-    }
+    attributes: Attributes;
 
     gender: Gender;
 
@@ -241,6 +245,19 @@ class Character {
         return this.random.dice(6, dice).reduce((a, b) => a + b, 0);
     }
 
+    modifyAttribute(attribute: Attribute, amount: number = 1): number {
+        this.attributes[attribute] += amount;
+        if (this.attributes[attribute] > 15) {
+            console.warn(`${attribute} went above 15, capped`);
+            this.attributes[attribute] = 15;
+        } else if (this.attributes[attribute] < 0) {
+            console.warn(`${attribute} went below zero, capped`);
+            this.attributes[attribute] = 0;
+        }
+
+        return this.attributes[attribute];
+    }
+    
     addSkill(skill: string) {
         if (skill == "Blade Cbt") {
             this.addWeaponSkill("blade");
@@ -438,68 +455,74 @@ class Character {
             return;
         } else if (this.age < 50) {
             if (this.roll() < 8) {
-                this.attributes.strength -= 1;
+                this.modifyAttribute("strength", -1);
+                console.debug(`Character fails aging STR throw (-1)`)
             }
             if (this.roll() < 7) {
-                this.attributes.dexterity -= 1;
+                console.debug("Character fails aging DEX throw (-1)")
+                this.modifyAttribute("dexterity", -1);
             }
             if (this.roll() < 8) {
-                this.attributes.endurance -= 1;
+                console.debug("Character fails aging END throw (-1)")
+                this.modifyAttribute("endurance", -1);
             }
         } else if (this.age < 66) {
             if (this.roll() < 9) {
-                this.attributes.strength -= 1;
+                console.debug("Character fails aging STR throw (-1)")
+                this.modifyAttribute("strength", -1);
             }
             if (this.roll() < 8) {
-                this.attributes.dexterity -= 1;
+                console.debug("Character fails aging DEX throw (-1)")
+                this.modifyAttribute("dexterity", -1);
             }
             if (this.roll() < 9) {
-                this.attributes.endurance -= 1;
+                console.debug("Character fails aging END throw (-1)")
+                this.modifyAttribute("endurance", -1);
             }
         } else {
             if (this.roll() < 9) {
-                this.attributes.strength -= 2;
+                console.debug("Character fails aging STR throw (-2)")
+                this.modifyAttribute("strength", -2);
             }
             if (this.roll() < 9) {
-                this.attributes.dexterity -= 2;
+                console.debug("Character fails aging DEX throw (-2)")
+                this.modifyAttribute("dexterity", -2);
             }
             if (this.roll() < 9) {
-                this.attributes.endurance -= 2;
+                console.debug("Character fails aging END throw (-2)")
+                this.modifyAttribute("endurance", -2);
             }
             if (this.roll() < 9) {
-                this.attributes.intelligence -= 1;
+                console.debug("Character fails aging INT throw (-1)")
+                this.modifyAttribute("intelligence", -1);
             }
         }
         // FIXME: add availability of slow drug / incapacity, DM for medical skill of service
-        if (this.attributes.strength <= 0) {
+        if (this.attributes.strength == 0) {
             if (this.roll() >= 8) {
-                this.attributes.strength = 1;
+                this.modifyAttribute("strength", 1);
             } else {
-                this.attributes.strength = 0;
                 this.dead = true;
             }
         }
-        if (this.attributes.dexterity <= 0) {
+        if (this.attributes.dexterity == 0) {
             if (this.roll() >= 8) {
-                this.attributes.dexterity = 1;
+                this.modifyAttribute("dexterity", 1);
             } else {
-                this.attributes.dexterity = 0;
                 this.dead = true;
             }
         }
-        if (this.attributes.endurance <= 0) {
+        if (this.attributes.endurance == 0) {
             if (this.roll() >= 8) {
-                this.attributes.endurance = 1;
+                this.modifyAttribute("endurance", 1);
             } else {
-                this.attributes.endurance = 0;
                 this.dead = true;
             }
         }
         if (this.attributes.intelligence <= 0) {
             if (this.roll() >= 8) {
-                this.attributes.intelligence = 1;
+                this.modifyAttribute("intelligence", 1);
             } else {
-                this.attributes.intelligence = 0;
                 this.dead = true;
             }
         }

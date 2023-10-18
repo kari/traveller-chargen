@@ -69,22 +69,22 @@ const Navy: Career = {
     personalDevelopment(c, i) {
         switch (i) {
             case 1:
-                c.attributes.strength += 1;
+                c.modifyAttribute("strength", 1);
                 break;
             case 2:
-                c.attributes.dexterity += 1;
+                c.modifyAttribute("dexterity", 1);
                 break;
             case 3:
-                c.attributes.endurance += 1;
+                c.modifyAttribute("endurance", 1);
                 break;
             case 4:
-                c.attributes.intelligence += 1;
+                c.modifyAttribute("intelligence", 1);
                 break;
             case 5:
-                c.attributes.education += 1;
+                c.modifyAttribute("education", 1);
                 break;
             case 6:
-                c.attributes.socialStanding += 1;
+                c.modifyAttribute("socialStanding", 1);
                 break;
         }
     },
@@ -94,10 +94,10 @@ const Navy: Career = {
                 c.addItem('Low Psg');
                 break;
             case 2:
-                c.attributes.intelligence += 1;
+                c.modifyAttribute("intelligence", 1);
                 break;
             case 3:
-                c.attributes.education += 2;
+                c.modifyAttribute("education", 2);
                 break;
             case 4:
                 c.addWeapon("blade");
@@ -109,13 +109,13 @@ const Navy: Career = {
                 c.addItem('High Psg');
                 break;
             case 7:
-                c.attributes.socialStanding += 2;
+                c.modifyAttribute("socialStanding", 2);
                 break;
         }
     },
     rankAndServiceSkills(c) {
         if (c.rank == 5 || c.rank == 6) { // Navy Captain / Admiral
-            c.attributes.socialStanding += 1
+            c.modifyAttribute("socialStanding", 1);
         }
     }
 }
@@ -165,13 +165,13 @@ const Marines: Career = {
     personalDevelopment(c, i) {
         switch (i) {
             case 1:
-                c.attributes.strength += 1;
+                c.modifyAttribute("strength", 1);
                 break;
             case 2:
-                c.attributes.dexterity += 1;
+                c.modifyAttribute("dexterity", 1);
                 break;
             case 3:
-                c.attributes.endurance += 1;
+                c.modifyAttribute("endurance", 1);
                 break;
             case 4:
                 c.addSkill('Gambling');
@@ -190,10 +190,10 @@ const Marines: Career = {
                 c.addItem('Low Psg');
                 break;
             case 2:
-                c.attributes.intelligence += 2;
+                c.modifyAttribute("intelligence", 2);
                 break;
             case 3:
-                c.attributes.education += 1;
+                c.modifyAttribute("education", 1);
                 break;
             case 4:
                 c.addWeapon("blade");
@@ -205,7 +205,7 @@ const Marines: Career = {
                 c.addItem('High Psg');
                 break;
             case 7:
-                c.attributes.socialStanding += 2;
+                c.modifyAttribute("socialStanding", 2);
                 break;
         }
     },
@@ -263,19 +263,19 @@ const Army: Career = {
     personalDevelopment(c, i) {
         switch (i) {
             case 1:
-                c.attributes.strength += 1;
+                c.modifyAttribute("strength", 1);
                 break;
             case 2:
-                c.attributes.dexterity += 1;
+                c.modifyAttribute("dexterity", 1);
                 break;
             case 3:
-                c.attributes.endurance += 1;
+                c.modifyAttribute("endurance", 1);
                 break;
             case 4:
                 c.addSkill('Gambling');
                 break;
             case 5:
-                c.attributes.education += 1;
+                c.modifyAttribute("education", 1);
                 break;
             case 6:
                 c.addSkill('Brawling');
@@ -288,10 +288,10 @@ const Army: Career = {
                 c.addItem('Low Psg');
                 break;
             case 2:
-                c.attributes.intelligence += 1;
+                c.modifyAttribute("intelligence", 1);
                 break;
             case 3:
-                c.attributes.education += 2;
+                c.modifyAttribute("education", 2);
                 break;
             case 4:
                 c.addWeapon("gun");
@@ -303,7 +303,7 @@ const Army: Career = {
                 c.addItem('Mid Psg');
                 break;
             case 7:
-                c.attributes.socialStanding += 1;
+                c.modifyAttribute("socialStanding", 1);
                 break;
         }
     },
@@ -357,19 +357,19 @@ const Scouts: Career = {
     personalDevelopment(c, i) {
         switch (i) {
             case 1:
-                c.attributes.strength += 1;
+                c.modifyAttribute("strength", 1);
                 break;
             case 2:
-                c.attributes.dexterity += 1;
+                c.modifyAttribute("dexterity", 1);
                 break;
             case 3:
-                c.attributes.endurance += 1;
+                c.modifyAttribute("endurance", 1);
                 break;
             case 4:
-                c.attributes.intelligence += 1;
+                c.modifyAttribute("intelligence", 1);
                 break;
             case 5:
-                c.attributes.education += 1;
+                c.modifyAttribute("education", 1);
                 break;
             case 6:
                 c.addSkill('Gun Cbt');
@@ -382,10 +382,10 @@ const Scouts: Career = {
                 c.addItem('Low Psg');
                 break;
             case 2:
-                c.attributes.intelligence += 2;
+                c.modifyAttribute("intelligence", 2);
                 break;
             case 3:
-                c.attributes.education += 2;
+                c.modifyAttribute("education", 2);
                 break;
             case 4:
                 c.addWeapon("blade");
@@ -456,16 +456,16 @@ const Merchants: Career = {
     personalDevelopment(c, i) {
         switch (i) {
             case 1:
-                c.attributes.strength += 1;
+                c.modifyAttribute("strength", 1);
                 break;
             case 2:
-                c.attributes.dexterity += 1;
+                c.modifyAttribute("dexterity", 1);
                 break;
             case 3:
-                c.attributes.endurance += 1;
+                c.modifyAttribute("endurance", 1);
                 break;
             case 4:
-                c.attributes.strength += 1;
+                c.modifyAttribute("strength", 1);
                 break;
             case 5:
                 c.addSkill('Blade Cbt');
@@ -481,10 +481,10 @@ const Merchants: Career = {
                 c.addItem('Low Psg');
                 break;
             case 2:
-                c.attributes.intelligence += 1;
+                c.modifyAttribute("intelligence", 1);
                 break;
             case 3:
-                c.attributes.education += 1;
+                c.modifyAttribute("education", 1);
                 break;
             case 4:
                 c.addWeapon("gun");
@@ -552,13 +552,13 @@ const Other: Career = {
     personalDevelopment(c, i) {
         switch (i) {
             case 1:
-                c.attributes.strength += 1;
+                c.modifyAttribute("strength", 1);
                 break;
             case 2:
-                c.attributes.dexterity += 1;
+                c.modifyAttribute("dexterity", 1);
                 break;
             case 3:
-                c.attributes.endurance += 1;
+                c.modifyAttribute("endurance", 1);
                 break;
             case 4:
                 c.addSkill('Blade Cbt');
@@ -567,7 +567,7 @@ const Other: Career = {
                 c.addSkill('Brawling');
                 break;
             case 6:
-                c.attributes.socialStanding -= 1;
+                c.modifyAttribute("socialStanding", 1);
                 break;
         }
     },
@@ -577,10 +577,10 @@ const Other: Career = {
                 c.addItem('Low Psg');
                 break;
             case 2:
-                c.attributes.intelligence += 1;
+                c.modifyAttribute("intelligence", 1);
                 break;
             case 3:
-                c.attributes.education += 1;
+                c.modifyAttribute("education", 1);
                 break;
             case 4:
                 c.addWeapon("gun");
