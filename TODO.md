@@ -39,3 +39,5 @@ Todo:
 - create communication routes
 - select capital world
 - create name for the world
+  - markov chain?
+    - list of gods, planets, last names, pokemon, ...

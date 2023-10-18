@@ -180,7 +180,7 @@ const Marines: Career = {
                 c.addSkill('Brawling');
                 break;
             case 6:
-                c.addItem('Blade Cbt');
+                c.addSkill('Blade Cbt');
                 break;
         }
     },

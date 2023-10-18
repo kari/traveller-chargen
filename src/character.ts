@@ -41,6 +41,10 @@ class Character {
         return `${this.career.name}${this.career.ranks && this.rank > 0 ? " " + this.career.ranks[this.rank - 1] : ""} Alexander Jamison ${this.upp} Age ${this.age} ${this.terms} terms Cr${this.credits}`;
     }
 
+    get skillAvg(): number {
+        return (this.attributes.strength+this.attributes.dexterity+this.attributes.endurance+this.attributes.intelligence+this.attributes.education+this.attributes.socialStanding)/6;
+    }
+
     constructor(seed?: number) {
         this.seed = seed ? seed : createEntropy(nativeMath, 1)[0];
         console.debug(`Using seed ${this.seed} to generate the character`);
@@ -57,19 +61,28 @@ class Character {
             socialStanding: this.roll()
         };
 
-        console.log(`UPP ${this.upp}`);
+        console.debug(`Initial UPP ${this.upp}`);
 
+        // FIXME: name, gender title
         this.gender = this.random.pick([Gender.Male, Gender.Female]);
         this.title = this.generateTitle();
 
-        // name
-
+        // generate career for the character
         this.career = this.enlist();
         this.career.rankAndServiceSkills(this); // add automatic skills for service (rank = 0)
+        this.doCareer();
 
+        console.log(this.toString());
+        if (Object.keys(this.skills).length > 0) { console.log(this.skills) }
+        if (Object.keys(this.items).length > 0) { console.log(this.items) }
+        if (this.ship) { console.log(this.ship) }
+    }
+    
+
+    doCareer() {
         let activeDuty = true;
         do {
-            console.debug('Starting a term of service');
+            console.debug(`Starting term ${this.terms+1} of service`);
 
             this.age += 4;
             this.terms += 1;
@@ -77,21 +90,22 @@ class Character {
 
             if (this.terms == 1) {
                 eligibleSkills += 2;
-                console.debug(`Earned 2 skill eligibility from first service term`);
+                console.debug(`Earned 2 skill eligibility from first service term (total ${eligibleSkills})`);
             } else if (this.career.name == "Scouts") {
                 eligibleSkills += 2;
-                console.debug(`Earned 2 skill eligibility from Scouts service term`);
+                console.debug(`Earned 2 skill eligibility from Scouts service term (total ${eligibleSkills})`);
             } else {
                 eligibleSkills += 1;
-                console.debug(`Earned 1 skill eligibility from service term`);
+                console.debug(`Earned 1 skill eligibility from service term (total ${eligibleSkills})`);
             }
 
             // survival
+            console.debug(`Survival throw ${this.career.survival}, DM ${this.career.survivalDM(this)}, need to roll ${this.career.survival-this.career.survivalDM(this)}+`);
             if (this.roll() + this.career.survivalDM(this) < this.career.survival) {
                 this.dead = true;
                 activeDuty = false;
                 console.warn("Character didn't survive the term of service");
-                break;
+                return;
             }
 
             // commission
@@ -101,6 +115,7 @@ class Character {
                 console.debug(`Character was commissioned to ${this.career.ranks![this.rank - 1]}`);
                 this.career.rankAndServiceSkills(this); // automatic skills for rank = 1
                 eligibleSkills += 1;
+                console.debug(`Earned 1 skill eligibility from commission (total ${eligibleSkills})`);
             }
 
             // promotion
@@ -109,33 +124,38 @@ class Character {
                 console.debug(`Character was promoted to rank ${this.rank} (${this.career.ranks![this.rank - 1]})`);
                 this.career.rankAndServiceSkills(this);
                 eligibleSkills += 1;
+                console.debug(`Earned 1 skill eligibility from promotion (total ${eligibleSkills})`);
             }
 
             // skills and training
             while (eligibleSkills > 0) {
                 eligibleSkills -= 1;
-                // FIXME: pick a skill from tables
-                switch (this.roll(1)) {
-                    case 1:
-                    case 2:
-                        this.career.personalDevelopment(this, this.roll(1));
-                        break;
-                    case 3:
-                    case 4:
-                        this.addSkill(this.career.skillsTable[this.roll(1) - 1]);
-                        break;
-                    case 5:
-                    case 6:
-                        if (this.attributes.education >= 8) {
-                            if (this.roll(1) >= 4) {
-                                this.addSkill(this.career.advancedEducationTable8[this.roll(1) - 1]);
+                if (this.skillAvg <= 7) {
+                    console.debug(`Avg. skill ${this.skillAvg.toFixed(2)}, focusing on personal development`);
+                    this.career.personalDevelopment(this, this.roll(1));
+                } else {
+                    switch (this.roll(1)) {
+                        case 1:
+                        case 2:
+                            this.career.personalDevelopment(this, this.roll(1));
+                            break;
+                        case 3:
+                        case 4:
+                            this.addSkill(this.career.skillsTable[this.roll(1) - 1]);
+                            break;
+                        case 5:
+                        case 6:
+                            if (this.attributes.education >= 8) {
+                                if (this.roll(1) >= 3) {
+                                    this.addSkill(this.career.advancedEducationTable8[this.roll(1) - 1]);
+                                } else {
+                                    this.addSkill(this.career.advancedEducationTable[this.roll(1) - 1]);
+                                }
                             } else {
                                 this.addSkill(this.career.advancedEducationTable[this.roll(1) - 1]);
                             }
-                        } else {
-                            this.addSkill(this.career.advancedEducationTable[this.roll(1) - 1]);
-                        }
-                        break;
+                            break;
+                    }
                 }
             }
 
@@ -143,7 +163,7 @@ class Character {
             const reenlistmentThrow = this.roll();
             if (reenlistmentThrow < this.career.reenlist) {
                 activeDuty = false;
-                console.log('Character failed reenlistment')
+                console.debug(`Character failed reenlistment throw ${this.career.reenlist}+, career is over`);
                 // failed reenlistment
             }
 
@@ -154,6 +174,9 @@ class Character {
                 this.retired = true;
             }
             // voluntary retirement terms >= 5
+            if (this.terms >= 5 && reenlistmentThrow != 12 && !this.retired && activeDuty) {
+                console.debug("Character is eligible for voluntary retirement");
+            }
 
             // retirement pay
             if (this.retired && this.career.retirementPay) {
@@ -162,6 +185,7 @@ class Character {
                 if (this.terms > 8) {
                     this.retirementPay += (this.terms - 8) * 2_000;
                 }
+                console.debug(`Character is eligible to retirement pay of ${this.retirementPay}`);
             }
 
             // mustering out, if leaving
@@ -183,15 +207,18 @@ class Character {
                 }
                 const benefitsDM = (this.rank >= 5) ? 1 : 0;
                 const cashDM = ('Gambling' in this.skills) ? 1 : 0;
+                console.debug(`Character is eligible to ${benefits} benefits, with benefits DM ${benefitsDM} and cash table DM ${cashDM}`);
+                let cashTaken = false; // take cash at least once
                 while (benefits > 0) {
                     benefits -= 1;
-                    if (this.roll(1) >= 4) {
+                    if (cashTaken && (this.skillAvg <= 7 || this.roll(1) >= 3)) {
                         // benefits
                         this.career.benefitsTable(this, this.roll(1) + benefitsDM - 1);
                     } else {
                         // cash table
-                        // FIXME: probably should hit cash table at least once
+                        cashTaken = true;
                         this.credits += this.career.cashTable[this.roll(1) + cashDM - 1];
+                        console.debug('Character took cash table');
                     }
                 }
                 if (this.ship) {
@@ -205,11 +232,9 @@ class Character {
             if (this.dead) {
                 console.log(`Character died of old age at ${this.age}`)
                 activeDuty = false;
+                return;
             }
         } while (activeDuty == true)
-
-        console.log(`${this.career.name}${this.career.ranks && this.rank > 0 ? " " + this.career.ranks[this.rank - 1] : ""} Alexander Jamison ${this.upp} Age ${this.age} ${this.terms} terms Cr${this.credits}`);
-        console.log(this.skills)
     }
 
     roll(dice: number = 2): number { // default roll is two dice
@@ -230,9 +255,11 @@ class Character {
         } else {
             this.skills[skill] = 1;
         }
+        console.debug(`Character earned skill ${skill}-${this.skills[skill]}`);
     }
 
     addItem(item: string) {
+        console.debug(`Character earned item ${item}`);
         if (item in this.items) {
             this.items[item] += 1;
         } else {
@@ -240,212 +267,118 @@ class Character {
         }
     }
 
-    addBladeSkill() {
-        const avoidBlades: string[] = [];
-        for (const blade of bladeSkills) {
-            if (this.attributes.strength <= weaponStrDM[blade][1]) {
-                avoidBlades.push(blade);
+    weaponPreferences(type: "blade" | "gun") {
+        const avoid: string[] = [];
+        const weapons = weaponSkills[type];
+        for (const w of weapons) {
+            if (this.attributes.strength <= weaponStrDM[w][1]) {
+                avoid.push(w);
             }
         }
-        const preferBlades: string[] = [];
-        for (const blade of bladeSkills) {
-            if (this.attributes.strength >= weaponStrDM[blade][0]) {
-                preferBlades.push(blade);
+        const prefer: string[] = [];
+        for (const w of weapons) {
+            if (this.attributes.strength >= weaponStrDM[w][0]) {
+                prefer.push(w);
             }
         }
-        const knownBlades: string[] = [];
-        for (const skill in this.skills) {
-            if (skill in bladeSkills) {
-                knownBlades.push(skill);
+        const known: string[] = [];
+        for (const skill of Object.keys(this.skills)) {
+            if (weapons.includes(skill)) {
+                known.push(skill);
             }
         }
-        if (knownBlades.length > 0) {
-            const knownAndPrefer = knownBlades.filter(x => preferBlades.includes(x));
+        const owned: string[] = [];
+        for (const w of weapons) {
+            if (Object.keys(this.items).includes(w)) {
+                owned.push(w);
+            }
+        }
+        console.debug(`Avoid: ${avoid.join(", ")}`);
+        console.debug(`Prefer: ${prefer.join(", ")}`);
+        console.debug(`Known: ${known.join(", ")}`);
+        console.debug(`Owned: ${owned.join(", ")}`);
+
+        return {avoid: avoid, prefer: prefer, known: known, owned: owned}
+    }
+
+    addWeaponSkill(type: "blade" | "gun") {
+        const prefs = this.weaponPreferences(type);
+
+        if (prefs.known.length > 0) {
+            const knownAndPrefer = prefs.known.filter(x => prefs.prefer.includes(x));
             if (knownAndPrefer.length > 0) {
                 this.addSkill(this.random.pick(knownAndPrefer)); // increase skill in a random preferred weapon
                 return;
             } else {
-                const knownAndProficient = knownBlades.filter(x => !avoidBlades.includes(x));
+                const knownAndProficient = prefs.known.filter(x => !prefs.avoid.includes(x));
                 if (knownAndProficient.length > 0) {
                     this.addSkill(this.random.pick(knownAndProficient)); // increase skill in a random weapon that doesn't incur STR penalty
                     return;
-                } // know only blades that incur penalty, fall through
+                } // know only weapons that incur penalty, fall through
             }
         }
-        // player either knowns no blade skills or all known incur penalty
-        if (preferBlades.length > 0) {
-            this.addSkill(this.random.pick(preferBlades)); // get random skill in a preferred blade
+        // player either knowns no weapon skills or all known incur penalty
+        if (prefs.prefer.length > 0) {
+            this.addSkill(this.random.pick(prefs.prefer)); // get random skill in a preferred weapon
         } else {
-            const proficient = bladeSkills.filter(x => !avoidBlades.includes(x));
+            const proficient = weaponSkills[type].filter(x => !prefs.avoid.includes(x));
             if (proficient.length > 0) {
                 this.addSkill(this.random.pick(proficient)); // get random skill in a random weapon that doesn't incur STR penalty
                 return;
-            } else {
-                this.addSkill(this.random.pick(bladeSkills)); // pick random blade, even if use incurs STR penalty
-                // FIXME: choose the one(s) with lowest STR requirement
-                return;
             }
         }
-        // NOTE: should not be reachable
+        this.addSkill(this.random.pick(weaponSkills[type])); // pick random weapon, even if use incurs STR penalty
+        // FIXME: choose the one(s) with lowest STR requirement!
+    }
+
+    addBladeSkill() {
+        return this.addWeaponSkill("blade");
     }
 
     addGunSkill() {
-        const avoidGuns: string[] = [];
-        for (const gun of gunSkills) {
-            if (this.attributes.strength <= weaponStrDM[gun][1]) {
-                avoidGuns.push(gun);
-            }
-        }
-        const preferGuns: string[] = [];
-        for (const gun of gunSkills) {
-            if (this.attributes.strength >= weaponStrDM[gun][0]) {
-                preferGuns.push(gun);
-            }
-        }
-        const knownGuns: string[] = [];
-        for (const skill in this.skills) {
-            if (skill in gunSkills) {
-                knownGuns.push(skill);
-            }
-        }
-        if (knownGuns.length > 0) {
-            const knownAndPrefer = knownGuns.filter(x => preferGuns.includes(x));
-            if (knownAndPrefer.length > 0) {
-                this.addSkill(this.random.pick(knownAndPrefer)); // increase skill in a random preferred weapon
-                return;
-            } else {
-                const knownAndProficient = knownGuns.filter(x => !avoidGuns.includes(x));
-                if (knownAndProficient.length > 0) {
-                    this.addSkill(this.random.pick(knownAndProficient)); // increase skill in a random weapon that doesn't incur STR penalty
-                    return;
-                } // know only guns that incur penalty, fall through
-            }
-        }
-        // player either knowns no gun skills or all known incur penalty
-        if (preferGuns.length > 0) {
-            this.addSkill(this.random.pick(preferGuns)); // get random skill in a preferred blade
-        } else {
-            const proficient = gunSkills.filter(x => !avoidGuns.includes(x));
-            if (proficient.length > 0) {
-                this.addSkill(this.random.pick(proficient)); // get random skill in a random weapon that doesn't incur STR penalty
-                return;
-            } else {
-                this.addSkill(this.random.pick(gunSkills)); // pick random blade, even if use incurs STR penalty
-                // FIXME: choose the one(s) with lowest STR requirement
-                return;
-            }
-        }
-        // NOTE: should not be reachable
+        return this.addWeaponSkill("gun");
     }
 
-    addBlade() {
-        const avoidBlades: string[] = [];
-        for (const blade of bladeSkills) {
-            if (this.attributes.strength <= weaponStrDM[blade][1]) {
-                avoidBlades.push(blade);
-            }
-        }
-        const preferBlades: string[] = [];
-        for (const blade of bladeSkills) {
-            if (this.attributes.strength >= weaponStrDM[blade][0]) {
-                preferBlades.push(blade);
-            }
-        }
-        const knownBlades: string[] = [];
-        for (const skill in this.skills) {
-            if (skill in bladeSkills) {
-                knownBlades.push(skill);
-            }
-        }
-        const ownedBlades: string[] = [];
-        for (const blade of bladeSkills) {
-            if (blade in this.items) {
-                ownedBlades.push(blade);
-            }
-        }
-        const preferAndKnown = knownBlades.filter(x => preferBlades.includes(x));
-        const preferAndKnownAndNotOwned = preferAndKnown.filter(x => !ownedBlades.includes(x));
+    addWeapon(type: "blade" | "gun") {
+        const prefs = this.weaponPreferences(type);
+
+        const preferAndKnown = prefs.known.filter(x => prefs.prefer.includes(x));
+        const preferAndKnownAndNotOwned = preferAndKnown.filter(x => !prefs.owned.includes(x));
         if (preferAndKnownAndNotOwned.length > 0) {
             this.addItem(this.random.pick(preferAndKnownAndNotOwned)); // add a weapon that is preferred and skilled but not owned
             return;
         } else {
-            const proficientAndKnown = knownBlades.filter(x => !avoidBlades.includes(x));
-            const proficientAndKnownAndNotOwned = proficientAndKnown.filter(x => !ownedBlades.includes(x));
+            const proficientAndKnown = prefs.known.filter(x => !prefs.avoid.includes(x));
+            const proficientAndKnownAndNotOwned = proficientAndKnown.filter(x => !prefs.owned.includes(x));
             if (proficientAndKnownAndNotOwned.length > 0) {
                 this.addItem(this.random.pick(proficientAndKnownAndNotOwned)); // add a weapon that doesn't incur STR penalty and skilled but not owned
                 return;
             }
         }
         // no known good weapons, pick a preferred or proficient weapon
-        const preferAndNotOwned = preferBlades.filter(x => !ownedBlades.includes(x));
+        const preferAndNotOwned = prefs.prefer.filter(x => !prefs.owned.includes(x));
         if (preferAndNotOwned.length > 0) {
             this.addItem(this.random.pick(preferAndNotOwned));
             // FIXME: gives weapon-0 skill
         } else {
-            const proficientAndNotOwned = knownBlades.filter(x => !avoidBlades.includes(x) && !ownedBlades.includes(x));
+            const proficientAndNotOwned = prefs.known.filter(x => !prefs.avoid.includes(x) && !prefs.owned.includes(x));
             if (proficientAndNotOwned.length > 0) {
                 this.addItem(this.random.pick(preferAndNotOwned));
+                return;
                 // FIXME: gives weapon-0 skill
             }
         }
         // give a random weapon not owned
-        this.addItem(this.random.pick(bladeSkills.filter(x => !ownedBlades.includes(x))));
+        this.addItem(this.random.pick(weaponSkills[type].filter(x => !prefs.owned.includes(x))));
         // FIXME: gives weapon-0 skill
     }
 
     addGun() {
-        const avoidGuns: string[] = [];
-        for (const gun of gunSkills) {
-            if (this.attributes.strength <= weaponStrDM[gun][1]) {
-                avoidGuns.push(gun);
-            }
-        }
-        const preferGuns: string[] = [];
-        for (const gun of gunSkills) {
-            if (this.attributes.strength >= weaponStrDM[gun][0]) {
-                preferGuns.push(gun);
-            }
-        }
-        const knownGuns: string[] = [];
-        for (const skill in this.skills) {
-            if (skill in gunSkills) {
-                knownGuns.push(skill);
-            }
-        }
-        const ownedGuns: string[] = [];
-        for (const gun of gunSkills) {
-            if (gun in this.items) {
-                ownedGuns.push(gun);
-            }
-        }
-        const preferAndKnown = knownGuns.filter(x => preferGuns.includes(x));
-        const preferAndKnownAndNotOwned = preferAndKnown.filter(x => !ownedGuns.includes(x));
-        if (preferAndKnownAndNotOwned.length > 0) {
-            this.addItem(this.random.pick(preferAndKnownAndNotOwned)); // add a weapon that is preferred and skilled but not owned
-            return;
-        } else {
-            const proficientAndKnown = knownGuns.filter(x => !avoidGuns.includes(x));
-            const proficientAndKnownAndNotOwned = proficientAndKnown.filter(x => !ownedGuns.includes(x));
-            if (proficientAndKnownAndNotOwned.length > 0) {
-                this.addItem(this.random.pick(proficientAndKnownAndNotOwned)); // add a weapon that doesn't incur STR penalty and skilled but not owned
-                return;
-            }
-        }
-        // no known good weapons, pick a preferred or proficient weapon
-        const preferAndNotOwned = preferGuns.filter(x => !ownedGuns.includes(x));
-        if (preferAndNotOwned.length > 0) {
-            this.addItem(this.random.pick(preferAndNotOwned));
-            // FIXME: gives weapon-0 skill
-        } else {
-            const proficientAndNotOwned = knownGuns.filter(x => !avoidGuns.includes(x) && !ownedGuns.includes(x));
-            if (proficientAndNotOwned.length > 0) {
-                this.addItem(this.random.pick(preferAndNotOwned));
-                // FIXME: gives weapon-0 skill
-            }
-        }
-        // give a random weapon not owned
-        this.addItem(this.random.pick(gunSkills.filter(x => !ownedGuns.includes(x))));
-        // FIXME: gives weapon-0 skill
+        this.addWeapon("gun");
+    }
+
+    addBlade() {
+        this.addWeapon("blade");
     }
 
     protected enlist(): Career {
@@ -613,8 +546,11 @@ enum Gender {
 }
 
 // for weapons, add strength requirements for DM, only choose skills in weapons for which strength+ is met or at least strength- is not met 
-const bladeSkills = ["Dagger", "Blade", "Foil", "Sword", "Cutlass", "Broadsword", "Bayonet", "Spear", "Halberd", "Pike", "Cudgel"];
-const gunSkills = ["Body Pistol", "Auto Pistol", "Revolver", "Carbine", "Rifle", "Auto Rifle", "Shotgun", "SMG", "Laser Carbine", "Laser Rifle"];
+const weaponSkills: { [key: string]: string[] } = {
+    blade: ["Dagger", "Blade", "Foil", "Sword", "Cutlass", "Broadsword", "Bayonet", "Spear", "Halberd", "Pike", "Cudgel"],
+    gun: ["Body Pistol", "Auto Pistol", "Revolver", "Carbine", "Rifle", "Auto Rifle", "Shotgun", "SMG", "Laser Carbine", "Laser Rifle"],
+}
+
 const weaponStrDM: Record<string, [bonus: number, penalty: number]> = {
     "Dagger": [8, 3],
     "Blade": [9, 4],
