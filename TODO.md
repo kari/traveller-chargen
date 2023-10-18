@@ -8,10 +8,6 @@ References:
 
 Todo:
 
-- reenlistment, retiring and mustering out
-  - benefit behavior
-    - choose skills if avg skill < low?
-    - take money at least once?
 - survival behavior, when to retire voluntarily?
 - add get/set to attributes
   - to ensure they are in the allowed range

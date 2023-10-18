@@ -243,10 +243,10 @@ class Character {
 
     addSkill(skill: string) {
         if (skill == "Blade Cbt") {
-            this.addBladeSkill();
+            this.addWeaponSkill("blade");
             return;
         } else if (skill == "Gun Cbt") {
-            this.addGunSkill();
+            this.addWeaponSkill("gun");
             return;
         }
 
@@ -256,6 +256,15 @@ class Character {
             this.skills[skill] = 1;
         }
         console.debug(`Character earned skill ${skill}-${this.skills[skill]}`);
+    }
+
+    addZeroSkill(skill: string) {
+        if (skill in this.skills) {
+            console.warn(`Skill already exists at level ${skill}-${this.skills[skill]}`);
+            return;
+        } else {
+            this.skills[skill] = 0;
+        }
     }
 
     addItem(item: string) {
@@ -293,10 +302,12 @@ class Character {
                 owned.push(w);
             }
         }
+        console.group();
         console.debug(`Avoid: ${avoid.join(", ")}`);
         console.debug(`Prefer: ${prefer.join(", ")}`);
         console.debug(`Known: ${known.join(", ")}`);
         console.debug(`Owned: ${owned.join(", ")}`);
+        console.groupEnd();
 
         return {avoid: avoid, prefer: prefer, known: known, owned: owned}
     }
@@ -304,10 +315,11 @@ class Character {
     addWeaponSkill(type: "blade" | "gun") {
         const prefs = this.weaponPreferences(type);
 
+        // FIXME: will always increase skill in known (good) skills, and doesn't allow for range of skills
         if (prefs.known.length > 0) {
             const knownAndPrefer = prefs.known.filter(x => prefs.prefer.includes(x));
             if (knownAndPrefer.length > 0) {
-                this.addSkill(this.random.pick(knownAndPrefer)); // increase skill in a random preferred weapon
+                this.addSkill(this.random.pick(knownAndPrefer)); // increase skill in a random preferred and known weapon
                 return;
             } else {
                 const knownAndProficient = prefs.known.filter(x => !prefs.avoid.includes(x));
@@ -331,54 +343,51 @@ class Character {
         // FIXME: choose the one(s) with lowest STR requirement!
     }
 
-    addBladeSkill() {
-        return this.addWeaponSkill("blade");
-    }
-
-    addGunSkill() {
-        return this.addWeaponSkill("gun");
-    }
-
     addWeapon(type: "blade" | "gun") {
+        // Note: will never pick a weapon twice
         const prefs = this.weaponPreferences(type);
 
         const preferAndKnown = prefs.known.filter(x => prefs.prefer.includes(x));
         const preferAndKnownAndNotOwned = preferAndKnown.filter(x => !prefs.owned.includes(x));
+
         if (preferAndKnownAndNotOwned.length > 0) {
             this.addItem(this.random.pick(preferAndKnownAndNotOwned)); // add a weapon that is preferred and skilled but not owned
+
             return;
         } else {
             const proficientAndKnown = prefs.known.filter(x => !prefs.avoid.includes(x));
             const proficientAndKnownAndNotOwned = proficientAndKnown.filter(x => !prefs.owned.includes(x));
             if (proficientAndKnownAndNotOwned.length > 0) {
                 this.addItem(this.random.pick(proficientAndKnownAndNotOwned)); // add a weapon that doesn't incur STR penalty and skilled but not owned
+
                 return;
             }
         }
+
         // no known good weapons, pick a preferred or proficient weapon
         const preferAndNotOwned = prefs.prefer.filter(x => !prefs.owned.includes(x));
         if (preferAndNotOwned.length > 0) {
-            this.addItem(this.random.pick(preferAndNotOwned));
-            // FIXME: gives weapon-0 skill
+            const randomWeapon = this.random.pick(preferAndNotOwned);
+            this.addItem(randomWeapon);
+            this.addZeroSkill(randomWeapon);
+            
+            return;
         } else {
             const proficientAndNotOwned = prefs.known.filter(x => !prefs.avoid.includes(x) && !prefs.owned.includes(x));
             if (proficientAndNotOwned.length > 0) {
-                this.addItem(this.random.pick(preferAndNotOwned));
+                const randomWeapon = this.random.pick(proficientAndNotOwned);
+                this.addItem(randomWeapon);
+                this.addZeroSkill(randomWeapon);
+
                 return;
-                // FIXME: gives weapon-0 skill
             }
         }
         // give a random weapon not owned
-        this.addItem(this.random.pick(weaponSkills[type].filter(x => !prefs.owned.includes(x))));
-        // FIXME: gives weapon-0 skill
-    }
+        const randomWeapon = this.random.pick(weaponSkills[type].filter(x => !prefs.owned.includes(x)))
+        this.addItem(randomWeapon);
+        this.addZeroSkill(randomWeapon);
 
-    addGun() {
-        this.addWeapon("gun");
-    }
-
-    addBlade() {
-        this.addWeapon("blade");
+        return;
     }
 
     protected enlist(): Career {

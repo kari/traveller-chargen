@@ -100,7 +100,7 @@ const Navy: Career = {
                 c.attributes.education += 2;
                 break;
             case 4:
-                c.addBlade();
+                c.addWeapon("blade");
                 break;
             case 5:
                 c.addItem("Travellers'");
@@ -196,7 +196,7 @@ const Marines: Career = {
                 c.attributes.education += 1;
                 break;
             case 4:
-                c.addBlade();
+                c.addWeapon("blade");
                 break;
             case 5:
                 c.addItem("Travellers'");
@@ -294,7 +294,7 @@ const Army: Career = {
                 c.attributes.education += 2;
                 break;
             case 4:
-                c.addGun();
+                c.addWeapon("gun");
                 break;
             case 5:
                 c.addItem("High Psg");
@@ -388,10 +388,10 @@ const Scouts: Career = {
                 c.attributes.education += 2;
                 break;
             case 4:
-                c.addBlade();
+                c.addWeapon("blade");
                 break;
             case 5:
-                c.addGun();
+                c.addWeapon("gun");
                 break;
             case 6:
                 if (!c.ship) {
@@ -487,10 +487,10 @@ const Merchants: Career = {
                 c.attributes.education += 1;
                 break;
             case 4:
-                c.addGun();
+                c.addWeapon("gun");
                 break;
             case 5:
-                c.addBlade();
+                c.addWeapon("blade");
                 break;
             case 6:
                 c.addItem('Low Psg');
@@ -583,7 +583,7 @@ const Other: Career = {
                 c.attributes.education += 1;
                 break;
             case 4:
-                c.addGun();
+                c.addWeapon("gun");
                 break;
             case 5:
                 c.addItem("High Psg");
