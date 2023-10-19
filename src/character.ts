@@ -3,6 +3,8 @@ import type { Career } from "./careers";
 import type { Ship } from "./ships";
 import { Random, MersenneTwister19937, createEntropy, nativeMath } from "random-js";
 
+const numberFormat = new Intl.NumberFormat("en-us", { maximumFractionDigits: 2});
+
 type Attributes = {
     strength: number,
     dexterity: number,
@@ -42,7 +44,7 @@ class Character {
     credits = 0;
 
     toString(): string {
-        return `${this.career.name}${this.career.ranks && this.rank > 0 ? " " + this.career.ranks[this.rank - 1] : ""} Alexander Jamison ${this.upp} Age ${this.age} ${this.terms} terms Cr${new Intl.NumberFormat("en-us").format(this.credits)}`;
+        return `${this.retired ? 'Retired ': ''}${this.career.memberName ? (this.retired ? this.career.memberName : 'Ex-' + this.career.memberName.toLowerCase() ) + ' ': ''}${this.career.ranks && this.career.ranks[this.rank] ? this.career.ranks[this.rank]+" " : ""}Alexander Jamison ${this.upp} Age ${this.age} ${this.terms} terms Cr${numberFormat.format(this.credits)}`;
     }
 
     get skillAvg(): number {
@@ -116,7 +118,7 @@ class Character {
             if (this.commissioned == false && (this.drafted == false || this.terms > 1) && this.career.commission !== null && this.roll() + this.career.commissionDM(this) >= this.career.commission) {
                 this.commissioned = true;
                 this.rank = 1;
-                console.debug(`Character was commissioned to ${this.career.ranks![this.rank - 1]}`);
+                console.debug(`Character was commissioned to ${this.career.ranks![this.rank]}`);
                 this.career.rankAndServiceSkills(this); // automatic skills for rank = 1
                 eligibleSkills += 1;
                 console.debug(`Earned 1 skill eligibility from commission (total ${eligibleSkills})`);
@@ -125,7 +127,7 @@ class Character {
             // promotion
             if (this.commissioned == true && this.rank < this.career.ranks!.length && this.roll() + this.career.promotionDM(this) >= this.career.promotion!) {
                 this.rank += 1;
-                console.debug(`Character was promoted to rank ${this.rank} (${this.career.ranks![this.rank - 1]})`);
+                console.debug(`Character was promoted to rank ${this.rank} (${this.career.ranks![this.rank]})`);
                 this.career.rankAndServiceSkills(this);
                 eligibleSkills += 1;
                 console.debug(`Earned 1 skill eligibility from promotion (total ${eligibleSkills})`);
@@ -135,7 +137,7 @@ class Character {
             while (eligibleSkills > 0) {
                 eligibleSkills -= 1;
                 if (this.skillAvg <= 7) {
-                    console.debug(`Avg. skill ${this.skillAvg.toFixed(2)}, focusing on personal development`);
+                    console.debug(`Avg. skill ${numberFormat.format(this.skillAvg)}, focusing on personal development`);
                     this.career.personalDevelopment(this, this.roll(1));
                 } else {
                     switch (this.roll(1)) {
@@ -189,7 +191,7 @@ class Character {
                 if (this.terms > 8) {
                     this.retirementPay += (this.terms - 8) * 2_000;
                 }
-                console.debug(`Character is eligible to retirement pay of ${this.retirementPay}`);
+                console.debug(`Character is eligible to retirement pay of ${numberFormat.format(this.retirementPay)}`);
             }
 
             // mustering out, if leaving
@@ -214,7 +216,7 @@ class Character {
                 console.debug(`Character is eligible to ${benefits} benefits, with benefits DM ${benefitsDM} and cash table DM ${cashDM}`);
                 while (benefits > 0) {
                     benefits -= 1;
-                    if (this.credits >= 0 && (this.skillAvg <= 7 || this.roll(1) >= 3)) {
+                    if (this.credits > 0 && (this.skillAvg <= 7 || this.roll(1) >= 3)) {
                         // benefits
                         this.career.benefitsTable(this, this.roll(1) + benefitsDM - 1);
                     } else {
@@ -244,14 +246,12 @@ class Character {
     }
 
     modifyAttribute(attribute: Attribute, amount: number = 1): number {
-        this.attributes[attribute] += amount;
-        if (this.attributes[attribute] > 15) {
-            console.warn(`${attribute} went above 15, capped`);
-            this.attributes[attribute] = 15;
-        } else if (this.attributes[attribute] < 0) {
-            console.warn(`${attribute} went below zero, capped`);
-            this.attributes[attribute] = 0;
+        function clamp(value: number, min: number, max: number): number {
+            return Math.max(min, Math.min(value, max));
         }
+        const oldValue = this.attributes[attribute];
+        this.attributes[attribute] = clamp(this.attributes[attribute] += amount, 0, 15);
+        console.debug(`Modifying ${attribute} by ${amount > 0 ? '+' : ''}${amount}, new value ${this.attributes[attribute]} ${oldValue + amount != this.attributes[attribute] ? '(clamped)' : ''}`)
 
         return this.attributes[attribute];
     }
@@ -474,45 +474,45 @@ class Character {
             return;
         } else if (this.age < 50) {
             if (this.roll() < 8) {
+                console.debug(`Character fails aging STR throw`)
                 this.modifyAttribute("strength", -1);
-                console.debug(`Character fails aging STR throw (-1)`)
             }
             if (this.roll() < 7) {
-                console.debug("Character fails aging DEX throw (-1)")
+                console.debug("Character fails aging DEX throw")
                 this.modifyAttribute("dexterity", -1);
             }
             if (this.roll() < 8) {
-                console.debug("Character fails aging END throw (-1)")
+                console.debug("Character fails aging END throw")
                 this.modifyAttribute("endurance", -1);
             }
         } else if (this.age < 66) {
             if (this.roll() < 9) {
-                console.debug("Character fails aging STR throw (-1)")
+                console.debug("Character fails aging STR throw")
                 this.modifyAttribute("strength", -1);
             }
             if (this.roll() < 8) {
-                console.debug("Character fails aging DEX throw (-1)")
+                console.debug("Character fails aging DEX throw")
                 this.modifyAttribute("dexterity", -1);
             }
             if (this.roll() < 9) {
-                console.debug("Character fails aging END throw (-1)")
+                console.debug("Character fails aging END throw")
                 this.modifyAttribute("endurance", -1);
             }
         } else {
             if (this.roll() < 9) {
-                console.debug("Character fails aging STR throw (-2)")
+                console.debug("Character fails aging STR throw")
                 this.modifyAttribute("strength", -2);
             }
             if (this.roll() < 9) {
-                console.debug("Character fails aging DEX throw (-2)")
+                console.debug("Character fails aging DEX throw")
                 this.modifyAttribute("dexterity", -2);
             }
             if (this.roll() < 9) {
-                console.debug("Character fails aging END throw (-2)")
+                console.debug("Character fails aging END throw")
                 this.modifyAttribute("endurance", -2);
             }
             if (this.roll() < 9) {
-                console.debug("Character fails aging INT throw (-1)")
+                console.debug("Character fails aging INT throw")
                 this.modifyAttribute("intelligence", -1);
             }
         }

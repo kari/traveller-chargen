@@ -3,13 +3,14 @@ import { type Character } from "./character";
 
 type Career = {
     name: string,
+    memberName: string | null,
     enlistment: number;
     draft: number;
     survival: number;
     commission: number | null;
     promotion: number | null;
     reenlist: number;
-    ranks: string[] | null;
+    ranks: (string | null)[] | null;
     cashTable: number[];
     skillsTable: string[];
     advancedEducationTable: string[];
@@ -26,6 +27,7 @@ type Career = {
 
 const Navy: Career = {
     name: "Navy",
+    memberName: "Navy",
     enlistment: 8,
     draft: 1,
     survival: 5,
@@ -33,7 +35,7 @@ const Navy: Career = {
     promotion: 8,
     reenlist: 6,
     retirementPay: true,
-    ranks: ["Ensign", "Lieutenant", "Lt Cmdr", "Commander", "Captain", "Admiral"],
+    ranks: ["Starman", "Ensign", "Lieutenant", "Lt Cmdr", "Commander", "Captain", "Admiral"],
     cashTable: [1000, 5000, 5000, 10_000, 20_000, 50_000, 50_000],
     skillsTable: ["Ship's Boat", "Vacc Suit", "Fwd Obsvr", "Gunnery", "Blade Cbt", "Gun Cbt"],
     advancedEducationTable: ["Vacc Suit", "Mechanical", "Electronics", "Engineering", "Gunnery", "Jack-o-T"],
@@ -122,6 +124,7 @@ const Navy: Career = {
 
 const Marines: Career = {
     name: "Marines",
+    memberName: "Marine",
     enlistment: 9,
     draft: 2,
     survival: 6,
@@ -129,7 +132,7 @@ const Marines: Career = {
     promotion: 9,
     reenlist: 6,
     retirementPay: true,
-    ranks: ["Lieutenant", "Captain", "Force Cmdr", "Lt Colonel", "Colonel", "Brigadier"],
+    ranks: ["Marine", "Lieutenant", "Captain", "Force Cmdr", "Lt Colonel", "Colonel", "Brigadier"],
     cashTable: [2000, 5000, 5000, 10_000, 20_000, 30_000, 40_000],
     skillsTable: ["Vehicle", "Vacc Suit", "Blade Cbt", "Gun Cbt", "Blade Cbt", "Gun Cbt"],
     advancedEducationTable: ["Vehicle", "Mechanical", "Electronics", "Tactics", "Blade Cbt", "Gun Cbt"],
@@ -220,6 +223,7 @@ const Marines: Career = {
 
 const Army: Career = {
     name: "Army",
+    memberName: "Army",
     enlistment: 5,
     draft: 3,
     survival: 5,
@@ -227,7 +231,7 @@ const Army: Career = {
     promotion: 6,
     reenlist: 7,
     retirementPay: true,
-    ranks: ["Lieutenant", "Captain", "Major", "Lt Colonel", "Colonel", "General"],
+    ranks: ["Trooper", "Lieutenant", "Captain", "Major", "Lt Colonel", "Colonel", "General"],
     cashTable: [2000, 5000, 10_000, 10_000, 10_000, 20_000, 30_000],
     skillsTable: ["Vehicle", "Air/Raft", "Gun Cbt", "Fwd Obsvr", "Blade Cbt", "Gun Cbt"],
     advancedEducationTable: ["Vehicle", "Mechanical", "Electronics", "Tactics", "Blade Cbt", "Gun Cbt"],
@@ -318,6 +322,7 @@ const Army: Career = {
 
 const Scouts: Career = {
     name: "Scouts",
+    memberName: "Scout",
     enlistment: 7,
     draft: 4,
     survival: 7,
@@ -413,6 +418,7 @@ const Scouts: Career = {
 
 const Merchants: Career = {
     name: "Merchants",
+    memberName: "Merchant",
     enlistment: 7,
     draft: 5,
     survival: 5,
@@ -420,7 +426,7 @@ const Merchants: Career = {
     promotion: 10,
     reenlist: 4,
     retirementPay: true,
-    ranks: ["4th Officer", "3rd Officer", "2nd Officer", "1st Officer", "Captain"],
+    ranks: [null, "4th Officer", "3rd Officer", "2nd Officer", "1st Officer", "Captain"],
     cashTable: [1000, 5000, 10_000, 20_000, 20_000, 40_000, 40_000],
     skillsTable: ["Vehicle", "Vacc Suit", "Jack-o-T", "Steward", "Electronics", "Gun Cbt"],
     advancedEducationTable: ["Streetwise", "Mechanical", "Electronics", "Navigation", "Gunnery", "Medical"],
@@ -519,6 +525,7 @@ const Merchants: Career = {
 
 const Other: Career = {
     name: "Other",
+    memberName: null,
     enlistment: 3,
     draft: 6,
     survival: 5,

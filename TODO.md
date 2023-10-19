@@ -8,9 +8,9 @@ References:
 
 Todo:
 
+- skills/items toString (2 High Psg, Vehicles-1)
 - survival behavior, when to retire voluntarily?
-- add get/set to attributes
-  - to ensure they are in the allowed range
+- convert passages to money if ship
 - verbose/debug mode
 - personal history
   - random charts for lore, look at throw / roll difference
