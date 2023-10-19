@@ -42,7 +42,7 @@ class Character {
     credits = 0;
 
     toString(): string {
-        return `${this.career.name}${this.career.ranks && this.rank > 0 ? " " + this.career.ranks[this.rank - 1] : ""} Alexander Jamison ${this.upp} Age ${this.age} ${this.terms} terms Cr${this.credits}`;
+        return `${this.career.name}${this.career.ranks && this.rank > 0 ? " " + this.career.ranks[this.rank - 1] : ""} Alexander Jamison ${this.upp} Age ${this.age} ${this.terms} terms Cr${new Intl.NumberFormat("en-us").format(this.credits)}`;
     }
 
     get skillAvg(): number {
@@ -212,15 +212,13 @@ class Character {
                 const benefitsDM = (this.rank >= 5) ? 1 : 0;
                 const cashDM = ('Gambling' in this.skills) ? 1 : 0;
                 console.debug(`Character is eligible to ${benefits} benefits, with benefits DM ${benefitsDM} and cash table DM ${cashDM}`);
-                let cashTaken = false; // take cash at least once
                 while (benefits > 0) {
                     benefits -= 1;
-                    if (cashTaken && (this.skillAvg <= 7 || this.roll(1) >= 3)) {
+                    if (this.credits >= 0 && (this.skillAvg <= 7 || this.roll(1) >= 3)) {
                         // benefits
                         this.career.benefitsTable(this, this.roll(1) + benefitsDM - 1);
                     } else {
                         // cash table
-                        cashTaken = true;
                         this.credits += this.career.cashTable[this.roll(1) + cashDM - 1];
                         console.debug('Character took cash table');
                     }
@@ -265,6 +263,9 @@ class Character {
         } else if (skill == "Gun Cbt") {
             this.addWeaponSkill("gun");
             return;
+        } else if (skill == "Vehicle") {
+            this.addVehicleSkill();
+            return;
         }
 
         if (skill in this.skills) {
@@ -273,6 +274,21 @@ class Character {
             this.skills[skill] = 1;
         }
         console.debug(`Character earned skill ${skill}-${this.skills[skill]}`);
+    }
+
+    addVehicleSkill() {
+        const known: string[] = [];
+        for (const skill of Object.keys(this.skills)) {
+            if (vehicleSkills.includes(skill)) {
+                known.push(skill);
+            }
+        }
+        // FIXME: don't level a single skill above 2-3
+        if (known.length > 0) {
+            this.addSkill(this.random.pick(known));
+        } else {
+            this.addSkill(this.random.pick(vehicleSkills));
+        }
     }
 
     addZeroSkill(skill: string) {
@@ -296,6 +312,8 @@ class Character {
     weaponPreferences(type: "blade" | "gun") {
         const avoid: string[] = [];
         const weapons = weaponSkills[type];
+
+        // FIXME: convert for loops into filters
         for (const w of weapons) {
             if (this.attributes.strength <= weaponStrDM[w][1]) {
                 avoid.push(w);
@@ -333,6 +351,7 @@ class Character {
         const prefs = this.weaponPreferences(type);
 
         // FIXME: will always increase skill in known (good) skills, and doesn't allow for range of skills
+        // probably shouldn't level skill above -3
         if (prefs.known.length > 0) {
             const knownAndPrefer = prefs.known.filter(x => prefs.prefer.includes(x));
             if (knownAndPrefer.length > 0) {
@@ -582,6 +601,7 @@ const weaponSkills: { [key: string]: string[] } = {
     blade: ["Dagger", "Blade", "Foil", "Sword", "Cutlass", "Broadsword", "Bayonet", "Spear", "Halberd", "Pike", "Cudgel"],
     gun: ["Body Pistol", "Auto Pistol", "Revolver", "Carbine", "Rifle", "Auto Rifle", "Shotgun", "SMG", "Laser Carbine", "Laser Rifle"],
 }
+const vehicleSkills = ["Ground Car", "Watercraft", "Winged Craft", "Hovercraft", "Grav Belt"];
 
 const weaponStrDM: Record<string, [bonus: number, penalty: number]> = {
     "Dagger": [8, 3],
