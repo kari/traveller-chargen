@@ -199,12 +199,21 @@ class Character {
                 }
             }
 
-            // reenlistment
+            // aging
+            this.aging();
+            if (this.dead) {
+                console.log(`Character died of old age at ${this.age}`)
+                activeDuty = false;
+                return;
+            }         
+
+            // reenlistment throw
             const reenlistmentThrow = this.roll();
+
+            // failed reenlistment
             if (reenlistmentThrow < this.career.reenlist) {
                 activeDuty = false;
                 console.debug(`Character failed reenlistment throw ${this.career.reenlist}+, career is over`);
-                // failed reenlistment
             }
 
             // retiring
@@ -212,82 +221,72 @@ class Character {
                 console.log(`Character was forced to retire after ${this.terms} terms of service`);
                 activeDuty = false;
                 this.retired = true;
-            }
-            // voluntary retirement terms >= 5
-            if (this.terms >= 5 && reenlistmentThrow != 12 && !this.retired && activeDuty) {
+            } else if (this.terms >= 5 && reenlistmentThrow != 12 && activeDuty) { // voluntary retirement terms >= 5
                 console.debug("Character is eligible for voluntary retirement");
+                // FIXME: add behavior for voluntary retirement
             }
 
-            // retirement pay
-            if (this.retired && this.career.retirementPay) {
-                const retirementPay = [4_000, 6_000, 8_000, 10_000]; // retirement pay is 2_000 + 2_000 * terms 5+
-                this.retirementPay = retirementPay[this.terms - 5];
-                if (this.terms > 8) {
-                    this.retirementPay += (this.terms - 8) * 2_000;
-                }
-                console.debug(`Character is eligible to retirement pay of ${numberFormat.format(this.retirementPay)}`);
-            }
-
-            // mustering out, if leaving
-            if (activeDuty == false) {
-                let benefits = this.terms;
-                switch (this.rank) {
-                    case 1:
-                    case 2:
-                        benefits += 1;
-                        break;
-                    case 3:
-                    case 4:
-                        benefits += 2;
-                        break;
-                    case 5:
-                    case 6:
-                        benefits += 3;
-                        break;
-                }
-                const benefitsDM = (this.rank >= 5) ? 1 : 0;
-                const cashDM = ('Gambling' in this.skills) ? 1 : 0;
-                console.debug(`Character is eligible to ${benefits} benefits, with benefits DM ${benefitsDM} and cash table DM ${cashDM}`);
-
-                let cashTableRolls = 0;
-                while (benefits > 0) {
-                    benefits -= 1;
-                    if (cashTableRolls > 0 && (cashTableRolls >= 3 || this.skillAvg <= 7 || this.roll(1) >= 3)) {
-                        // benefits
-                        console.log("Character rolls for benefits table");
-                        this.career.benefitsTable(this, this.roll(1) + benefitsDM);
-                    } else if (cashTableRolls < 3) {
-                        // cash table
-                        this.credits += this.career.cashTable[this.roll(1) + cashDM - 1];
-                        cashTableRolls += 1;
-                        console.debug(`Character rolls for cash table (${cashTableRolls})`);
-                    }
-                }
-
-                if (this.ship) {
-                    const PassagePrices: { [key: string]: number } = {
-                        "Low Psg": 1000,
-                        "Mid Psg": 8000,
-                        "High Psg": 10000,
-                    }
-                    const passages = Object.keys(this.items).filter(x => Object.keys(PassagePrices).includes(x));
-                    for (const p of passages) {
-                        console.debug(`Converted ${this.items[p]} ${p} to credits`);
-                        this.credits += PassagePrices[p] * 0.9 * this.items[p];
-                        delete (this.items[p]);
-                    }
-                }
-
-            }
-
-            // aging
-            this.aging();
-            if (this.dead) {
-                console.log(`Character died of old age at ${this.age}`)
-                activeDuty = false;
-                return;
-            }
         } while (activeDuty == true)
+
+        // retirement pay
+        if (this.retired && this.career.retirementPay) {
+            const retirementPay = [4_000, 6_000, 8_000, 10_000]; // retirement pay is 2_000 + 2_000 * terms 5+
+            this.retirementPay = retirementPay[this.terms - 5];
+            if (this.terms > 8) {
+                this.retirementPay += (this.terms - 8) * 2_000;
+            }
+            console.debug(`Character is eligible to retirement pay of ${numberFormat.format(this.retirementPay)}`);
+        }
+        
+        // mustering out
+        let benefits = this.terms;
+        switch (this.rank) {
+            case 1:
+            case 2:
+                benefits += 1;
+                break;
+            case 3:
+            case 4:
+                benefits += 2;
+                break;
+            case 5:
+            case 6:
+                benefits += 3;
+                break;
+        }
+        const benefitsDM = (this.rank >= 5) ? 1 : 0;
+        const cashDM = ('Gambling' in this.skills) ? 1 : 0;
+        console.debug(`Character is eligible to ${benefits} benefits, with benefits DM ${benefitsDM} and cash table DM ${cashDM}`);
+
+        let cashTableRolls = 0;
+        while (benefits > 0) {
+            benefits -= 1;
+            if (cashTableRolls > 0 && (cashTableRolls >= 3 || this.skillAvg <= 7 || this.roll(1) >= 3)) {
+                // benefits
+                console.log("Character rolls for benefits table");
+                this.career.benefitsTable(this, this.roll(1) + benefitsDM);
+            } else if (cashTableRolls < 3) {
+                // cash table
+                this.credits += this.career.cashTable[this.roll(1) + cashDM - 1];
+                cashTableRolls += 1;
+                console.debug(`Character rolls for cash table (${cashTableRolls})`);
+            }
+        }
+
+        if (this.ship) {
+            const PassagePrices: { [key: string]: number } = {
+                "Low Psg": 1000,
+                "Mid Psg": 8000,
+                "High Psg": 10000,
+            }
+            const passages = Object.keys(this.items).filter(x => Object.keys(PassagePrices).includes(x));
+            for (const p of passages) {
+                console.debug(`Converted ${this.items[p]} ${p} to credits`);
+                this.credits += PassagePrices[p] * 0.9 * this.items[p];
+                delete (this.items[p]);
+            }
+        }
+
     }
 
     roll(dice: number = 2): number { // default roll is two dice
