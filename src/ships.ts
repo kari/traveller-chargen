@@ -9,6 +9,10 @@ abstract class Ship {
     constructor(name?: string) {
         this.name = name;
     }
+
+    toString(): string {
+        return `${this.name} (type: ${this.type})`;
+    }
 }
 
 class ScoutCourier extends Ship {

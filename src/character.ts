@@ -3,7 +3,7 @@ import type { Career } from "./careers";
 import type { Ship } from "./ships";
 import { Random, MersenneTwister19937, createEntropy, nativeMath } from "random-js";
 
-const numberFormat = new Intl.NumberFormat("en-us", { maximumFractionDigits: 2});
+const numberFormat = new Intl.NumberFormat("en-us", { maximumFractionDigits: 2 });
 
 type Attributes = {
     strength: number,
@@ -44,11 +44,19 @@ class Character {
     credits = 0;
 
     toString(): string {
-        return `${this.retired ? 'Retired ': ''}${this.career.memberName ? (this.retired ? this.career.memberName : 'Ex-' + this.career.memberName.toLowerCase() ) + ' ': ''}${this.career.ranks && this.career.ranks[this.rank] ? this.career.ranks[this.rank]+" " : ""}Alexander Jamison ${this.upp} Age ${this.age} ${this.terms} terms Cr${numberFormat.format(this.credits)}`;
+        return `${this.retired ? 'Retired ' : ''}${this.career.memberName ? (this.retired ? this.career.memberName : 'Ex-' + this.career.memberName.toLowerCase()) + ' ' : ''}${this.career.ranks && this.career.ranks[this.rank] ? this.career.ranks[this.rank] + " " : ""}Alexander Jamison ${this.upp} Age ${this.age} ${this.terms} terms Cr${numberFormat.format(this.credits)}`;
+    }
+
+    skillsToString(): string {
+        return Object.keys(this.skills).map(s => s + "-" + this.skills[s]).join(", ");
+    }
+
+    itemsToString(): string {
+        return Object.keys(this.items).map(i => this.items[i] + " " + i).join(", ");
     }
 
     get skillAvg(): number {
-        return (this.attributes.strength+this.attributes.dexterity+this.attributes.endurance+this.attributes.intelligence+this.attributes.education+this.attributes.socialStanding)/6;
+        return (this.attributes.strength + this.attributes.dexterity + this.attributes.endurance + this.attributes.intelligence + this.attributes.education + this.attributes.socialStanding) / 6;
     }
 
     constructor(seed?: number) {
@@ -79,16 +87,16 @@ class Character {
         this.doCareer();
 
         console.log(this.toString());
-        if (Object.keys(this.skills).length > 0) { console.log(this.skills) }
-        if (Object.keys(this.items).length > 0) { console.log(this.items) }
-        if (this.ship) { console.log(this.ship) }
+        if (Object.keys(this.skills).length > 0) { console.log(this.skillsToString()) }
+        if (Object.keys(this.items).length > 0) { console.log(this.itemsToString()) }
+        if (this.ship) { console.log(this.ship.toString()) }
     }
-    
+
 
     doCareer() {
         let activeDuty = true;
         do {
-            console.debug(`Starting term ${this.terms+1} of service`);
+            console.debug(`Starting term ${this.terms + 1} of service`);
 
             this.age += 4;
             this.terms += 1;
@@ -106,7 +114,7 @@ class Character {
             }
 
             // survival
-            console.debug(`Survival throw ${this.career.survival}, DM ${this.career.survivalDM(this)}, need to roll ${this.career.survival-this.career.survivalDM(this)}+`);
+            console.debug(`Survival throw ${this.career.survival}, DM ${this.career.survivalDM(this)}, need to roll ${this.career.survival - this.career.survivalDM(this)}+`);
             if (this.roll() + this.career.survivalDM(this) < this.career.survival) {
                 this.dead = true;
                 activeDuty = false;
@@ -214,19 +222,33 @@ class Character {
                 const benefitsDM = (this.rank >= 5) ? 1 : 0;
                 const cashDM = ('Gambling' in this.skills) ? 1 : 0;
                 console.debug(`Character is eligible to ${benefits} benefits, with benefits DM ${benefitsDM} and cash table DM ${cashDM}`);
+
+                let cashTableRolls = 0;
                 while (benefits > 0) {
                     benefits -= 1;
-                    if (this.credits > 0 && (this.skillAvg <= 7 || this.roll(1) >= 3)) {
+                    if (cashTableRolls > 0 && (cashTableRolls >= 3 || this.skillAvg <= 7 || this.roll(1) >= 3)) {
                         // benefits
-                        this.career.benefitsTable(this, this.roll(1) + benefitsDM - 1);
-                    } else {
+                        this.career.benefitsTable(this, this.roll(1) + benefitsDM);
+                    } else if (cashTableRolls < 3) {
                         // cash table
                         this.credits += this.career.cashTable[this.roll(1) + cashDM - 1];
-                        console.debug('Character took cash table');
+                        cashTableRolls += 1;
+                        console.debug(`Character took cash table (${cashTableRolls})`);
                     }
                 }
+
                 if (this.ship) {
-                    // FIXME: convert passages to money if the player has a ship.
+                    const PassagePrices: { [key: string]: number } = {
+                        "Low Psg": 1000,
+                        "Mid Psg": 8000,
+                        "High Psg": 10000,
+                    }
+                    const passages = Object.keys(this.items).filter(x => Object.keys(PassagePrices).includes(x));
+                    for (const p of passages) {
+                        console.debug(`Converted ${this.items[p]} ${p} to credits`);
+                        this.credits += PassagePrices[p] * 0.9 * this.items[p];
+                        delete (this.items[p]);
+                    }
                 }
 
             }
@@ -255,7 +277,7 @@ class Character {
 
         return this.attributes[attribute];
     }
-    
+
     addSkill(skill: string) {
         if (skill == "Blade Cbt") {
             this.addWeaponSkill("blade");
@@ -337,14 +359,14 @@ class Character {
                 owned.push(w);
             }
         }
-        console.group();
-        console.debug(`Avoid: ${avoid.join(", ")}`);
-        console.debug(`Prefer: ${prefer.join(", ")}`);
-        console.debug(`Known: ${known.join(", ")}`);
-        console.debug(`Owned: ${owned.join(", ")}`);
-        console.groupEnd();
+        // console.group();
+        // console.debug(`Avoid: ${avoid.join(", ")}`);
+        // console.debug(`Prefer: ${prefer.join(", ")}`);
+        // console.debug(`Known: ${known.join(", ")}`);
+        // console.debug(`Owned: ${owned.join(", ")}`);
+        // console.groupEnd();
 
-        return {avoid: avoid, prefer: prefer, known: known, owned: owned}
+        return { avoid: avoid, prefer: prefer, known: known, owned: owned }
     }
 
     addWeaponSkill(type: "blade" | "gun") {
@@ -406,7 +428,7 @@ class Character {
             const randomWeapon = this.random.pick(preferAndNotOwned);
             this.addItem(randomWeapon);
             this.addZeroSkill(randomWeapon);
-            
+
             return;
         } else {
             const proficientAndNotOwned = prefs.known.filter(x => !prefs.avoid.includes(x) && !prefs.owned.includes(x));

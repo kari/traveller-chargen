@@ -148,7 +148,7 @@ class World {
         }
         if (this.planetaryAthmosphere in [0, 1] && this.hydrographicPercentage >= 1) {
             this.tradeClassifications.push(TradeClassification.IceCapped);
-        }       
+        }
 
         // travel advisory, https://www.traveller-srd.com/core-rules/world-creation/
         if (this.planetaryAthmosphere >= 10 || this.planetaryGovernment in [0, 7, 10] || this.lawLevel == 0 || this.lawLevel >= 9) {
