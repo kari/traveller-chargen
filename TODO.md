@@ -15,7 +15,6 @@ Todo:
 - skills and training
   - skills to enums?
 - names
-  - social standing before and after service can change, and so nobility
   - random names, markov chain? swn?
 - go through character generation in the book to find missing details
 

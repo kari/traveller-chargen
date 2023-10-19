@@ -16,6 +16,31 @@ type Attributes = {
 
 type Attribute = keyof Attributes;
 
+class Name {
+    title?: string;
+    first: string;
+    middle?: string;
+    prefix?: string;
+    last: string;
+
+    toString(): string {
+        return `${this.title ? this.title + ' ': ''}${this.first} ${this.middle ? this.middle + ' ' : '' }${this.prefix ? this.prefix : ''}${this.last}`;
+    }
+
+    constructor(first: string, last: string) {
+        this.first = first;
+        this.last = last;
+    }
+
+    get middleInitial(): string | null {
+        if (this.middle) {
+            return this.middle.charAt(0)+".";
+        } else {
+            return null;
+        }
+    }
+}
+
 class Character {
     seed: number;
     random: Random;
@@ -29,8 +54,7 @@ class Character {
 
     gender: Gender;
 
-    // name: string;
-    title: string;
+    name: Name;
 
     career: Career;
     rank = 0;
@@ -44,7 +68,7 @@ class Character {
     credits = 0;
 
     toString(): string {
-        return `${this.retired ? 'Retired ' : ''}${this.career.memberName ? (this.retired ? this.career.memberName : 'Ex-' + this.career.memberName.toLowerCase()) + ' ' : ''}${this.career.ranks && this.career.ranks[this.rank] ? this.career.ranks[this.rank] + " " : ""}Alexander Jamison ${this.upp} Age ${this.age} ${this.terms} terms Cr${numberFormat.format(this.credits)}`;
+        return `${this.retired ? 'Retired ' : ''}${this.career.memberName ? (this.retired ? this.career.memberName : 'Ex-' + this.career.memberName.toLowerCase()) + ' ' : ''}${this.career.ranks && this.career.ranks[this.rank] ? this.career.ranks[this.rank] + " " : ""}${this.name.toString()} ${this.upp} Age ${this.age} ${this.terms} terms Cr${numberFormat.format(this.credits)}`;
     }
 
     skillsToString(): string {
@@ -79,7 +103,9 @@ class Character {
 
         // FIXME: name, gender title
         this.gender = this.random.pick([Gender.Male, Gender.Female]);
-        this.title = this.generateTitle();
+        this.name = new Name("Alexander", "Madison");
+        this.name.middle = "Lascelles";
+        this.name.title = this.addTitle();
 
         // generate career for the character
         this.career = this.enlist();
@@ -228,12 +254,13 @@ class Character {
                     benefits -= 1;
                     if (cashTableRolls > 0 && (cashTableRolls >= 3 || this.skillAvg <= 7 || this.roll(1) >= 3)) {
                         // benefits
+                        console.log("Character rolls for benefits table");
                         this.career.benefitsTable(this, this.roll(1) + benefitsDM);
                     } else if (cashTableRolls < 3) {
                         // cash table
                         this.credits += this.career.cashTable[this.roll(1) + cashDM - 1];
                         cashTableRolls += 1;
-                        console.debug(`Character took cash table (${cashTableRolls})`);
+                        console.debug(`Character rolls for cash table (${cashTableRolls})`);
                     }
                 }
 
@@ -271,9 +298,14 @@ class Character {
         function clamp(value: number, min: number, max: number): number {
             return Math.max(min, Math.min(value, max));
         }
+
         const oldValue = this.attributes[attribute];
         this.attributes[attribute] = clamp(this.attributes[attribute] += amount, 0, 15);
         console.debug(`Modifying ${attribute} by ${amount > 0 ? '+' : ''}${amount}, new value ${this.attributes[attribute]} ${oldValue + amount != this.attributes[attribute] ? '(clamped)' : ''}`)
+
+        if (attribute == "socialStanding" && (oldValue >= 11 || this.attributes.socialStanding >= 11)) {
+            this.name.title = this.addTitle();
+        }
 
         return this.attributes[attribute];
     }
@@ -482,12 +514,12 @@ class Character {
 
     }
 
-    // if character has the nobility of a Baron but doesn't use the title
-    protected prefix(): string {
-        if (this.attributes.socialStanding == 12 && this.title == "") {
+    // if character has the nobility of a Baron but doesn't (want to) use the title
+    protected addPrefix(): string | undefined {
+        if (this.attributes.socialStanding == 12) {
             return this.random.pick(["von ", "hault-", "haut-"]);
         } else {
-            return "";
+            return undefined;
         }
     }
 
@@ -569,8 +601,7 @@ class Character {
         }
     }
 
-    // NOTE: character's social standing can increase/change during creation
-    protected generateTitle(): string {
+    protected addTitle(): string | undefined {
         switch (this.attributes.socialStanding) {
             case 11: // Knight
                 if (this.gender == Gender.Male) {
@@ -579,15 +610,16 @@ class Character {
                     return "Dame";
                 }
             case 12:
-                if (this.random.integer(1, 2) <= 2) {
+                if (this.name.prefix || this.roll(1) <= 3) {
                     if (this.gender == Gender.Male) {
                         return "Baron";
                     } else {
                         return this.random.pick(["Baronet", "Baroness"]);
                     }
                 } else {
-                    // in lieu of title, use prefix in name
-                    return ""
+                    // in lieu of a title, use prefix in name
+                    if (!this.name.prefix) { this.name.prefix = this.addPrefix(); }
+                    return undefined;
                 }
             case 13:
                 if (this.gender == Gender.Male) {
@@ -608,7 +640,7 @@ class Character {
                     return "Duchess";
                 }
             default:
-                return "";
+                return undefined;
         }
     }
 }
