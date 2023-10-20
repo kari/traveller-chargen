@@ -1,6 +1,7 @@
 import { Navy, Marines, Army, Scouts, Merchants, Other } from "./careers";
 import type { Career } from "./careers";
 import type { Ship } from "./ships";
+import { names } from "./names";
 import { Random, MersenneTwister19937, createEntropy, nativeMath } from "random-js";
 
 const numberFormat = new Intl.NumberFormat("en-us", { maximumFractionDigits: 2 });
@@ -68,7 +69,7 @@ class Character {
     credits = 0;
 
     toString(): string {
-        return `${this.retired ? 'Retired ' : ''}${this.career.memberName ? (this.retired ? this.career.memberName : 'Ex-' + this.career.memberName.toLowerCase()) + ' ' : ''}${this.career.ranks && this.career.ranks[this.rank] ? this.career.ranks[this.rank] + " " : ""}${this.name.toString()} ${this.upp} Age ${this.age} ${this.terms} terms Cr${numberFormat.format(this.credits)}`;
+        return `${this.retired ? 'Retired ' : ''}${this.career.memberName ? (this.retired ? this.career.memberName : 'Ex-' + this.career.memberName.toLowerCase()) + ' ' : ''}${this.career.ranks && this.career.ranks[this.rank] && this.career.memberName != this.career.ranks[this.rank] ? this.career.ranks[this.rank] + " " : ""}${this.name.toString()} ${this.upp} Age ${this.age} ${this.terms} terms Cr${numberFormat.format(this.credits)}`;
     }
 
     skillsToString(): string {
@@ -103,8 +104,12 @@ class Character {
 
         // FIXME: name, gender title
         this.gender = this.random.pick([Gender.Male, Gender.Female]);
-        this.name = new Name("Alexander", "Madison");
-        this.name.middle = "Lascelles";
+        if (this.gender == Gender.Female) {
+            this.name = new Name(this.random.pick(names["female"]), this.random.pick(names["last"]));
+        } else {
+            this.name = new Name(this.random.pick(names["male"]), this.random.pick(names["last"]));
+        }
+        // this.name.middle = "Lascelles";
         this.name.title = this.addTitle();
 
         // generate career for the character
