@@ -61,5 +61,5 @@ def scrape_us_navy():
                 for ship in heading.find_next_sibling("div").find_all("li"):
                     f.write(ship.text + "\n")
 
-
+scrape_royal_navy()
 scrape_us_navy()
