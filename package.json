@@ -4,6 +4,7 @@
     "random-js": "^2.1.0"
   },
   "devDependencies": {
+    "@types/node": "^20.8.7",
     "@typescript-eslint/eslint-plugin": "^6.7.5",
     "@typescript-eslint/parser": "^6.7.5",
     "buffer": "^6.0.3",

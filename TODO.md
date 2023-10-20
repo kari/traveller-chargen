@@ -14,8 +14,6 @@ Todo:
   - random charts for lore, look at throw / roll difference
 - skills and training
   - skills to enums?
-- names 
-  - random names, markov chain? swn?
 - go through character generation in the book to find missing details
 
 ## WORLDGEN
