@@ -268,7 +268,7 @@ class Character {
             benefits -= 1;
             if (cashTableRolls > 0 && (cashTableRolls >= 3 || this.skillAvg <= 7 || this.roll(1) >= 3)) {
                 // benefits
-                console.log("Character rolls for benefits table");
+                console.debug("Character rolls for benefits table");
                 this.career.benefitsTable(this, this.roll(1) + benefitsDM);
             } else if (cashTableRolls < 3) {
                 // cash table
@@ -687,4 +687,3 @@ const weaponStrDM: Record<string, [bonus: number, penalty: number]> = {
 const careers: Career[] = [Navy, Marines, Army, Scouts, Merchants, Other];
 
 export { Character };
-
