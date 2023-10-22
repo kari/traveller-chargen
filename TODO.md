@@ -19,6 +19,8 @@ Todo:
 ### TAS Form 2
 
 - Univers 55 font family
+- style checkboxes
+- add barcode
 
 ## WORLDGEN
 

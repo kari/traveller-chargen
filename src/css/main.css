@@ -73,4 +73,9 @@ div.form div.label {
 
 div.barcode {
     text-align: right;
+    padding-right: 2em;
+}
+
+div.outer-form h3 {
+    padding-left: 0.5em;
 }
