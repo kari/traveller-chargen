@@ -1,12 +1,36 @@
 @import 'npm:@picocss/pico/css/pico.css';
 
-.form {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
+main {
+    font-family: "Helvetica Neue"; 
 }
 
+.form {
+    grid-column: span 2;;
+    border: 5px solid;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(7, 1fr) repeat(3, 2fr) 1fr 3fr repeat(3, 1fr) 2fr;
+}
+
+.outer-form {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+}   
+
 .form div {
+    border: 1px solid;
     grid-column: span 2;
+    padding-left: 0.5em;
+    padding-bottom: 0.25em;
+}
+.form div h2 {
+    margin-bottom: 0;
+    text-transform: uppercase;
+}
+.form div div {
+    border: none;
+    padding-left: 0;
+    padding-bottom: 0;
 }
 div.span-3 {
     grid-column: span 3;
@@ -16,4 +40,37 @@ div.span-1 {
 }
 div.span-4 {
     grid-column: span 4;
+}
+.form div.padding-left {
+    padding-left: 0.5em;
+}
+div.upp {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    padding-left: 0;
+}
+
+div.border-left-0 {
+    border-left: 0;
+}
+
+div.border-right-0 {
+    border-right: 0;
+}
+
+div.upp div {
+    grid-column: span 1;
+}
+
+div.upp div.border-right {
+    border-right: 2px solid;
+    grid-row: span 2;
+}
+
+div.form div.label {
+    font-size: 80%;
+}
+
+div.barcode {
+    text-align: right;
 }
