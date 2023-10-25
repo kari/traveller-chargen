@@ -12,6 +12,7 @@ Todo:
 - verbose/debug mode
 - personal history
   - random charts for lore, look at throw / roll difference
+  - random stuff in TAS Form 2?
 - skills and training
   - skills to enums?
 - go through character generation in the book to find missing details
@@ -19,7 +20,6 @@ Todo:
 ### TAS Form 2
 
 - Univers 55 font family
-- style checkboxes
 - add barcode
 
 ## WORLDGEN

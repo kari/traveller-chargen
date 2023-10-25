@@ -4,6 +4,7 @@ import { type Character } from "./character";
 type Career = {
     name: string,
     memberName: string | null,
+    military: boolean;
     enlistment: number;
     draft: number;
     survival: number;
@@ -28,6 +29,7 @@ type Career = {
 const Navy: Career = {
     name: "Navy",
     memberName: "Navy",
+    military: true,
     enlistment: 8,
     draft: 1,
     survival: 5,
@@ -125,6 +127,7 @@ const Navy: Career = {
 const Marines: Career = {
     name: "Marines",
     memberName: "Marine",
+    military: true,
     enlistment: 9,
     draft: 2,
     survival: 6,
@@ -224,6 +227,7 @@ const Marines: Career = {
 const Army: Career = {
     name: "Army",
     memberName: "Army",
+    military: true,
     enlistment: 5,
     draft: 3,
     survival: 5,
@@ -323,6 +327,7 @@ const Army: Career = {
 const Scouts: Career = {
     name: "Scouts",
     memberName: "Scout",
+    military: false,
     enlistment: 7,
     draft: 4,
     survival: 7,
@@ -419,6 +424,7 @@ const Scouts: Career = {
 const Merchants: Career = {
     name: "Merchants",
     memberName: "Merchant",
+    military: false,
     enlistment: 7,
     draft: 5,
     survival: 5,
@@ -526,6 +532,7 @@ const Merchants: Career = {
 const Other: Career = {
     name: "Other",
     memberName: null,
+    military: false,
     enlistment: 3,
     draft: 6,
     survival: 5,
