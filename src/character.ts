@@ -24,8 +24,12 @@ class Name {
     prefix?: string;
     last: string;
 
-    toString(): string {
-        return `${this.title ? this.title + ' ': ''}${this.first} ${this.middle ? this.middle + ' ' : '' }${this.prefix ? this.prefix : ''}${this.last}`;
+    toString(title: boolean = true): string {
+        if (title) {
+            return `${this.title ? this.title + ' ' : ''}${this.first} ${this.middle ? this.middle + ' ' : ''}${this.prefix ? this.prefix : ''}${this.last}`;
+        } else {
+            return `${this.first} ${this.middle ? this.middle + ' ' : ''}${this.prefix ? this.prefix : ''}${this.last}`;
+        }
     }
 
     constructor(first: string, last: string) {
@@ -35,7 +39,7 @@ class Name {
 
     get middleInitial(): string | null {
         if (this.middle) {
-            return this.middle.charAt(0)+".";
+            return this.middle.charAt(0) + ".";
         } else {
             return null;
         }
@@ -54,6 +58,7 @@ class Character {
     attributes: Attributes;
 
     gender: Gender;
+    birthDate: Date;
 
     name: Name;
 
@@ -102,14 +107,12 @@ class Character {
 
         console.debug(`Initial UPP ${this.upp}`);
 
-        // FIXME: name, gender title
         this.gender = this.random.pick([Gender.Male, Gender.Female]);
         if (this.gender == Gender.Female) {
             this.name = new Name(this.random.pick(names["female"]), this.random.pick(names["last"]));
         } else {
             this.name = new Name(this.random.pick(names["male"]), this.random.pick(names["last"]));
         }
-        // this.name.middle = "Lascelles";
         this.name.title = this.addTitle();
 
         // generate career for the character
@@ -117,7 +120,13 @@ class Character {
         this.career.rankAndServiceSkills(this); // add automatic skills for service (rank = 0)
         this.doCareer();
 
-        console.log(this.toString());
+        function randomDate(start: Date, end: Date) {
+            return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
+        }
+
+        this.birthDate = randomDate(new Date(1105 - this.age, 0, 1), new Date(1105 - this.age, 11, 31));
+
+        console.log((this.dead ? "✝ " : "") + this.toString());
         if (Object.keys(this.skills).length > 0) { console.log(this.skillsToString()) }
         if (Object.keys(this.items).length > 0) { console.log(this.itemsToString()) }
         if (this.ship) { console.log(this.ship.toString()) }
@@ -125,7 +134,7 @@ class Character {
 
     sortSkills(skills = Object.keys(this.skills)): string[] {
 
-        return skills.sort((a,b) => (this.skills[a] < this.skills[b]) ? 1 : -1);
+        return skills.sort((a, b) => (this.skills[a] < this.skills[b]) ? 1 : -1);
     }
 
     doCareer() {
@@ -214,7 +223,7 @@ class Character {
                 console.log(`Character died of old age at ${this.age}`)
                 activeDuty = false;
                 return;
-            }         
+            }
 
             // reenlistment throw
             const reenlistmentThrow = this.roll();
@@ -222,7 +231,10 @@ class Character {
             // failed reenlistment
             if (reenlistmentThrow < this.career.reenlist) {
                 activeDuty = false;
-                console.debug(`Character failed reenlistment throw ${this.career.reenlist}+, career is over`);
+                console.log(`Character failed reenlistment throw ${this.career.reenlist}+, career is over`);
+            } else if (reenlistmentThrow != 12 && this.roll() + (this.terms - 2) >= 10) {
+                activeDuty = false;
+                console.log(`Character chose not to reenlist after ${this.terms} terms.`);
             }
 
             // retiring
@@ -233,6 +245,11 @@ class Character {
             } else if (this.terms >= 5 && reenlistmentThrow != 12 && activeDuty) { // voluntary retirement terms >= 5
                 console.debug("Character is eligible for voluntary retirement");
                 // FIXME: add behavior for voluntary retirement
+                if (this.roll() + (this.terms - 7) >= 10) {
+                    this.retired = true;
+                    activeDuty = false;
+                    console.log(`Character voluntarily retired after ${this.terms} terms.`);
+                }
             }
 
         } while (activeDuty == true)
@@ -246,7 +263,7 @@ class Character {
             }
             console.debug(`Character is eligible to retirement pay of ${numberFormat.format(this.retirementPay)}`);
         }
-        
+
         // mustering out
         let benefits = this.terms;
         switch (this.rank) {
@@ -372,7 +389,7 @@ class Character {
     }
 
     get hasTravellers(): boolean {
-        if (Object.keys(this.items).includes("Travellers'")) { 
+        if (Object.keys(this.items).includes("Travellers'")) {
             return true;
         } else {
             return false;
@@ -667,7 +684,7 @@ enum Gender {
 }
 
 // for weapons, add strength requirements for DM, only choose skills in weapons for which strength+ is met or at least strength- is not met 
-const weaponSkills: { [key: string ]: string[] } = {
+const weaponSkills: { [key: string]: string[] } = {
     blade: ["Dagger", "Blade", "Foil", "Sword", "Cutlass", "Broadsword", "Bayonet", "Spear", "Halberd", "Pike", "Cudgel"],
     weapon: ["Carbine", "Rifle", "Auto Rifle", "Shotgun", "SMG", "Laser Carbine", "Laser Rifle"],
     pistol: ["Body Pistol", "Auto Pistol", "Revolver"],

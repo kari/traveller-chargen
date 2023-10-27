@@ -8,19 +8,14 @@ References:
 
 Todo:
 
-- survival behavior, when to retire voluntarily?
-- verbose/debug mode
 - personal history
   - random charts for lore, look at throw / roll difference
   - random stuff in TAS Form 2?
-- skills and training
-  - skills to enums?
 - go through character generation in the book to find missing details
 
 ### TAS Form 2
 
 - Univers 55 font family
-- add barcode
 
 ## WORLDGEN
 
@@ -35,6 +30,4 @@ Todo:
 
 - create communication routes
 - select capital world
-- create name for the world
-  - markov chain?
-    - list of gods, planets, last names, pokemon, ...
+- create names for the worlds

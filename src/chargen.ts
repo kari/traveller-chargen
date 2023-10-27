@@ -10,6 +10,7 @@ if (typeof window == 'undefined') {
     window.addEventListener("load", (_event) => {
         const c = new Character();
         const today = new Date();
+        today.setFullYear(1105);
 
         if (c.dead) {
             document.getElementById("tas-form-2")!.classList.add("deceased");
@@ -18,9 +19,8 @@ if (typeof window == 'undefined') {
 
         document.getElementById("box-1")!.textContent = today.toLocaleDateString();
 
-        document.getElementById("box-2")!.textContent = c.name.toString(); // FIXME: includes title
-        document.getElementById("box-25")!.textContent = c.name.toString(); // FIXME: includes title
-        document.getElementById("s-box-22")!.textContent = c.name.toString(); // FIXME: includes title
+        document.getElementById("box-2")!.textContent = c.name.toString(false);
+        document.getElementById("box-25")!.textContent = c.name.toString(false);
 
         document.getElementById("strength")!.textContent = c.attributes.strength.toString(16).toUpperCase();
         document.getElementById("dexterity")!.textContent = c.attributes.dexterity.toString(16).toUpperCase();
@@ -37,7 +37,7 @@ if (typeof window == 'undefined') {
             document.getElementById("box-5")!.textContent = c.career.ranks[c.rank];
         }
 
-        // FIXME: box-6 calculate birthdate in character.ts, current year is 1105
+        document.getElementById("box-6")!.textContent = c.birthDate.toLocaleDateString();
 
         // FIXME: box-8, box-11, create worlds from subsector.ts
 
@@ -58,17 +58,17 @@ if (typeof window == 'undefined') {
             document.getElementById("retired-no")!.setAttribute("checked", "");
         }
 
-        // FIXME: identify weapons & devices qualified on
+        // identify weapons & devices qualified on
         const equipmentSkills: string[] = Object.keys(c.skills).filter(s => weaponSkills["gun"].concat(weaponSkills["blade"]).includes(s));
-        document.getElementById("box-17")!.textContent = c.skillsToString(equipmentSkills); 
+        document.getElementById("box-17")!.textContent = c.skillsToString(equipmentSkills);
         const additionalSkills: string[] = Object.keys(c.skills).filter(s => !weaponSkills["gun"].concat(weaponSkills["blade"]).includes(s));
-        document.getElementById("box-17")!.textContent = c.skillsToString(equipmentSkills); 
+        document.getElementById("box-17")!.textContent = c.skillsToString(equipmentSkills);
 
         if (Object.keys(additionalSkills).length > 0) {
             const sortedSkills = c.sortSkills(additionalSkills);
-            document.getElementById("box-18a")!.textContent = sortedSkills[0]+"-"+c.skills[sortedSkills[0]];
+            document.getElementById("box-18a")!.textContent = sortedSkills[0] + "-" + c.skills[sortedSkills[0]];
             if (sortedSkills.length > 1) {
-                document.getElementById("box-18b")!.textContent = sortedSkills[1]+"-"+c.skills[sortedSkills[1]];
+                document.getElementById("box-18b")!.textContent = sortedSkills[1] + "-" + c.skills[sortedSkills[1]];
             }
             if (sortedSkills.length > 2) {
                 document.getElementById("box-18c")!.textContent = c.skillsToString(sortedSkills.slice(2));
@@ -120,7 +120,7 @@ if (typeof window == 'undefined') {
             document.getElementById("tas-form-3")!.hidden = false;
 
             document.getElementById("s-box-1")!.textContent = today.toLocaleDateString();
-            document.getElementById("s-box-2")!.textContent = c.ship.name || ""; 
+            document.getElementById("s-box-2")!.textContent = c.ship.name || "";
             // 3: Registration number
 
             document.getElementById("s-box-4")!.textContent = c.ship.type;
@@ -139,7 +139,7 @@ if (typeof window == 'undefined') {
             } else {
                 document.getElementById("std-hull-no")!.setAttribute("checked", "");
             }
-    
+
             if (c.ship.streamlined) {
                 document.getElementById("streamlined-yes")!.setAttribute("checked", "");
             } else {
@@ -163,6 +163,8 @@ if (typeof window == 'undefined') {
             document.getElementById("s-box-19")!.textContent = c.ship.minCrew.toString();
 
             document.getElementById("s-box-20")!.textContent = c.ship.vehicles.join(", ");
+
+            document.getElementById("s-box-22")!.textContent = c.name.toString();
 
             // FIXME: Reverse side of TAS Form 3 (Computer, turrets, ...)
 

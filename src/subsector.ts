@@ -25,7 +25,7 @@ class World {
     }
 
     constructor(hex: Hex, random: Random) {
-        // FIXME: this function should probably defined in an extended Random (see chargen for identical function on Character class)
+        // FIXME: below function should probably be defined in an extended Random (see chargen for identical function on Character class)
         function roll(dice: number = 2): number { // default roll is two dice
             return random.dice(6, dice).reduce((a, b) => a + b, 0);
         }
