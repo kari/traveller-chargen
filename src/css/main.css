@@ -16,7 +16,8 @@ div.outer-form h3 {
 
 div.outer-form div.barcode {
     text-align: right;
-    padding-right: 2em;
+    padding-right: 0.5em;
+    font-size: 42px;
 }
 
 div.outer-form.deceased .form {
@@ -30,8 +31,16 @@ div.outer-form.deceased .form {
     border: 5px solid;
     display: grid;
     grid-template-columns: repeat(4, 1fr);
+}
+
+#tas-form-2 .form {
     grid-template-rows: repeat(7, 1fr) repeat(3, 2fr) 1fr 3fr repeat(3, 1fr) 2fr;
 }
+
+#tas-form-2-reverse .form {
+    grid-template-rows: repeat(2, 1fr) 7fr 1fr 6fr 6fr;
+}
+
 
 .form div {
     border: 1px solid;

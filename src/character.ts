@@ -72,8 +72,8 @@ class Character {
         return `${this.retired ? 'Retired ' : ''}${this.career.memberName ? (this.retired ? this.career.memberName : 'Ex-' + this.career.memberName.toLowerCase()) + ' ' : ''}${this.career.ranks && this.career.ranks[this.rank] && this.career.memberName != this.career.ranks[this.rank] ? this.career.ranks[this.rank] + " " : ""}${this.name.toString()} ${this.upp} Age ${this.age} ${this.terms} terms Cr${numberFormat.format(this.credits)}`;
     }
 
-    skillsToString(): string {
-        return Object.keys(this.skills).map(s => s + "-" + this.skills[s]).join(", ");
+    skillsToString(skills: string[] = Object.keys(this.skills)): string {
+        return skills.map(s => s + "-" + this.skills[s]).join(", ");
     }
 
     itemsToString(): string {
@@ -123,6 +123,10 @@ class Character {
         if (this.ship) { console.log(this.ship.toString()) }
     }
 
+    sortSkills(skills = Object.keys(this.skills)): string[] {
+
+        return skills.sort((a,b) => (this.skills[a] < this.skills[b]) ? 1 : -1);
+    }
 
     doCareer() {
         let activeDuty = true;
@@ -360,10 +364,18 @@ class Character {
 
     addItem(item: string) {
         console.debug(`Character earned item ${item}`);
-        if (item in this.items) {
+        if (item in this.items && item != "Travellers'") {
             this.items[item] += 1;
         } else {
             this.items[item] = 1;
+        }
+    }
+
+    get hasTravellers(): boolean {
+        if (Object.keys(this.items).includes("Travellers'")) { 
+            return true;
+        } else {
+            return false;
         }
     }
 
@@ -655,10 +667,13 @@ enum Gender {
 }
 
 // for weapons, add strength requirements for DM, only choose skills in weapons for which strength+ is met or at least strength- is not met 
-const weaponSkills: { [key: string]: string[] } = {
+const weaponSkills: { [key: string ]: string[] } = {
     blade: ["Dagger", "Blade", "Foil", "Sword", "Cutlass", "Broadsword", "Bayonet", "Spear", "Halberd", "Pike", "Cudgel"],
-    gun: ["Body Pistol", "Auto Pistol", "Revolver", "Carbine", "Rifle", "Auto Rifle", "Shotgun", "SMG", "Laser Carbine", "Laser Rifle"],
+    weapon: ["Carbine", "Rifle", "Auto Rifle", "Shotgun", "SMG", "Laser Carbine", "Laser Rifle"],
+    pistol: ["Body Pistol", "Auto Pistol", "Revolver"],
 }
+weaponSkills["gun"] = weaponSkills["weapon"].concat(weaponSkills["pistol"]);
+
 const vehicleSkills = ["Ground Car", "Watercraft", "Winged Craft", "Hovercraft", "Grav Belt"];
 
 const weaponStrDM: Record<string, [bonus: number, penalty: number]> = {
@@ -686,4 +701,4 @@ const weaponStrDM: Record<string, [bonus: number, penalty: number]> = {
 }
 const careers: Career[] = [Navy, Marines, Army, Scouts, Merchants, Other];
 
-export { Character };
+export { Character, weaponSkills };

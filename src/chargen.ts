@@ -1,4 +1,4 @@
-import { Character } from "./character";
+import { Character, weaponSkills } from "./character";
 
 console.log("Traveller Chargen");
 
@@ -13,11 +13,13 @@ if (typeof window == 'undefined') {
 
         if (c.dead) {
             document.getElementById("tas-form-2")!.classList.add("deceased");
+            document.getElementById("tas-form-2-reverse")!.classList.add("deceased");
         }
 
         document.getElementById("box-1")!.textContent = today.toLocaleDateString();
 
         document.getElementById("box-2")!.textContent = c.name.toString(); // FIXME: includes title
+        document.getElementById("box-25")!.textContent = c.name.toString(); // FIXME: includes title
 
         document.getElementById("strength")!.textContent = c.attributes.strength.toString(16).toUpperCase();
         document.getElementById("dexterity")!.textContent = c.attributes.dexterity.toString(16).toUpperCase();
@@ -56,19 +58,68 @@ if (typeof window == 'undefined') {
         }
 
         // FIXME: identify weapons & devices qualified on
+        const equipmentSkills: string[] = Object.keys(c.skills).filter(s => weaponSkills["gun"].concat(weaponSkills["blade"]).includes(s));
+        document.getElementById("box-17")!.textContent = c.skillsToString(equipmentSkills); 
+        const additionalSkills: string[] = Object.keys(c.skills).filter(s => !weaponSkills["gun"].concat(weaponSkills["blade"]).includes(s));
+        document.getElementById("box-17")!.textContent = c.skillsToString(equipmentSkills); 
 
-        // FIXME: identify primary/secondary skills
-        document.getElementById("box-18c")!.textContent = c.skillsToString();
+        if (Object.keys(additionalSkills).length > 0) {
+            const sortedSkills = c.sortSkills(additionalSkills);
+            document.getElementById("box-18a")!.textContent = sortedSkills[0]+"-"+c.skills[sortedSkills[0]];
+            if (sortedSkills.length > 1) {
+                document.getElementById("box-18b")!.textContent = sortedSkills[1]+"-"+c.skills[sortedSkills[1]];
+            }
+            if (sortedSkills.length > 2) {
+                document.getElementById("box-18c")!.textContent = c.skillsToString(sortedSkills.slice(2));
+            }
+        }
 
-        // FIXME: box-19a-c identify preferred weapons
 
-        // FIXME: box-20 add TAS membership
+        function preferredWeapon(type: string): string | null {
+            const skills: string[] = c.sortSkills(Object.keys(c.skills).filter(s => weaponSkills[type].includes(s)));
+            if (skills.length > 0) {
+                return skills[0];
+            }
 
-        /* FIXME: TAS Form 2 doesn't include stuff like
-        - inventory
-        - cash balance
-        - ship
-        */ 
+            return null;
+        }
+
+        // box-19a-c identify preferred weapons
+        // a weapon
+        const preferredRifle = preferredWeapon("weapon");
+        if (preferredRifle) {
+            document.getElementById("box-19a")!.textContent = preferredRifle+"-"+c.skills[preferredRifle];
+        }
+
+        // b pistol
+        const preferredPistol = preferredWeapon("pistol");
+        if (preferredPistol) {
+            document.getElementById("box-19b")!.textContent = preferredPistol+"-"+c.skills[preferredPistol];
+        }
+
+        // c blade
+        const preferredBlade = preferredWeapon("blade");
+        if (preferredBlade) {
+            document.getElementById("box-19c")!.textContent = preferredBlade+"-"+c.skills[preferredBlade];
+        }
+
+        if (c.hasTravellers) {
+            document.getElementById("tas-yes")!.setAttribute("checked", "");
+        } else {
+            document.getElementById("tas-no")!.setAttribute("checked", "");
+        }
+
+        if (c.credits > 0) {
+            document.getElementById("box-26")!.textContent = "Cr" + new Intl.NumberFormat().format(c.credits);
+        }
+
+        document.getElementById("box-27")!.textContent = c.itemsToString();
+
+        if (c.ship) {
+            document.getElementById("box-28")!.textContent = c.ship.toString();
+        }
+
+        /* FIXME: Add TAS Form 3 for possible ship, see supplement #12 */ 
 
 
     });
