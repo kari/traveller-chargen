@@ -1,8 +1,21 @@
 @import 'npm:@picocss/pico/css/pico.css';
 
+@font-face {
+    font-family: "Optane";
+    src: url('../woff/optane.woff');
+}
+
 main {
     font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
     position: relative;
+}
+
+main h1 {
+    font-family: "Optane", serif;
+    font-style: oblique;
+    text-transform: uppercase;
+    text-align: right;
+    border-top: 3px solid red;
 }
 
 button {

@@ -194,10 +194,6 @@ if (typeof window == 'undefined') {
         rollCharacter();
     });
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    document.getElementById("reset")?.addEventListener("click", (_event) => {
-        resetSheets();
-    });
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     window.addEventListener("load", (_event) => {
         rollCharacter();
     });

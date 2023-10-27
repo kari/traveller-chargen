@@ -1,5 +1,8 @@
 {
     "markdownlint.config": {
-        "MD034": false
+        "MD034": false,
+        "MD024": {
+            "siblings_only": true
+        }
     }
 }
