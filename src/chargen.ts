@@ -8,7 +8,7 @@ if (typeof window == 'undefined') {
 } else {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     window.addEventListener("load", (_event) => {
-        const c = new Character(); // 348320716); // scout ship: 1201531450
+        const c = new Character();
         const today = new Date();
 
         if (c.dead) {
@@ -20,6 +20,7 @@ if (typeof window == 'undefined') {
 
         document.getElementById("box-2")!.textContent = c.name.toString(); // FIXME: includes title
         document.getElementById("box-25")!.textContent = c.name.toString(); // FIXME: includes title
+        document.getElementById("s-box-22")!.textContent = c.name.toString(); // FIXME: includes title
 
         document.getElementById("strength")!.textContent = c.attributes.strength.toString(16).toUpperCase();
         document.getElementById("dexterity")!.textContent = c.attributes.dexterity.toString(16).toUpperCase();
@@ -88,19 +89,19 @@ if (typeof window == 'undefined') {
         // a weapon
         const preferredRifle = preferredWeapon("weapon");
         if (preferredRifle) {
-            document.getElementById("box-19a")!.textContent = preferredRifle+"-"+c.skills[preferredRifle];
+            document.getElementById("box-19a")!.textContent = preferredRifle;
         }
 
         // b pistol
         const preferredPistol = preferredWeapon("pistol");
         if (preferredPistol) {
-            document.getElementById("box-19b")!.textContent = preferredPistol+"-"+c.skills[preferredPistol];
+            document.getElementById("box-19b")!.textContent = preferredPistol;
         }
 
         // c blade
         const preferredBlade = preferredWeapon("blade");
         if (preferredBlade) {
-            document.getElementById("box-19c")!.textContent = preferredBlade+"-"+c.skills[preferredBlade];
+            document.getElementById("box-19c")!.textContent = preferredBlade;
         }
 
         if (c.hasTravellers) {
@@ -116,11 +117,56 @@ if (typeof window == 'undefined') {
         document.getElementById("box-27")!.textContent = c.itemsToString();
 
         if (c.ship) {
-            document.getElementById("box-28")!.textContent = c.ship.toString();
+            document.getElementById("tas-form-3")!.hidden = false;
+
+            document.getElementById("s-box-1")!.textContent = today.toLocaleDateString();
+            document.getElementById("s-box-2")!.textContent = c.ship.name || ""; 
+            // 3: Registration number
+
+            document.getElementById("s-box-4")!.textContent = c.ship.type;
+            // 5: Builder
+            // 6: Homeworld
+            // 7: Laid Down
+            // 8: First Flight
+
+            document.getElementById("s-box-9")!.textContent = "MCr" + new Intl.NumberFormat().format(c.ship.cost);
+            // 10: Occupation
+
+            document.getElementById("s-box-11a")!.textContent = new Intl.NumberFormat().format(c.ship.tonnage);
+
+            if (c.ship.hullStandard) {
+                document.getElementById("std-hull-yes")!.setAttribute("checked", "");
+            } else {
+                document.getElementById("std-hull-no")!.setAttribute("checked", "");
+            }
+    
+            if (c.ship.streamlined) {
+                document.getElementById("streamlined-yes")!.setAttribute("checked", "");
+            } else {
+                document.getElementById("streamlined-no")!.setAttribute("checked", "");
+            }
+
+            // 11c. Max Atmosphere
+
+            document.getElementById("s-box-12")!.textContent = c.ship.acceleration + "-G";
+
+            document.getElementById("s-box-13")!.textContent = c.ship.jump.toString();
+
+            document.getElementById("s-box-14")!.textContent = c.ship.powerPlant;
+
+            document.getElementById("s-box-15")!.textContent = c.ship.cargoCapacity.toString();
+
+            document.getElementById("s-box-16")!.textContent = c.ship.staterooms.toString();
+
+            document.getElementById("s-box-17")!.textContent = c.ship.lowBerths.toString();
+
+            document.getElementById("s-box-19")!.textContent = c.ship.minCrew.toString();
+
+            document.getElementById("s-box-20")!.textContent = c.ship.vehicles.join(", ");
+
+            // FIXME: Reverse side of TAS Form 3 (Computer, turrets, ...)
+
         }
-
-        /* FIXME: Add TAS Form 3 for possible ship, see supplement #12 */ 
-
 
     });
 }

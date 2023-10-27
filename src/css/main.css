@@ -41,6 +41,9 @@ div.outer-form.deceased .form {
     grid-template-rows: repeat(2, 1fr) 7fr 1fr 6fr 6fr;
 }
 
+#tas-form-3 .form {
+    grid-template-rows: repeat(8, 1fr) 2fr 11fr 1fr;
+}
 
 .form div {
     border: 1px solid;
@@ -99,6 +102,12 @@ div.upp div {
 div.upp div.border-right {
     border-right: 2px solid;
     grid-row: span 2;
+}
+
+div.tonnage {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 1fr);
 }
 
 div.form div.label {

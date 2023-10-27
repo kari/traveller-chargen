@@ -3,8 +3,20 @@ abstract class Ship {
     name?: string;
     type!: string;
     tonnage!: number;
+    hullStandard!: boolean;
     age: number = 0;
     mortgage?: Mortgage;
+    minCrew!: number;
+    streamlined!: boolean;
+    cargoCapacity!: number;
+    cost!: number;
+    vehicles: string[] = [];
+    acceleration!: number;
+    jump!: number;
+    powerPlant!: string;
+    staterooms!: number;
+    lowBerths!: number;
+
 
     constructor(name?: string) {
         this.name = name;
@@ -13,16 +25,38 @@ abstract class Ship {
     toString(): string {
         return `${this.name} (type: ${this.type})`;
     }
+
 }
 
 class ScoutCourier extends Ship {
     type = 'S';
     tonnage = 100;
+    hullStandard = true;
+    minCrew = 1;
+    streamlined = true;
+    cargoCapacity = 3;
+    cost = 29.43;
+    vehicles = ["Air/Raft"];
+    jump = 2;
+    powerPlant = "A";
+    acceleration = 2;
+    staterooms = 4;
+    lowBerths = 0;
 }
 
 class FreeTrader extends Ship {
     type = 'A';
     tonnage = 200;
+    hullStandard = true;
+    minCrew = 4;
+    streamlined = true;
+    cargoCapacity = 82;
+    cost = 37.08;
+    jump = 1;
+    powerPlant = 'A';
+    acceleration = 1;
+    staterooms = 10;
+    lowBerths = 20;
     mortgage = new Mortgage(150_000, 40);
 }
 
