@@ -1,6 +1,6 @@
 import { Navy, Marines, Army, Scouts, Merchants, Other } from "./careers";
 import type { Career } from "./careers";
-import type { Ship } from "./ships";
+import { type Ship } from "./ships";
 import { names } from "./names";
 import { Random, MersenneTwister19937, createEntropy, nativeMath } from "random-js";
 
@@ -91,7 +91,7 @@ class Character {
 
     constructor(seed?: number) {
         this.seed = seed ? seed : createEntropy(nativeMath, 1)[0];
-        console.debug(`Using seed ${this.seed} to generate the character`);
+        console.debug(`Using seed ${this.seed} to generate a character`);
         this.random = new Random(MersenneTwister19937.seed(this.seed));
 
         this.age = 18;
@@ -231,8 +231,8 @@ class Character {
             // failed reenlistment
             if (reenlistmentThrow < this.career.reenlist) {
                 activeDuty = false;
-                console.log(`Character failed reenlistment throw ${this.career.reenlist}+, career is over`);
-            } else if (reenlistmentThrow != 12 && this.roll() + (this.terms - 2) >= 10) {
+                console.log(`Character failed reenlistment throw ${this.career.reenlist}+, career is over after ${this.terms} terms of service`);
+            } else if (reenlistmentThrow != 12 && this.terms < 7 && this.roll() >= 10) {
                 activeDuty = false;
                 console.log(`Character chose not to reenlist after ${this.terms} terms.`);
             }
@@ -242,6 +242,9 @@ class Character {
                 console.log(`Character was forced to retire after ${this.terms} terms of service`);
                 activeDuty = false;
                 this.retired = true;
+            } else if (!activeDuty && this.terms >= 5) { // failed reenlistment, but eligible for retirement
+                this.retired = true;
+                console.log(`Character chose to retire after ${this.terms} terms of service.`)
             } else if (this.terms >= 5 && reenlistmentThrow != 12 && activeDuty) { // voluntary retirement terms >= 5
                 console.debug("Character is eligible for voluntary retirement");
                 // FIXME: add behavior for voluntary retirement

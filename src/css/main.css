@@ -5,6 +5,11 @@ main {
     position: relative;
 }
 
+button {
+    display: inline;
+    width: auto;
+}
+
 .outer-form {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
