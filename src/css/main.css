@@ -1,18 +1,19 @@
 @import 'npm:@picocss/pico/css/pico.css';
 
-@font-face {
+/* @font-face {
     font-family: "Optane";
     src: url('../woff/optane.woff');
-}
+} */
 
 main {
-    font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
+    font-family: "Univers", "Helvetica Neue", Arial, Helvetica, sans-serif;
     position: relative;
 }
 
 main h1 {
-    font-family: "Optane", serif;
+    font-family: "Optima", "URW Classico", "Optane", serif;
     font-style: oblique;
+    font-weight: bold;
     text-transform: uppercase;
     text-align: right;
     border-top: 3px solid red;

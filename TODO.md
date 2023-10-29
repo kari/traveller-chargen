@@ -13,6 +13,10 @@
   - random stuff in TAS Form 2?
 - go through character generation in the book to find missing details
 - ship names
+- change Optane to URW Classico (AFPL?)
+  - https://ctan.org/tex-archive/fonts/urw/classico
+  - https://git.ghostscript.com/?p=ghostpdl.git;a=tree;f=pcl/urwfonts;h=04b33714529093f48537b6d07ef78a1cee2ce6fe;hb=6f1da3c990ab7de4c3218bf8beff21f19449b284
+  - https://picocss.com/docs/customization.html
 - Univers 55 font family for TAS Forms
 
 ## WORLDGEN
