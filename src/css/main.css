@@ -5,8 +5,11 @@
     src: url('../woff/optane.woff');
 } */
 
+:root {
+    --font-family: "Univers", "Helvetica Neue", Arial, Helvetica, sans-serif;
+}
+
 main {
-    font-family: "Univers", "Helvetica Neue", Arial, Helvetica, sans-serif;
     position: relative;
 }
 

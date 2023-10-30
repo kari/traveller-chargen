@@ -19,7 +19,7 @@ function resetSheets() {
     }
 }
 
-function rollCharacter() {
+function rollCharacter(): Character {
     const c = new Character();
     const today = new Date();
     today.setFullYear(1105);
@@ -182,6 +182,8 @@ function rollCharacter() {
         // FIXME: Reverse side of TAS Form 3 (Computer, turrets, ...)
 
     }
+
+    return c;
 }
 
 if (typeof window == 'undefined') {
@@ -192,6 +194,14 @@ if (typeof window == 'undefined') {
     document.getElementById("reroll")?.addEventListener("click", (_event) => {
         resetSheets();
         rollCharacter();
+    });
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    document.getElementById("roll-ship")?.addEventListener("click", (_event) => {
+        let c: Character;
+        do {
+            resetSheets();
+            c = rollCharacter();
+        } while (!c.ship)
     });
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     window.addEventListener("load", (_event) => {

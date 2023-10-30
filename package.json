@@ -1,4 +1,10 @@
 {
+  "name": "traveller-chargen",
+  "source": "src/chargen.html",
+  "scripts": {
+    "start": "parcel",
+    "build": "parcel build"
+  },
   "dependencies": {
     "@picocss/pico": "^1.5.10",
     "random-js": "^2.1.0"
