@@ -177,7 +177,7 @@ class Character {
             }
 
             // promotion
-            if (this.commissioned == true && this.rank < this.career.ranks!.length && this.roll() + this.career.promotionDM(this) >= this.career.promotion!) {
+            if (this.commissioned == true && this.rank < (this.career.ranks!.length - 1) && this.roll() + this.career.promotionDM(this) >= this.career.promotion!) {
                 this.rank += 1;
                 console.debug(`Character was promoted to rank ${this.rank} (${this.career.ranks![this.rank]})`);
                 this.career.rankAndServiceSkills(this);
