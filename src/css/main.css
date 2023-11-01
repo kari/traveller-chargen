@@ -1,12 +1,12 @@
 @import 'npm:@picocss/pico/css/pico.css';
-
-/* @font-face {
-    font-family: "Optane";
-    src: url('../woff/optane.woff');
-} */
+@import 'npm:@ksilvennoinen/urw-classico/700-italic.css';
+@import 'npm:@ksilvennoinen/urw-classicsans';
+@import 'npm:@ksilvennoinen/urw-classicsans/400-italic.css';
+@import 'npm:@ksilvennoinen/urw-classicsans/700.css';
+@import 'npm:@ksilvennoinen/urw-classicsans/700-italic.css';
 
 :root {
-    --font-family: "Univers", "Helvetica Neue", Arial, Helvetica, sans-serif;
+    --font-family: "URW Classic Sans", "Helvetica Neue", Arial, Helvetica, sans-serif;
 }
 
 main {
@@ -15,7 +15,7 @@ main {
 
 main h1 {
     font-family: "Optima", "URW Classico", "Optane", serif;
-    font-style: oblique;
+    font-style: italic;
     font-weight: bold;
     text-transform: uppercase;
     text-align: right;

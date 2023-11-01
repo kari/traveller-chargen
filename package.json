@@ -6,6 +6,8 @@
     "build": "parcel build"
   },
   "dependencies": {
+    "@ksilvennoinen/urw-classico": "^1.0.0",
+    "@ksilvennoinen/urw-classicsans": "^1.0.0",
     "@picocss/pico": "^1.5.10",
     "random-js": "^2.1.0"
   },
