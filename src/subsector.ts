@@ -1,4 +1,4 @@
-import { Random, MersenneTwister19937, createEntropy, nativeMath } from "random-js";
+import { Random } from "./random";
 
 enum TravelZoneType { Amber = "A", Red = "R" }
 
@@ -25,10 +25,6 @@ class World {
     }
 
     constructor(hex: Hex, random: Random) {
-        // FIXME: below function should probably be defined in an extended Random (see chargen for identical function on Character class)
-        function roll(dice: number = 2): number { // default roll is two dice
-            return random.dice(6, dice).reduce((a, b) => a + b, 0);
-        }
 
         function clamp(value: number, min: number, max: number): number {
             return Math.max(min, Math.min(value, max));
@@ -37,29 +33,29 @@ class World {
         this.hex = hex;
         this.name = "Betelguese V"; // FIXME: random world name
 
-        this.planetarySize = clamp(roll(2) - 2, 0, 10);
+        this.planetarySize = clamp(random.roll(2) - 2, 0, 10);
 
         if (this.planetarySize == 0) {
             this.planetaryAthmosphere = 0;
         } else {
-            this.planetaryAthmosphere = roll(2) - 7 + this.planetarySize;
+            this.planetaryAthmosphere = random.roll(2) - 7 + this.planetarySize;
         }
         this.planetaryAthmosphere = clamp(this.planetaryAthmosphere, 0, 12);
 
         if (this.planetarySize == 0) {
             this.hydrographicPercentage = 0;
         } else if (this.planetaryAthmosphere <= 1 || this.planetaryAthmosphere >= 10) { // 0, 1, A+
-            this.hydrographicPercentage = roll(2) - 7 - 4 + this.planetaryAthmosphere;
+            this.hydrographicPercentage = random.roll(2) - 7 - 4 + this.planetaryAthmosphere;
         } else {
-            this.hydrographicPercentage = roll(2) - 7 + this.planetaryAthmosphere;
+            this.hydrographicPercentage = random.roll(2) - 7 + this.planetaryAthmosphere;
         }
         this.hydrographicPercentage = clamp(this.hydrographicPercentage, 0, 10);
 
-        this.population = clamp(roll(2) - 2, 0, 10);
+        this.population = clamp(random.roll(2) - 2, 0, 10);
 
-        this.planetaryGovernment = clamp(roll(2) - 7 + this.population, 0, 13);
+        this.planetaryGovernment = clamp(random.roll(2) - 7 + this.population, 0, 13);
 
-        this.lawLevel = clamp(roll(2) - 7 + this.planetaryGovernment, 0, 9);
+        this.lawLevel = clamp(random.roll(2) - 7 + this.planetaryGovernment, 0, 9);
 
         let techLevelDM = 0;
         switch (hex.starport) {
@@ -113,7 +109,7 @@ class World {
                 break;
         }
 
-        this.technologicalLevel = clamp(roll(1) + techLevelDM, 0, 20);
+        this.technologicalLevel = clamp(random.roll(1) + techLevelDM, 0, 20);
 
         // trade classifications
         if (this.planetaryAthmosphere >= 4 && this.planetaryAthmosphere <= 9 && this.hydrographicPercentage >= 4 && this.hydrographicPercentage <= 8 && this.population >= 5 && this.population <= 7) {
@@ -194,17 +190,13 @@ class Hex {
     }
 
     constructor(column: number, row: number, random: Random) {
-        // FIXME: this function should probably defined in an extended Random (see chargen for identical function on Character class)
-        function roll(dice: number = 2): number { // default roll is two dice
-            return random.dice(6, dice).reduce((a, b) => a + b, 0);
-        }
 
         this.coordinates = [column, row];
-        if (roll(1) >= 4) { // this hex has a world
+        if (random.roll(1) >= 4) { // this hex has a world
 
             let scoutBaseDM = 0;
             // Starport
-            switch (roll(2)) {
+            switch (random.roll(2)) {
                 case 2:
                 case 3:
                 case 4:
@@ -233,15 +225,15 @@ class Hex {
                     break;
             }
             // Naval base presence
-            if (!(this.starport in ["C", "D", "E", "X"]) && roll(2) >= 8) {
+            if (!(this.starport in ["C", "D", "E", "X"]) && random.roll(2) >= 8) {
                 this.navalBase = true;
             }
             // Scout base presence
-            if (roll(2) + scoutBaseDM >= 7) {
+            if (random.roll(2) + scoutBaseDM >= 7) {
                 this.scoutBase = true;
             }
             // gas giant presence
-            if (roll(2) <= 9) {
+            if (random.roll(2) <= 9) {
                 this.gasGiant = true;
             }
 
@@ -263,9 +255,9 @@ class Subsector {
     hexes: Hex[] = [];
 
     constructor(seed?: number) {
-        this.seed = seed ? seed : createEntropy(nativeMath, 1)[0];
+        this.random = new Random(seed);
+        this.seed = this.random.seed;
         console.debug(`Using seed ${this.seed} to generate a new subsector`);
-        this.random = new Random(MersenneTwister19937.seed(this.seed));
 
         // create subsector 8x10 hexes
         for (let i = 1; i <= 8; i++) {

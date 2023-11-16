@@ -1,5 +1,5 @@
 import names from "./names/ships";
-import { Random } from "random-js";
+import { Random } from "./random";
 
 abstract class Ship {
     name?: string;
