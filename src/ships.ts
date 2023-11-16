@@ -1,3 +1,5 @@
+import names from "./names/ships";
+import { Random } from "random-js";
 
 abstract class Ship {
     name?: string;
@@ -19,7 +21,8 @@ abstract class Ship {
 
 
     constructor(name?: string) {
-        this.name = name;
+        const random = new Random();
+        this.name = name ? name : random.pick(names);
     }
 
     toString(): string {

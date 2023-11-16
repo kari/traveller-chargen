@@ -12,7 +12,6 @@
   - random charts for lore, look at throw / roll difference
   - random stuff in TAS Form 2?
 - go through character generation in the book to find missing details
-- ship names
 - option to specify what to look for in generation
   - async function
   - timeout
