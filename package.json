@@ -1,6 +1,6 @@
 {
   "name": "traveller-chargen",
-  "source": "src/chargen.html",
+  "source": "src/index.html",
   "scripts": {
     "start": "parcel",
     "build": "parcel build"
