@@ -3,7 +3,8 @@
   "source": "src/index.html",
   "scripts": {
     "start": "parcel",
-    "build": "parcel build"
+    "build": "parcel build",
+    "clean": "npx rimraf build dist"
   },
   "dependencies": {
     "@ksilvennoinen/urw-classico": "^1.0.0",
