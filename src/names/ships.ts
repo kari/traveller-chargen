@@ -1,4 +1,4 @@
-// Source: Wikipedia
+// Source: Wikipedia (CC-BY-SA 3.0)
 // https://en.wikipedia.org/wiki/List_of_ship_names_of_the_Royal_Navy
 // https://en.wikipedia.org/wiki/List_of_United_States_Navy_ships
 

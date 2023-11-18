@@ -1,4 +1,4 @@
-// Source: Moby Word Lists
+// Source: Moby Word Lists (Public Domain)
 // https://www.gutenberg.org/files/3201/files/NAMES-M.TXT
 
 export { names as default }

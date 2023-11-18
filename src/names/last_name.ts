@@ -1,4 +1,4 @@
-// Source: markov-namegen-lib
+// Source: markov-namegen-lib (CC-BY-SA 3.0)
 // https://github.com/Tw1ddle/markov-namegen-lib/blob/master/word_lists/american_surnames.txt
 
 export {names as default }
