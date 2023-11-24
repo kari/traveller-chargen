@@ -4,13 +4,13 @@ This project has three parts,
 
 - CHARGEN - for character (and their possible ship) generation
 - WORLDGEN - for subsector and world generation
-- NAMEGEN - for generating names using Markov chains
+- NAMEGEN - for generating names using Markov chains, <https://github.com/kari/markov-namegen>
 
 ## CHARGEN
 
 ### References
 
-- https://github.com/makhidkarun/travellercharactergenerator
+- <https://github.com/makhidkarun/travellercharactergenerator>
 
 ### Todo
 
@@ -27,10 +27,10 @@ This project has three parts,
 
 ### References
 
-- https://www.traveller-srd.com/core-rules/world-creation/
-- https://forum.mongoosepublishing.com/threads/traveller-trade-code-statistics.32998/
-- https://donjon.bin.sh/scifi/tsg/
-- https://zhodani.space/stuff/generators/random-subsector-generator/
+- <https://www.traveller-srd.com/core-rules/world-creation/>
+- <https://forum.mongoosepublishing.com/threads/traveller-trade-code-statistics.32998/>
+- <https://donjon.bin.sh/scifi/tsg/>
+- <https://zhodani.space/stuff/generators/random-subsector-generator/>
 
 ### Todo
 
@@ -39,13 +39,3 @@ This project has three parts,
 - create names for the worlds
 - generate possible ships to encounter when entering system?
 - spin out to its own project?
-
-## NAMEGEN
-
-### References
-
-- https://github.com/Tw1ddle/markov-namegen-lib
-
-### Todo
-
-- Port markov-namegen-lib to TS
