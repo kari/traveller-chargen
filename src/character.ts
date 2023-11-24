@@ -3,6 +3,7 @@ import type { Career } from "./careers";
 import { type Ship } from "./ships";
 import { names } from "./names";
 import { Random } from "./random";
+import { clamp } from "./utils";
 
 const numberFormat = new Intl.NumberFormat("en-us", { maximumFractionDigits: 2 });
 
@@ -315,10 +316,6 @@ class Character {
     }
 
     modifyAttribute(attribute: Attribute, amount: number = 1): number {
-        function clamp(value: number, min: number, max: number): number {
-            return Math.max(min, Math.min(value, max));
-        }
-
         const oldValue = this.attributes[attribute];
         this.attributes[attribute] = clamp(this.attributes[attribute] += amount, 0, 15);
         console.debug(`Modifying ${attribute} by ${amount > 0 ? '+' : ''}${amount}, new value ${this.attributes[attribute]} ${oldValue + amount != this.attributes[attribute] ? '(clamped)' : ''}`)
