@@ -24,5 +24,8 @@
     "process": "^0.11.10",
     "stream-browserify": "^3.0.0",
     "typescript": "^5.2.2"
+  },
+  "optionalDependencies": {
+    "@parcel/watcher-linux-x64-glibc": "2.3.0"
   }
 }
