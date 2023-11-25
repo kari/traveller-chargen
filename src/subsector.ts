@@ -1,12 +1,15 @@
 import { Random } from "./random";
+import names from "./names/spacey";
+import { NameGenerator } from "@ksilvennoinen/markov-namegen";
+import { clamp } from "./utils";
 
 enum TravelZoneType { Amber = "A", Red = "R" }
 
-enum TradeClassification { Agricultural = "Agricultural", NonAgricultural = "Non-agricultural", Industrial = "Industrial", NonIndustrial = "Non-indisturial", Rich = "Rich", Poor = "Poor", Water = "Water", Desert = "Desert", Vacuum = "Vacuum", AsteroidBelt = "Asteroid Belt", IceCapped = "Ice-capped", SubsectorCapital = "Subsector Capital" }
+enum TradeClassification { Agricultural = "Agricultural", NonAgricultural = "Non-agricultural", Industrial = "Industrial", NonIndustrial = "Non-industrial", Rich = "Rich", Poor = "Poor", Water = "Water", Desert = "Desert", Vacuum = "Vacuum", AsteroidBelt = "Asteroid Belt", IceCapped = "Ice-capped", SubsectorCapital = "Subsector Capital" }
 
 class World {
-    hex: Hex;
     name: string;
+    starport: string;
     planetarySize: number;
     planetaryAthmosphere: number;
     hydrographicPercentage: number;
@@ -17,21 +20,19 @@ class World {
     tradeClassifications: TradeClassification[] = [];
 
     get uwp(): string {
-        return (this.hex.starport + this.planetarySize.toString(16) + this.planetaryAthmosphere.toString(16) + this.hydrographicPercentage.toString(16) + this.population.toString(16) + this.planetaryGovernment.toString(16) + this.lawLevel.toString(16) + '-' + ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K'][this.technologicalLevel]).toUpperCase();
+        return (this.starport + this.planetarySize.toString(16) + this.planetaryAthmosphere.toString(16) + this.hydrographicPercentage.toString(16) + this.population.toString(16) + this.planetaryGovernment.toString(16) + this.lawLevel.toString(16) + '-' + ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K'][this.technologicalLevel]).toUpperCase();
     }
 
     tradeClassificationsToString(): string {
         return this.tradeClassifications.join(", ");
     }
 
-    constructor(hex: Hex, random: Random) {
+    constructor(random: Random, starport?: string)  {
 
-        function clamp(value: number, min: number, max: number): number {
-            return Math.max(min, Math.min(value, max));
-        }
-
-        this.hex = hex;
-        this.name = "Betelguese V"; // FIXME: random world name
+        this.starport = starport ?? Hex.rollStarport(random)
+        const namegen = new NameGenerator(names, 3, 0.01, true)
+        this.name = namegen.generateNames(1, 4, 12, "", "", "", "")[0];
+        this.name = this.name.substring(0, 1).toUpperCase() + this.name.substring(1);
 
         this.planetarySize = clamp(random.roll(2) - 2, 0, 10);
 
@@ -58,7 +59,7 @@ class World {
         this.lawLevel = clamp(random.roll(2) - 7 + this.planetaryGovernment, 0, 9);
 
         let techLevelDM = 0;
-        switch (hex.starport) {
+        switch (starport) {
             case "A":
                 techLevelDM += 6;
                 break;
@@ -145,11 +146,6 @@ class World {
         if (this.planetaryAthmosphere in [0, 1] && this.hydrographicPercentage >= 1) {
             this.tradeClassifications.push(TradeClassification.IceCapped);
         }
-
-        // travel advisory, https://www.traveller-srd.com/core-rules/world-creation/
-        if (this.planetaryAthmosphere >= 10 || this.planetaryGovernment in [0, 7, 10] || this.lawLevel == 0 || this.lawLevel >= 9) {
-            this.hex.travelZone = TravelZoneType.Amber;
-        }
     }
 
 }
@@ -167,7 +163,7 @@ class Hex {
     toString(): string {
         if (this.world) {
             // name, hex location, UPP, bases, trade classifications, travel zones (A/R), gas giant (G/-)
-            return `${this.systemName} ${('0000' + this.hexNumber).slice(-4)} ${this.world.uwp} ${this.basesToString()} ${this.world.tradeClassificationsToString()} ${this.travelZone ? this.travelZone : '-'} ${this.gasGiant ? 'G' : '-'}`;
+            return `${this.systemName} ${('0000' + this.hexNumber).slice(-4)} ${this.world.uwp} ${this.basesToString()} ${this.world.tradeClassifications.length > 0 ? this.world.tradeClassificationsToString() + " ": ""}${this.travelZone ? this.travelZone : '-'} ${this.gasGiant ? 'G' : '-'}`;
         } else {
             return "- " + ('0000' + this.hexNumber).slice(-4);
         }
@@ -189,48 +185,56 @@ class Hex {
         return this.coordinates[0] * 100 + this.coordinates[1];
     }
 
+    static rollStarport(random: Random): string {
+        switch (random.roll(2)) {
+            case 2:
+            case 3:
+            case 4:
+                return "A";
+            case 5:
+            case 6:
+                return "B";
+            case 7:
+            case 8:
+                return "C";
+            case 9:
+                return "D";
+            case 10:
+            case 11:
+                return "E";
+            case 12:
+            default:
+                return "X";
+        }
+
+    }
+
     constructor(column: number, row: number, random: Random) {
 
         this.coordinates = [column, row];
         if (random.roll(1) >= 4) { // this hex has a world
 
+            this.starport = Hex.rollStarport(random);
+
+            // Scout base presence
             let scoutBaseDM = 0;
-            // Starport
-            switch (random.roll(2)) {
-                case 2:
-                case 3:
-                case 4:
-                    this.starport = "A";
+            switch (this.starport) {
+                case "A":
                     scoutBaseDM = -3;
                     break;
-                case 5:
-                case 6:
-                    this.starport = "B";
+                case "B":
                     scoutBaseDM = -2;
                     break;
-                case 7:
-                case 8:
-                    this.starport = "C";
+                case "C":
                     scoutBaseDM = -1;
                     break;
-                case 9:
-                    this.starport = "D";
-                    break;
-                case 10:
-                case 11:
-                    this.starport = "E";
-                    break;
-                case 12:
-                    this.starport = "X";
-                    break;
+            }
+            if (random.roll(2) + scoutBaseDM >= 7) {
+                this.scoutBase = true;
             }
             // Naval base presence
             if (!(this.starport in ["C", "D", "E", "X"]) && random.roll(2) >= 8) {
                 this.navalBase = true;
-            }
-            // Scout base presence
-            if (random.roll(2) + scoutBaseDM >= 7) {
-                this.scoutBase = true;
             }
             // gas giant presence
             if (random.roll(2) <= 9) {
@@ -238,9 +242,13 @@ class Hex {
             }
 
             // world creation
-            this.world = new World(this, random);
+            this.world = new World(random, this.starport);
             this.systemName = this.world.name;
 
+            // travel advisory, https://www.traveller-srd.com/core-rules/world-creation/
+            if (this.world.planetaryAthmosphere >= 10 || this.world.planetaryGovernment in [0, 7, 10] || this.world.lawLevel == 0 || this.world.lawLevel >= 9) {
+                this.travelZone = TravelZoneType.Amber;
+            }
 
         } // else an empty hex
         console.log(this.toString());
@@ -274,4 +282,4 @@ class Subsector {
 
 }
 
-export { Subsector }
+export { Subsector, World }

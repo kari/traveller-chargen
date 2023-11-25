@@ -4,6 +4,7 @@ import { type Ship } from "./ships";
 import { names } from "./names";
 import { Random } from "./random";
 import { clamp } from "./utils";
+import { World } from "./subsector";
 
 const numberFormat = new Intl.NumberFormat("en-us", { maximumFractionDigits: 2 });
 
@@ -27,9 +28,9 @@ class Name {
 
     toString(title: boolean = true): string {
         if (title) {
-            return `${this.title ? this.title + ' ' : ''}${this.first} ${this.middle ? this.middle + ' ' : ''}${this.prefix ? this.prefix : ''}${this.last}`;
+            return `${this.title ? this.title + ' ' : ''}${this.first} ${this.middle ? this.middle + ' ' : ''}${this.prefix ?? ''}${this.last}`;
         } else {
-            return `${this.first} ${this.middle ? this.middle + ' ' : ''}${this.prefix ? this.prefix : ''}${this.last}`;
+            return `${this.first} ${this.middle ? this.middle + ' ' : ''}${this.prefix ?? ''}${this.last}`;
         }
     }
 
@@ -55,6 +56,9 @@ class Character {
     dead = false;
     retired = false;
     retirementPay = 0;
+
+    birthworld: World;
+    dischargeworld: World;
 
     attributes: Attributes;
 
@@ -115,6 +119,9 @@ class Character {
             this.name = new Name(this.random.pick(names["male"]), this.random.pick(names["last"]));
         }
         this.name.title = this.addTitle();
+
+        this.birthworld = new World(this.random);
+        this.dischargeworld = new World(this.random);
 
         // generate career for the character
         this.career = this.enlist();

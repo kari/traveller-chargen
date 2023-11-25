@@ -52,9 +52,13 @@ function rollCharacter(): Character {
 
     document.getElementById("box-6")!.textContent = c.birthDate.toLocaleDateString();
 
-    // FIXME: box-8, box-11, create worlds from subsector.ts
+    document.getElementById("box-8")!.textContent = c.birthworld.name;
 
     document.getElementById("box-9")!.textContent = c.career.name;
+
+    // NOTE: box-10 (Branch) not in Books 1-3
+
+    document.getElementById("box-11")!.textContent = c.dischargeworld.name;
 
     document.getElementById("box-12")!.textContent = c.terms.toString();
 
@@ -70,6 +74,9 @@ function rollCharacter(): Character {
     } else {
         document.getElementById("retired-no")!.setAttribute("checked", "");
     }
+
+    // ADD: box-15 (Special Assignments)
+    // ADD: box-16 (Awards and Decorations)
 
     // identify weapons & devices qualified on
     const equipmentSkills: string[] = Object.keys(c.skills).filter(s => weaponSkills["gun"].concat(weaponSkills["blade"]).includes(s));

@@ -6,6 +6,8 @@ This project has three parts,
 - WORLDGEN - for subsector and world generation
 - NAMEGEN - for generating names using Markov chains, <https://github.com/kari/markov-namegen>
 
+Possibly there's a need for SHIPGEN as well.
+
 ## CHARGEN
 
 ### References
@@ -14,12 +16,12 @@ This project has three parts,
 
 ### Todo
 
-- personal history
+- Personal history
   - random charts for lore, look at throw / roll difference
   - random stuff in TAS Form 2?
-- dice icon to re-roll certain aspects (name, etc.)
-- go through character generation in the book to find missing details
-- option to specify what to look for in generation
+- Dice icon to re-roll certain aspects (name, etc.)
+- Go through character generation in the book to find missing details
+- Option to specify what to look for in generation
   - async function
   - timeout
 
@@ -34,8 +36,8 @@ This project has three parts,
 
 ### Todo
 
-- create communication routes
-- select capital world
-- create names for the worlds
-- generate possible ships to encounter when entering system?
-- spin out to its own project?
+- Draw Subsector Map Grid (TAS Form 6)
+- Create communication routes
+- Select capital world
+- Generate possible ships to encounter when entering system?
+- Spin out to its own project?
