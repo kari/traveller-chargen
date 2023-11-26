@@ -1,5 +1,5 @@
 import { Random } from "./random";
-import names from "./names/spacey";
+import names from "./names/worlds";
 import { NameGenerator } from "@ksilvennoinen/markov-namegen";
 import { clamp } from "./utils";
 
