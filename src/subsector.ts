@@ -32,7 +32,7 @@ class World {
         this.starport = starport ?? Hex.rollStarport(random)
         const namegen = new NameGenerator(names, 3, 0.01, true)
         this.name = namegen.generateNames(1, 4, 12, "", "", "", "")[0];
-        this.name = this.name.substring(0, 1).toUpperCase() + this.name.substring(1);
+        this.name = this.name.substring(0, 1).toUpperCase() + this.name.substring(1); // FIXME: add capitalization function to handle spaces etc.
 
         this.planetarySize = clamp(random.roll(2) - 2, 0, 10);
 
@@ -261,11 +261,21 @@ class Subsector {
     seed: number;
     random: Random;
     hexes: Hex[] = [];
+    name: string;
+    sector: {
+        name: string;
+    }
 
     constructor(seed?: number) {
         this.random = new Random(seed);
         this.seed = this.random.seed;
         console.debug(`Using seed ${this.seed} to generate a new subsector`);
+
+        const namegen = new NameGenerator(names, 3, 0.01, true);
+        const sector_names = namegen.generateNames(2, 4, 12, "", "", "", "");
+        this.name = sector_names[0].substring(0, 1).toUpperCase() + sector_names[0].substring(1);
+        this.sector = { name: sector_names[1].substring(0, 1).toUpperCase() + sector_names[1].substring(1) }
+
 
         // create subsector 8x10 hexes
         for (let i = 1; i <= 8; i++) {

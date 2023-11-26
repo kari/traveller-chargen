@@ -13,6 +13,7 @@ Possibly there's a need for SHIPGEN as well.
 ### References
 
 - <https://github.com/makhidkarun/travellercharactergenerator>
+- <https://travellertoolsdemo.azurewebsites.net/character>
 
 ### Todo
 
@@ -33,10 +34,12 @@ Possibly there's a need for SHIPGEN as well.
 - <https://forum.mongoosepublishing.com/threads/traveller-trade-code-statistics.32998/>
 - <https://donjon.bin.sh/scifi/tsg/>
 - <https://zhodani.space/stuff/generators/random-subsector-generator/>
+- <https://travellermap.com>
 
 ### Todo
 
 - Output TAS Form 7 (Subsector World Data)
+  - Subsector and Sector names
 - Draw Subsector Map Grid (TAS Form 6)
 - Create communication routes
 - Select capital world
