@@ -19,9 +19,9 @@ function rollSubsector(): Subsector {
 
     document.getElementById("box-2")!.textContent = s.name;
     document.getElementById("box-3")!.textContent = s.sector.name;
-    
 
-    function addWorldNode(text:string) {
+
+    function addWorldNode(text: string) {
         const worlds = document.getElementById("world-list")!;
         const div = document.createElement("div");
         const divText = document.createTextNode(text);
@@ -29,7 +29,7 @@ function rollSubsector(): Subsector {
         worlds.appendChild(div);
     }
 
-    function addBoxedWorldNode(text:string) {
+    function addBoxedWorldNode(text: string) {
         const worlds = document.getElementById("world-list")!;
         const div = document.createElement("div");
         div.classList.add("boxed");

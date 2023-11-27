@@ -1,46 +1,61 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>worldgen</title>
-    <script type="module" src="worldgen.ts"></script>
-    <link href="css/main.css" rel="stylesheet">
-  </head>
-  <body>
-    <main class="container">
-      <h1>Classic Traveller Worldgen</h1>
-      <button id="reroll" type="button" class="contrast">Reroll</button>
-      <div id="result">
 
-      </div>
-      <div class="outer-form" id="tas-form-7">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>worldgen</title>
+  <script type="module" src="worldgen.ts"></script>
+  <link href="css/main.css" rel="stylesheet">
+</head>
+
+<body>
+  <main class="container">
+    <h1>Classic Traveller Worldgen</h1>
+    <button id="reroll" type="button" class="contrast">Reroll</button>
+    <div id="result">
+
+    </div>
+    <div class="outer-form" id="tas-form-7">
       <div class="form">
-        <div class="span-3"><h2>Subsector World Data</h2></div>
+        <div class="span-3">
+          <h2>Subsector World Data</h2>
+        </div>
         <div class="span-1">
-            <div class="label">1. Date of preparation</div>
-            <div id="box-1"></div>
+          <div class="label">1. Date of preparation</div>
+          <div id="box-1"></div>
         </div>
         <div class="span-3">
-            <div class="label">2. Subsector Name</div>
-            <div id="box-2"></div>
+          <div class="label">2. Subsector Name</div>
+          <div id="box-2"></div>
         </div>
         <div class="span-1">
           <div class="label">3. Sector Name</div>
           <div id="box-3"></div>
         </div>
-        <div class="span-1 border-right-0 align-bottom"><h4>World Name</h4></div>
-        <div class="span-1 border-left-0 border-right-0 align-bottom"><h4>Location</h4></div>
-        <div class="span-1 border-left-0 border-right-0 align-bottom"><h4>UWP</h4></div>
-        <div class="span-1 border-left-0 align-bottom"><h4>Remarks</h4></div>
+        <div class="span-1 border-right-0 align-bottom">
+          <h4>World Name</h4>
+        </div>
+        <div class="span-1 border-left-0 border-right-0 align-bottom">
+          <h4>Location</h4>
+        </div>
+        <div class="span-1 border-left-0 border-right-0 align-bottom">
+          <h4>UWP</h4>
+        </div>
+        <div class="span-1 border-left-0 align-bottom">
+          <h4>Remarks</h4>
+        </div>
         <div class="world span-4" id="world-list">
         </div>
         <div class="span-4"></div>
       </div>
-        <div><h3>TAS Form 7</h3></div>
-        <div class="barcode" id="seed">⑈⑆⑇⑈⑆⑆⑇⑇⑈</div>
+      <div>
+        <h3>TAS Form 7</h3>
       </div>
+      <div class="barcode" id="seed">⑈⑆⑇⑈⑆⑆⑇⑇⑈</div>
+    </div>
 
-    </main>
-  </body>
+  </main>
+</body>
+
 </html>

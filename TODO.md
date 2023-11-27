@@ -38,8 +38,6 @@ Possibly there's a need for SHIPGEN as well.
 
 ### Todo
 
-- Output TAS Form 7 (Subsector World Data)
-  - Subsector and Sector names
 - Draw Subsector Map Grid (TAS Form 6)
 - Create communication routes
 - Select capital world

@@ -40,4 +40,4 @@ Distributed under the MPL 2.0 License. See `LICENSE` for more information.
 
 Markov name generator `scripts/lib/name_generator.ts` is provided under [CC0](http://creativecommons.org/publicdomain/zero/1.0/).
 
-First name data in `src/names/` is from [Moby Word Lists](https://www.gutenberg.org/ebooks/3201) (Public Domain) and surnames are from [Markov Namegen's word lists](https://github.com/Tw1ddle/markov-namegen-lib) (CC-BY-SA 3.0). Ship names are from Wikipedia (CC-BY-SA 3.0).
+First name data in `src/names/` is from [Moby Word Lists](https://www.gutenberg.org/ebooks/3201) (Public Domain) and surnames are from [Markov Namegen's word lists](https://github.com/Tw1ddle/markov-namegen-lib) (CC-BY-SA 3.0). Ship names are from Wikipedia (CC-BY-SA 3.0). World names are from [Traveller RPG Wiki](https://wiki.travellerrpg.com/Canon_World_%26_System_Reference_Log) (CC-BY-NC 3.0)
