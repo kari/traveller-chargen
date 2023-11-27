@@ -71,7 +71,7 @@ div.outer-form.deceased .form {
     grid-template-rows: repeat(3, 2fr) auto 1fr;
 }
 
-.form div {
+.form > div {
     border: 1px solid;
     grid-column: span 2;
     padding-left: 0.5em;
@@ -93,7 +93,7 @@ div.outer-form.deceased .form {
     font-weight: 400;
 }
 
-.form div div {
+.form div > div {
     border: none;
     padding-left: 0;
     padding-bottom: 0;
@@ -197,9 +197,44 @@ div.form div.world {
     padding-bottom: 0;
 }
 
-div.form div.world div {
+div.form div.world > div {
     grid-column: span 1;
     grid-row: span 2;
     padding-left: 0.5em;
     border-bottom: 1px solid;
+    display: flex;
+    align-items: center;;
+}
+
+div.align-bottom {
+    display: flex;
+    align-items: flex-end;
+}
+
+div.form div.world > div:nth-child(4n) {
+    border-right: 1px solid;
+}
+
+div.form div.world > div:nth-child(4n+1) {
+    border-left: 1px solid;
+}
+
+div.world > div.boxed {
+    padding: 0.5em;
+    padding-bottom: 0.5em;
+}
+div.boxed div {
+    margin-top: 0.25em;
+    margin-bottom: 0.25em;
+
+    font-family: monospace;
+    font-size: 85%;
+    display: inline;
+    border-left: 1px solid;
+    border-bottom: 1px solid;
+    padding: 0.25em;
+}
+
+div.boxed div:last-child {
+    border-right: 1px solid;
 }

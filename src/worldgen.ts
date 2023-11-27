@@ -4,6 +4,8 @@ console.log("Traveller Subsector Generator")
 
 function resetSheets() {
     // note this only clears optional fields, not full sheet
+    document.getElementById("world-list")!.replaceChildren();
+
 }
 
 function rollSubsector(): Subsector {
@@ -19,6 +21,36 @@ function rollSubsector(): Subsector {
     document.getElementById("box-3")!.textContent = s.sector.name;
     
 
+    function addWorldNode(text:string) {
+        const worlds = document.getElementById("world-list")!;
+        const div = document.createElement("div");
+        const divText = document.createTextNode(text);
+        div.appendChild(divText);
+        worlds.appendChild(div);
+    }
+
+    function addBoxedWorldNode(text:string) {
+        const worlds = document.getElementById("world-list")!;
+        const div = document.createElement("div");
+        div.classList.add("boxed");
+        for (const l of text) {
+            const box = document.createElement("div");
+            const boxText = document.createTextNode(l);
+            box.appendChild(boxText);
+            div.appendChild(box);
+        }
+        worlds.appendChild(div);
+    }
+
+    for (const h of s.hexes) {
+        if (h.world == undefined) {
+            continue;
+        }
+        addWorldNode(h.world.name);
+        addBoxedWorldNode(('0000' + h.hexNumber).slice(-4))
+        addBoxedWorldNode(h.world.uwp);
+        addWorldNode(""); // FIXME: remarks
+    }
 
     return s;
 }
