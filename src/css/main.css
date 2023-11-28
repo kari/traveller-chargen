@@ -67,6 +67,10 @@ div.outer-form.deceased .form {
     grid-template-rows: repeat(8, 1fr) 2fr 11fr 1fr;
 }
 
+#tas-form-6 .form {
+    grid-template-rows: repeat(2, 1fr) 20fr;     
+}
+
 #tas-form-7 .form {
     grid-template-rows: repeat(3, 2fr) auto 1fr;
 }
@@ -237,4 +241,8 @@ div.boxed div {
 
 div.boxed div:last-child {
     border-right: 1px solid;
+}
+
+div#map-grid {
+    border-top-width: 4px;
 }

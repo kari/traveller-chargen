@@ -35,9 +35,11 @@ Possibly there's a need for SHIPGEN as well.
 - <https://donjon.bin.sh/scifi/tsg/>
 - <https://zhodani.space/stuff/generators/random-subsector-generator/>
 - <https://travellermap.com>
+  - <https://travellermap.com/doc/secondsurvey#remarks>
 
 ### Todo
 
+- Make Worldgen reachable
 - Draw Subsector Map Grid (TAS Form 6)
 - Create communication routes
 - Select capital world

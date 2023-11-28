@@ -15,9 +15,12 @@ function rollSubsector(): Subsector {
     today.setFullYear(1105);
 
     document.getElementById("box-1")!.textContent = today.toLocaleDateString();
+    document.getElementById("t6-box-2")!.textContent = today.toLocaleDateString();
+
     document.getElementById("seed")!.setAttribute("data-seed", s.seed.toString());
 
     document.getElementById("box-2")!.textContent = s.name;
+    document.getElementById("t6-box-1")!.textContent = s.name;
     document.getElementById("box-3")!.textContent = s.sector.name;
 
 
