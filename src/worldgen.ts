@@ -1,4 +1,5 @@
 import { Subsector } from "./subsector";
+import { SVG } from '@svgdotjs/svg.js';
 
 console.log("Traveller Subsector Generator")
 
@@ -54,6 +55,51 @@ function rollSubsector(): Subsector {
         addBoxedWorldNode(h.world.uwp);
         addWorldNode(""); // FIXME: remarks
     }
+
+    // https://www.redblobgames.com/grids/hexagons/#basics
+    function hexCorner(x: number, y: number, size: number, i: number): number[] {
+        const angle_deg = 60 * i;
+        const angle_rad = Math.PI / 180 * angle_deg;
+
+        return [x + size * Math.cos(angle_rad), y + size * Math.sin(angle_rad)]
+    }
+
+    // https://www.redblobgames.com/grids/hexagons/#hex-to-pixel
+    function hexToPixel(q: number, r: number) { // odd-q offset
+        const x = size * 3 / 2 * q + size
+        const y = size * Math.sqrt(3) * (r + 0.5 * (q & 1)) + Math.sqrt(3) / 2 * size
+
+        return [x, y]
+
+    }
+
+    function drawHex(x: number, y: number, size: number) {
+        const edges: number[] = [];
+        for (let i = 0; i <= 5; i++) {
+            edges.push(...hexCorner(x, y, size, i))
+        }
+        // console.log(edges);
+        return edges
+
+    }
+
+    const draw = SVG().addTo("#map-grid").size('100%', '100%');
+    const size = 100;
+    draw.viewbox(0, 0, size * 3 / 2 * 7 + 2 * size, size * Math.sqrt(3) * (9 + 0.5 * (7 & 1)) + Math.sqrt(3) * size)
+    for (let q = 0; q <= 7; q++) { // x index
+        const r_init = q == 7 ? -1 : 0; // adds missing line segment in top-right corner
+        const r_max = q % 2 == 0 ? 10 : 9; // 11 row for even
+        for (let r = r_init; r <= r_max; r++) { // y index
+            const [x, y] = hexToPixel(q, r);
+            draw.polygon(drawHex(x, y, size)).fill('none').stroke({ width: 1, color: "black"});
+            const text = draw.text((('0000' + ((q+1)*100+(r+1))).slice(-4)))
+            text.move(x-text.length()/2,y-size+20)
+        }
+    }
+    
+
+
+
 
     return s;
 }

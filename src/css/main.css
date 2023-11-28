@@ -245,4 +245,5 @@ div.boxed div:last-child {
 
 div#map-grid {
     border-top-width: 4px;
+    padding: 0;
 }
