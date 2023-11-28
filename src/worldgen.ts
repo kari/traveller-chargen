@@ -83,6 +83,7 @@ function rollSubsector(): Subsector {
 
     }
 
+    // FIXME: refactor into "drawTemplateGrid" and draw it before new Subsector() and in resetSheets()
     const draw = SVG().addTo("#map-grid").size('100%', '100%');
     const size = 100;
     draw.viewbox(0, 0, size * 3 / 2 * 7 + 2 * size, size * Math.sqrt(3) * (9 + 0.5 * (7 & 1)) + Math.sqrt(3) * size)
@@ -97,6 +98,49 @@ function rollSubsector(): Subsector {
         }
     }
     
+    // FIXME: we already iterate over worlds above
+    for (const h of s.hexes) {
+        if (h.world == undefined) { continue }
+        // naval base (star)
+        // scout base (triangle)
+        // gas giant (circle)
+        
+        const [x, y] = hexToPixel(h.coordinates[0]-1, h.coordinates[1]-1);
+        
+        const worldName = draw.text(h.world.name)
+        const starportType = draw.text(h.starport)
+        // FIXME: if text.length() > side length (= size), decrease font size until fits
+        worldName.move(x-worldName.length()/2,y+size-40)
+        starportType.move(x-starportType.length()/2, y-size+40)
+        
+        // world symbol (full = ocean, empty = no ocean, asteroid belt)
+        if (h.world.planetarySize == 0) { // Asteroid Belt
+            draw.rect(20, 20).move(x-10, y-10) // FIXME: draw asteroid belt icon
+        } else if (h.world.hydrographicPercentage > 0) { // has oceans
+            draw.circle(20).move(x-10, y-10)
+        } else { // desert world
+            draw.circle(20).move(x-10, y-10).fill("none").stroke({ width: 1, color: "black"})
+        }
+
+        // FIXME: position at consistent radius/angle (from icon center point) from world symbol
+        if (h.gasGiant) {
+            draw.circle(10).move(x+30,y-30)
+        }
+        if (h.scoutBase) {
+            draw.polygon("0,0 14,0 7,-14").move(x-45,y+15)
+        }
+        if (h.navalBase) {
+            draw.polygon("0,0 14,0 7,-14").move(x-45,y-30) // FIXME: make into star
+        }
+
+        /* S12 Forms and charts
+        - world name in ALL CAPS if population > 1B
+            - subsector capital in red
+        - travel zone a circle around world (red or amber)
+        - water present in grey/blue
+        - 
+        */
+    }
 
 
 
