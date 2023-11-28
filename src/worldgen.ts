@@ -6,6 +6,7 @@ console.log("Traveller Subsector Generator")
 function resetSheets() {
     // note this only clears optional fields, not full sheet
     document.getElementById("world-list")!.replaceChildren();
+    document.getElementById("map-grid")!.replaceChildren();
 
 }
 
@@ -92,7 +93,7 @@ function rollSubsector(): Subsector {
         const r_max = q % 2 == 0 ? 10 : 9; // 11 row for even
         for (let r = r_init; r <= r_max; r++) { // y index
             const [x, y] = hexToPixel(q, r);
-            draw.polygon(drawHex(x, y, size)).fill('none').stroke({ width: 1, color: "black"});
+            draw.polygon(drawHex(x, y, size)).fill('none').stroke({ width: 1, color: "currentColor"});
             const text = draw.text((('0000' + ((q+1)*100+(r+1))).slice(-4)))
             text.move(x-text.length()/2,y-size+20)
         }
@@ -119,7 +120,7 @@ function rollSubsector(): Subsector {
         } else if (h.world.hydrographicPercentage > 0) { // has oceans
             draw.circle(20).move(x-10, y-10)
         } else { // desert world
-            draw.circle(20).move(x-10, y-10).fill("none").stroke({ width: 1, color: "black"})
+            draw.circle(20).move(x-10, y-10).fill("none").stroke({ width: 1, color: "currentColor"})
         }
 
         // FIXME: position at consistent radius/angle (from icon center point) from world symbol
@@ -151,6 +152,9 @@ function rollSubsector(): Subsector {
 if (typeof window == 'undefined') {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const s = new Subsector();
+    for (const h of s.hexes) {
+        console.log(h.toString())
+    }
 } else {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     document.getElementById("reroll")?.addEventListener("click", (_event) => {

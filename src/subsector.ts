@@ -251,7 +251,7 @@ class Hex {
             }
 
         } // else an empty hex
-        console.log(this.toString());
+        // console.log(this.toString());
     }
 }
 
