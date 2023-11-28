@@ -1,6 +1,6 @@
 {
   "name": "traveller-chargen",
-  "source": "src/index.html",
+  "source": ["./src/index.html", "./src/worldgen.html"],
   "scripts": {
     "start": "parcel",
     "build": "parcel build",
