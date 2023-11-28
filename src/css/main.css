@@ -173,6 +173,10 @@ div.form input[type="checkbox"]::before {
     height: 0.65em;
 }
 
+div.form input[type="checkbox"]:checked {
+    background-image: none;
+}
+
 div.form input[type="checkbox"]:checked::before {
     content: "";
     margin-top: 0.1em;
@@ -180,14 +184,14 @@ div.form input[type="checkbox"]:checked::before {
     margin-left: 0.1em;
     width: 0.6em;
     height: 0.6em;
-    background-color: black;
+    background-color: currentColor;
     display: block;
     transform-origin: bottom left;
     clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
 }
 
 div.form input[type="checkbox"]:disabled {
-    color: black;
+    color: currentColor;
     background-color: transparent;
 }
 
