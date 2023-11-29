@@ -5,6 +5,7 @@ import { names } from "./names";
 import { Random } from "./random";
 import { clamp } from "./utils";
 import { World } from "./subsector";
+import { ImperialDate } from "./imperial_date";
 
 const numberFormat = new Intl.NumberFormat("en-us", { maximumFractionDigits: 2 });
 
@@ -63,7 +64,7 @@ class Character {
     attributes: Attributes;
 
     gender: Gender;
-    birthDate: Date;
+    birthDate: ImperialDate;
 
     name: Name;
 
@@ -128,7 +129,7 @@ class Character {
         this.career.rankAndServiceSkills(this); // add automatic skills for service (rank = 0)
         this.doCareer();
 
-        this.birthDate = this.random.date(new Date(1105 - this.age, 0, 1), new Date(1105 - this.age, 11, 31));
+        this.birthDate = new ImperialDate(this.random.integer(1, 365), 1105 - this.age); // FIXME: this might not always be correct, should ensure date of preparation - birthdate >= age
 
         console.log((this.dead ? "✝ " : "") + this.toString());
         if (Object.keys(this.skills).length > 0) { console.log(this.skillsToString()) }

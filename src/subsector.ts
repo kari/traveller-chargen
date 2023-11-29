@@ -292,4 +292,4 @@ class Subsector {
 
 }
 
-export { Subsector, World }
+export { Subsector, World, TravelZoneType }

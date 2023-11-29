@@ -25,6 +25,14 @@ class Random {
         return this._random.dice(6, dice).reduce((a, b) => a + b, 0);
     }
 
+    integer(min: number, max: number): number {
+        return this._random.integer(min, max);
+    }
+
+    real(min: number, max: number, inclusive: boolean = true) {
+        return this._random.real(min, max, inclusive)
+    }
+
 }
 
 export { Random }

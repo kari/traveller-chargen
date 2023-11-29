@@ -1,4 +1,6 @@
-import { Subsector } from "./subsector";
+import { ImperialDate } from "./imperial_date";
+import { Random } from "./random";
+import { Subsector, TravelZoneType } from "./subsector";
 import { SVG } from '@svgdotjs/svg.js';
 
 console.log("Traveller Subsector Generator")
@@ -13,11 +15,10 @@ function resetSheets() {
 function rollSubsector(): Subsector {
     const s = new Subsector();
 
-    const today = new Date();
-    today.setFullYear(1105);
+    const today = new ImperialDate();
 
-    document.getElementById("box-1")!.textContent = today.toLocaleDateString();
-    document.getElementById("t6-box-2")!.textContent = today.toLocaleDateString();
+    document.getElementById("box-1")!.textContent = today.toString();
+    document.getElementById("t6-box-2")!.textContent = today.toString();
 
     document.getElementById("seed")!.setAttribute("data-seed", s.seed.toString());
 
@@ -84,6 +85,22 @@ function rollSubsector(): Subsector {
 
     }
 
+    function starPoints(r: number) {
+        const edges: number[][] = [];
+        for (let k = 0; k <= 4; k++) {
+            edges.push([r * Math.cos(2 * Math.PI * k / 5 + Math.PI / 2), -r * Math.sin(2 * Math.PI * k / 5 + Math.PI / 2)])
+        }
+        return edges;
+    }
+
+    function drawStar(r: number) {
+        const points = starPoints(r);
+        const star = [points[0], points[2], points[4], points[1], points[3]]
+
+        return star.flat()
+
+    }
+
     // FIXME: refactor into "drawTemplateGrid" and draw it before new Subsector() and in resetSheets()
     const draw = SVG().addTo("#map-grid").size('100%', '100%');
     const size = 100;
@@ -93,58 +110,70 @@ function rollSubsector(): Subsector {
         const r_max = q % 2 == 0 ? 10 : 9; // 11 row for even
         for (let r = r_init; r <= r_max; r++) { // y index
             const [x, y] = hexToPixel(q, r);
-            draw.polygon(drawHex(x, y, size)).fill('none').stroke({ width: 1, color: "currentColor"});
-            const text = draw.text((('0000' + ((q+1)*100+(r+1))).slice(-4)))
-            text.move(x-text.length()/2,y-size+20)
+            draw.polygon(drawHex(x, y, size)).fill('none').stroke({ width: 1, color: "currentColor" });
+            const text = draw.text((('0000' + ((q + 1) * 100 + (r + 1))).slice(-4)))
+            text.move(x - text.length() / 2, y - size + 20)
         }
     }
-    
+
     // FIXME: we already iterate over worlds above
     for (const h of s.hexes) {
         if (h.world == undefined) { continue }
-        // naval base (star)
-        // scout base (triangle)
-        // gas giant (circle)
-        
-        const [x, y] = hexToPixel(h.coordinates[0]-1, h.coordinates[1]-1);
-        
-        const worldName = draw.text(h.world.name)
+
+        const [x, y] = hexToPixel(h.coordinates[0] - 1, h.coordinates[1] - 1);
+
+        const worldName = draw.text(h.world.population >= 9 ? h.world.name.toUpperCase() : h.world.name)
+
+        const mask = draw.mask()
+        mask.add(draw.circle(100).center(x, y).fill("none").stroke({ width: 5, color: "#fff" }))
+
         const starportType = draw.text(h.starport)
         // FIXME: if text.length() > side length (= size), decrease font size until fits
-        worldName.move(x-worldName.length()/2,y+size-40)
-        starportType.move(x-starportType.length()/2, y-size+40)
-        
+        worldName.move(x - worldName.length() / 2, y + size - 40)
+        starportType.move(x - starportType.length() / 2, y - size + 40)
+        // add starport to clip path
+        mask.add(draw.rect(starportType.length() + 10, starportType.length() + 10).fill('#000').move(x - (starportType.length() + 10) / 2, y - size + 40))
+
         // world symbol (full = ocean, empty = no ocean, asteroid belt)
+        const r = new Random();
         if (h.world.planetarySize == 0) { // Asteroid Belt
-            draw.rect(20, 20).move(x-10, y-10) // FIXME: draw asteroid belt icon
+            for (let i = 0; i <= r.integer(12, 18); i++) {
+                const dx = r.real(-20, 20)
+                const dy = r.real(-20, 20)
+                draw.circle(r.real(2, 5)).move(x + dx, y + dy)
+            }
         } else if (h.world.hydrographicPercentage > 0) { // has oceans
-            draw.circle(20).move(x-10, y-10)
+            draw.circle(20).move(x - 10, y - 10) // .fill('grey')
         } else { // desert world
-            draw.circle(20).move(x-10, y-10).fill("none").stroke({ width: 1, color: "currentColor"})
+            draw.circle(20).move(x - 10, y - 10).fill("none").stroke({ width: 1, color: "currentColor" })
         }
 
-        // FIXME: position at consistent radius/angle (from icon center point) from world symbol
         if (h.gasGiant) {
-            draw.circle(10).move(x+30,y-30)
+            const gasGiant = draw.circle(10).center(x + Math.sqrt(2) / 2 * 50, y - Math.sqrt(2) / 2 * 50)
+            mask.add(gasGiant.clone().scale(2).fill('#000'))
         }
         if (h.scoutBase) {
-            draw.polygon("0,0 14,0 7,-14").move(x-45,y+15)
+            draw.polygon("0,0 12,0 6,-10.392").center(x - Math.sqrt(2) / 2 * 50, y + Math.sqrt(2) / 2 * 50) // height = sqrt(3)/2*side
+            mask.add(draw.circle(20).fill('#000').center(x - Math.sqrt(2) / 2 * 50 + 1, y + Math.sqrt(2) / 2 * 50 + 1))
         }
         if (h.navalBase) {
-            draw.polygon("0,0 14,0 7,-14").move(x-45,y-30) // FIXME: make into star
+            draw.polygon(drawStar(8)).center(x - Math.sqrt(2) / 2 * 50, y - Math.sqrt(2) / 2 * 50)
+            mask.add(draw.circle(20).fill('#000').center(x - Math.sqrt(2) / 2 * 50, y - Math.sqrt(2) / 2 * 50 + 1))
+        }
+
+        if (h.travelZone) {
+            const zoneColor = h.travelZone == TravelZoneType.Red ? "red" : "grey"; // red/orange
+            const travelZone = draw.circle(100).center(x, y).fill("none").stroke({ width: 5, color: zoneColor })
+
+            travelZone.maskWith(mask)
         }
 
         /* S12 Forms and charts
-        - world name in ALL CAPS if population > 1B
-            - subsector capital in red
+        - subsector capital name in red
+        - worlds with water are grey/blue
         - travel zone a circle around world (red or amber)
-        - water present in grey/blue
-        - 
         */
     }
-
-
-
 
     return s;
 }

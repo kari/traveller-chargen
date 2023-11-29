@@ -1,4 +1,5 @@
 import { Character, weaponSkills } from "./character";
+import { ImperialDate } from "./imperial_date";
 
 console.log("Traveller Chargen");
 
@@ -21,15 +22,14 @@ function resetSheets() {
 
 function rollCharacter(): Character {
     const c = new Character();
-    const today = new Date();
-    today.setFullYear(1105);
+    const today = new ImperialDate();
 
     if (c.dead) {
         document.getElementById("tas-form-2")!.classList.add("deceased");
         document.getElementById("tas-form-2-reverse")!.classList.add("deceased");
     }
 
-    document.getElementById("box-1")!.textContent = today.toLocaleDateString();
+    document.getElementById("box-1")!.textContent = today.toString();
     document.getElementById("seed")!.setAttribute("data-seed", c.seed.toString());
 
     document.getElementById("box-2")!.textContent = c.name.toString(false);
@@ -50,7 +50,7 @@ function rollCharacter(): Character {
         document.getElementById("box-5")!.textContent = c.career.ranks[c.rank];
     }
 
-    document.getElementById("box-6")!.textContent = c.birthDate.toLocaleDateString();
+    document.getElementById("box-6")!.textContent = c.birthDate.toString();
 
     document.getElementById("box-8")!.textContent = c.birthworld.name;
 
@@ -139,7 +139,7 @@ function rollCharacter(): Character {
     if (c.ship) {
         document.getElementById("tas-form-3")!.hidden = false;
 
-        document.getElementById("s-box-1")!.textContent = today.toLocaleDateString();
+        document.getElementById("s-box-1")!.textContent = today.toString();
         document.getElementById("s-box-2")!.textContent = c.ship.name || "";
         // 3: Registration number
 

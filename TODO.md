@@ -39,8 +39,6 @@ Possibly there's a need for SHIPGEN as well.
 
 ### Todo
 
-- Make Worldgen reachable
-- Draw Subsector Map Grid (TAS Form 6)
 - Create communication routes
 - Select capital world
 - Generate possible ships to encounter when entering system?

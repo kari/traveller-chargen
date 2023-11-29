@@ -235,7 +235,7 @@ div.boxed div {
     margin-top: 0.25em;
     margin-bottom: 0.25em;
 
-    font-family: monospace;
+    font-family: Courier, 'Courier New', monospace;
     font-size: 85%;
     display: inline;
     border-left: 1px solid;
