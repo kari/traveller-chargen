@@ -112,7 +112,7 @@ function rollSubsector(): Subsector {
             const [x, y] = hexToPixel(q, r);
             draw.polygon(drawHex(x, y, size)).fill('none').stroke({ width: 1, color: "currentColor" });
             const text = draw.text((('0000' + ((q + 1) * 100 + (r + 1))).slice(-4)))
-            text.move(x - text.length() / 2, y - size + 20)
+            text.center(x, y - 70)
         }
     }
 
@@ -129,10 +129,9 @@ function rollSubsector(): Subsector {
 
         const starportType = draw.text(h.starport)
         // FIXME: if text.length() > side length (= size), decrease font size until fits
-        worldName.move(x - worldName.length() / 2, y + size - 40)
-        starportType.move(x - starportType.length() / 2, y - size + 40)
-        // add starport to clip path
-        mask.add(draw.rect(starportType.length() + 10, starportType.length() + 10).fill('#000').move(x - (starportType.length() + 10) / 2, y - size + 40))
+        worldName.center(x, y + size - 30)
+        starportType.center(x, y - 50)
+        mask.add(draw.rect(starportType.length() + 10, starportType.length() + 10).fill('#000').center(x, y - 50))
 
         // world symbol (full = ocean, empty = no ocean, asteroid belt)
         const r = new Random();
@@ -143,9 +142,9 @@ function rollSubsector(): Subsector {
                 draw.circle(r.real(2, 5)).move(x + dx, y + dy)
             }
         } else if (h.world.hydrographicPercentage > 0) { // has oceans
-            draw.circle(20).move(x - 10, y - 10) // .fill('grey')
+            draw.circle(20).center(x, y) // .fill('grey')
         } else { // desert world
-            draw.circle(20).move(x - 10, y - 10).fill("none").stroke({ width: 1, color: "currentColor" })
+            draw.circle(20).center(x, y).fill("none").stroke({ width: 1, color: "currentColor" })
         }
 
         if (h.gasGiant) {
