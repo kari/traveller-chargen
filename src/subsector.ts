@@ -171,7 +171,7 @@ class Hex {
 
     basesToString(): string {
         if (this.navalBase && this.scoutBase) {
-            return '2';
+            return 'A';
         } else if (this.navalBase) {
             return 'N';
         } else if (this.scoutBase) {
