@@ -2,301 +2,343 @@
 <html lang="en">
 
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Classic Traveller Chargen</title>
-    <script type="module" src="chargen.ts"></script>
-    <link href="css/main.css" rel="stylesheet">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Classic Traveller Chargen</title>
+  <script type="module" src="chargen.ts"></script>
+  <link href="css/main.css" rel="stylesheet">
 </head>
 
 <body>
-    <main class="container">
-        <h1>Classic Traveller Chargen</h1>
-        <button id="reroll" type="button" class="contrast">Reroll</button>
-        <button id="roll-ship" type="button" class="contrast">Roll Ship</button>
-        <div id="result">
+  <main class="container">
+    <h1>Classic Traveller Chargen</h1>
+    <nav>
+      <ul>
+        <li><a href="worldgen.html">Worldgen</a></li>
+        <li><a href="about.html">About</a></li>
+      </ul>
+    </nav>
+    <button id="reroll" type="button" class="contrast">Reroll</button>
+    <button id="roll-ship" type="button" class="contrast">Roll Ship</button>
+    <div id="result">
 
+    </div>
+    <div class="outer-form" id="tas-form-2">
+      <div class="form">
+        <div class="span-3">
+          <h2>Personal Data and History</h2>
         </div>
-        <div class="outer-form" id="tas-form-2">
-        <div class="form">
-            <div class="span-3"><h2>Personal Data and History</h2></div>
-            <div class="span-1">
-                <div class="label">1. Date of preparation</div>
-                <div id="box-1"></div>
-            </div>
-            <div class="border-right-0">
-                <div class="label">2. Name</div>
-                <div id="box-2"></div>
-            </div>
-            <div class="upp border-left-0">
-                <div class="border-right label">3. UPP</div>
-                <div class="label padding-left"><em>Stren</em></div>
-                <div class="label"><em>Dext</em></div>
-                <div class="label"><em>Endur</em></div>
-                <div class="label"><em>Intel</em></div>
-                <div class="label"><em>Educ</em></div>
-                <div class="label"><em>Soc</em></div>
-                <div id="strength" class="padding-left"></div>
-                <div id="dexterity"></div>
-                <div id="endurance"></div>
-                <div id="intelligence"></div>
-                <idv id="education"></idv>
-                <div id="social-standing"></div>
-            </div>
-            <div class="span-1">
-                <div class="label">4. Noble Title</div>
-                <div id="box-4"></div>
-            </div>
-            <div class="span-1">
-                <div class="label">5. Military Rank</div>
-                <div id="box-5"></div>
-            </div>
-            <div>
-                <div class="label">6. Birthdate</div>
-                <div id="box-6"></div>
-            </div>
-            <div>
-                <div class="label">7. Age Modifiers <em>(+ for drugs; - for sleep)</em></div>
-                <div>0</div>
-            </div>
-            <div>
-                <div class="label">8. Birthworld</div>
-                <div id="box-8"></div>
-            </div>
-            <div class="border-right-0"><h2>Service History</h2></div>
-            <div class="border-left-0 label">Personal service data produced from the appropriate character generation system</div>
-            <div class="span-1">
-                <div class="label">9. Service</div>
-                <div id="box-9"></div>
-            </div>
-            <div class="span-1">
-                <div class="label">10. Branch</div>
-                <div id="box-10"></div>
-            </div>
-            <div>
-                <div class="label">11. Dischargeworld</div>
-                <div id="box-11"></div>
-            </div>
-            <div class="span-1">
-                <div class="label">12. Terms Served</div>
-                <div id="box-12"></div>
-            </div>
-            <div class="span-1">
-                <div class="label">13. Final Rank</div>
-                <div id="box-13"></div>
-            </div>
-            <div class="span-1">
-                <div class="label">14a. Retired?</div>
-                <div><label><input type="checkbox" id="retired-yes" disabled />Yes</label> <label><input type="checkbox" id="retired-no" disabled />No</label></div>
-            </div>
-            <div class="span-1">
-                <div class="label">14b. Retirement Pay</div>
-                <div id="box-14b"></div>
-            </div>
-            <div class="span-4">
-                <div class="label">15. Special Assignments</div>
-                <div></div>
-            </div>
-            <div class="span-4">
-                <div class="label">16. Awards and Decorations <em>(include Combat Command Credits, Commendations, Medals, etc)</em></div>
-                <div></div>
-            </div>
-            <div class="span-4">
-                <div class="label">17. Equipment Qualified On</div>
-                <div id="box-17"></div>
-            </div>
-            <div>
-                <div class="label">18a. Primary Skill</div>
-                <div id="box-18a"></div>
-            </div>
-            <div>
-                <div class="label">18b. Secondary Skill</div>
-                <div id="box-18b"></div>
-            </div>
-            <div class="span-4">
-                <div class="label">18c. Additional Skills</div>
-                <div id="box-18c"></div>
-            </div>
-            <div class="span-1">
-                <div class="label">19a. Preferred Weapon</div>
-                <div id="box-19a"></div>
-            </div>
-            <div class="span-1">
-                <div class="label">19b. Preferred Pistol</div>
-                <div id="box-19b"></div>
-            </div>
-            <div class="span-1">
-                <div class="label">19c. Preferred Blade</div>
-                <div id="box-19c"></div>
-            </div>
-            <div class="span-1">
-                <div class="label">20. Travellers' Member?</div>
-                <div><label><input type="checkbox" id="tas-yes" disabled />Yes</label> <label><input type="checkbox" id="tas-no" disabled />No</label></div>
-            </div>
-            <div class="span-1 border-right-0"><h2>Psionics</h2></div>
-            <div class="span-3 border-left-0 label"><em><strong>Warning:</strong></em> Information regarding an individual's psionic ability is confidential, and may not be released without his or her consent.</div>
-            <div class="span-1">
-                <div class="label">21. Date of Test</div>
-                <div></div>
-            </div>
-            <div class="span-1">
-                <div class="label">22. PSR</div>
-                <div></div>
-            </div>
-            <div class="span-1">
-                <div class="label">23a. Trained?</div> 
-                <div><label><input type="checkbox" disabled />Yes</label> <label><input type="checkbox" disabled />No</label></div>
-            </div>
-            <div class="span-1">
-                <div class="label">23b. Date Completed</div>
-                <div></div>
-            </div>
-            <div class="span-4">
-                <div class="label">24. Talents and Current Levels</div>
-                <div></div>
-            </div>
+        <div class="span-1">
+          <div class="label">1. Date of preparation</div>
+          <div id="box-1"></div>
         </div>
-            <div><h3>TAS Form 2</h3></div>
-            <div class="barcode" id="seed">⑉⑆⑇⑈⑇⑆⑆⑉</div>
+        <div class="border-right-0">
+          <div class="label">2. Name</div>
+          <div id="box-2"></div>
         </div>
+        <div class="upp border-left-0">
+          <div class="border-right label">3. UPP</div>
+          <div class="label padding-left"><em>Stren</em></div>
+          <div class="label"><em>Dext</em></div>
+          <div class="label"><em>Endur</em></div>
+          <div class="label"><em>Intel</em></div>
+          <div class="label"><em>Educ</em></div>
+          <div class="label"><em>Soc</em></div>
+          <div id="strength" class="padding-left"></div>
+          <div id="dexterity"></div>
+          <div id="endurance"></div>
+          <div id="intelligence"></div>
+          <idv id="education"></idv>
+          <div id="social-standing"></div>
+        </div>
+        <div class="span-1">
+          <div class="label">4. Noble Title</div>
+          <div id="box-4"></div>
+        </div>
+        <div class="span-1">
+          <div class="label">5. Military Rank</div>
+          <div id="box-5"></div>
+        </div>
+        <div>
+          <div class="label">6. Birthdate</div>
+          <div id="box-6"></div>
+        </div>
+        <div>
+          <div class="label">7. Age Modifiers <em>(+ for drugs; - for sleep)</em></div>
+          <div>0</div>
+        </div>
+        <div>
+          <div class="label">8. Birthworld</div>
+          <div id="box-8"></div>
+        </div>
+        <div class="border-right-0">
+          <h2>Service History</h2>
+        </div>
+        <div class="border-left-0 label">Personal service data produced from the appropriate character
+          generation system</div>
+        <div class="span-1">
+          <div class="label">9. Service</div>
+          <div id="box-9"></div>
+        </div>
+        <div class="span-1">
+          <div class="label">10. Branch</div>
+          <div id="box-10"></div>
+        </div>
+        <div>
+          <div class="label">11. Dischargeworld</div>
+          <div id="box-11"></div>
+        </div>
+        <div class="span-1">
+          <div class="label">12. Terms Served</div>
+          <div id="box-12"></div>
+        </div>
+        <div class="span-1">
+          <div class="label">13. Final Rank</div>
+          <div id="box-13"></div>
+        </div>
+        <div class="span-1">
+          <div class="label">14a. Retired?</div>
+          <div><label><input type="checkbox" id="retired-yes" disabled />Yes</label> <label><input type="checkbox"
+                id="retired-no" disabled />No</label></div>
+        </div>
+        <div class="span-1">
+          <div class="label">14b. Retirement Pay</div>
+          <div id="box-14b"></div>
+        </div>
+        <div class="span-4">
+          <div class="label">15. Special Assignments</div>
+          <div></div>
+        </div>
+        <div class="span-4">
+          <div class="label">16. Awards and Decorations <em>(include Combat Command Credits, Commendations,
+              Medals, etc)</em></div>
+          <div></div>
+        </div>
+        <div class="span-4">
+          <div class="label">17. Equipment Qualified On</div>
+          <div id="box-17"></div>
+        </div>
+        <div>
+          <div class="label">18a. Primary Skill</div>
+          <div id="box-18a"></div>
+        </div>
+        <div>
+          <div class="label">18b. Secondary Skill</div>
+          <div id="box-18b"></div>
+        </div>
+        <div class="span-4">
+          <div class="label">18c. Additional Skills</div>
+          <div id="box-18c"></div>
+        </div>
+        <div class="span-1">
+          <div class="label">19a. Preferred Weapon</div>
+          <div id="box-19a"></div>
+        </div>
+        <div class="span-1">
+          <div class="label">19b. Preferred Pistol</div>
+          <div id="box-19b"></div>
+        </div>
+        <div class="span-1">
+          <div class="label">19c. Preferred Blade</div>
+          <div id="box-19c"></div>
+        </div>
+        <div class="span-1">
+          <div class="label">20. Travellers' Member?</div>
+          <div><label><input type="checkbox" id="tas-yes" disabled />Yes</label> <label><input type="checkbox"
+                id="tas-no" disabled />No</label></div>
+        </div>
+        <div class="span-1 border-right-0">
+          <h2>Psionics</h2>
+        </div>
+        <div class="span-3 border-left-0 label"><em><strong>Warning:</strong></em> Information regarding an
+          individual's psionic ability is confidential, and may not be released without his or her consent.
+        </div>
+        <div class="span-1">
+          <div class="label">21. Date of Test</div>
+          <div></div>
+        </div>
+        <div class="span-1">
+          <div class="label">22. PSR</div>
+          <div></div>
+        </div>
+        <div class="span-1">
+          <div class="label">23a. Trained?</div>
+          <div><label><input type="checkbox" disabled />Yes</label> <label><input type="checkbox" disabled />No</label>
+          </div>
+        </div>
+        <div class="span-1">
+          <div class="label">23b. Date Completed</div>
+          <div></div>
+        </div>
+        <div class="span-4">
+          <div class="label">24. Talents and Current Levels</div>
+          <div></div>
+        </div>
+      </div>
+      <div>
+        <h3>TAS Form 2</h3>
+      </div>
+      <div class="barcode" id="seed">⑉⑆⑇⑈⑇⑆⑆⑉</div>
+    </div>
 
-        <div class="outer-form" id="tas-form-2-reverse">
-            <div class="form">
-                <div class="span-4">
-                    <div class="label">25. Name</div>
-                    <div id="box-25"></div>
-                </div>
-                <div class="border-right-0"><h2>Cash Accounts</h2></div>
-                <div class="border-left-0 label">Data concerning the individual's financial affairs and cash availability</div>
-                <div class="span-4">
-                    <div class="label">26. Cash Status <em>(note cash available to the individual)</em></div>
-                    <div id="box-26"></div>
-                </div>
-                <div class="border-right-0"><h2>Inventory</h2></div>
-                <div class="border-left-0 label">Information on personal inventory and possessions, including vehicles.</div>
-                <div class="span-4">
-                    <div class="label">27. Personal Possessions</div>
-                    <div id="box-27"></div>
-                </div>
-                <div class="span-4">
-                    <div class="label">28. Vehicles</div>
-                    <div id="box-28"></div>
-                </div>
-            </div>
-                <div><h3>TAS Form 2 (Reverse)</h3></div>
-            </div>
+    <div class="outer-form" id="tas-form-2-reverse">
+      <div class="form">
+        <div class="span-4">
+          <div class="label">25. Name</div>
+          <div id="box-25"></div>
+        </div>
+        <div class="border-right-0">
+          <h2>Cash Accounts</h2>
+        </div>
+        <div class="border-left-0 label">Data concerning the individual's financial affairs and cash
+          availability</div>
+        <div class="span-4">
+          <div class="label">26. Cash Status <em>(note cash available to the individual)</em></div>
+          <div id="box-26"></div>
+        </div>
+        <div class="border-right-0">
+          <h2>Inventory</h2>
+        </div>
+        <div class="border-left-0 label">Information on personal inventory and possessions, including vehicles.
+        </div>
+        <div class="span-4">
+          <div class="label">27. Personal Possessions</div>
+          <div id="box-27"></div>
+        </div>
+        <div class="span-4">
+          <div class="label">28. Vehicles</div>
+          <div id="box-28"></div>
+        </div>
+      </div>
+      <div>
+        <h3>TAS Form 2 (Reverse)</h3>
+      </div>
+    </div>
 
-            <div class="outer-form" id="tas-form-3" hidden>
-                <div class="form">
-                    <div class="span-3"><h2>Ship's Papers (Commercial)</h2></div>
-                    <div class="span-1">
-                        <div class="label">1. Date of preparation</div>
-                        <div id="s-box-1"></div>
-                    </div>
-                    <div>
-                        <div class="label">2. Ship Name</div>
-                        <div id="s-box-2"></div>
-                    </div>
-                    <div>
-                        <div class="label">3. Registration Number</div>
-                        <div id="s-box-3"></div>
-                    </div>
-                    <div class="span-1">
-                        <div class="label">4. Ship Type</div>
-                        <div id="s-box-4"></div>
-                    </div>
-                    <div class="span-1">
-                        <div class="label">5. Builder</div>
-                        <div id="s-box-5"></div>
-                    </div>
-                    <div>
-                        <div class="label">6. Homeworld</div>
-                        <div id="s-box-6"></div>
-                    </div>
-                    <div class="span-1">
-                        <div class="label">7. Laid Down</div>
-                        <div id="s-box-7"></div>
-                    </div>
-                    <div class="span-1">
-                        <div class="label">8. First Flight</div>
-                        <div id="s-box-8"></div>
-                    </div>
-                    <div class="span-1">
-                        <div class="label">9. Cost <em>(New)</em></div>
-                        <div id="s-box-9"></div>
-                    </div>
-                    <div class="span-1">
-                        <div class="label">10. Occupation</div>
-                        <div id="s-box-10"></div>
-                    </div>
-                    <div class="border-right-0"><h2>Statistics</h2></div>
-                    <div class="border-left-0 label">Basic ship information for classification and registration purposes</div>
-                    <div class="tonnage">
-                        <div class="label span-2">11a. Hull Tonnage</div>
-                        <div id="s-box-11a" class="span-1"></div>
-                        <div class="span-1"><label><input id="std-hull-yes" type="checkbox" disabled />Std</label> <label><input id="std-hull-no" type="checkbox" disabled />Custom</label></div>
-                    </div>
-                    <div class="span-1">
-                        <div class="label">11b. Streamlined?</div>
-                        <div><label><input id="streamlined-yes" type="checkbox" disabled />Yes</label> <label><input id="streamlined-no" type="checkbox" disabled />No</label></div>
-                    </div>
-                    <div class="span-1">
-                        <div class="label">11c. Max Atmosphere</div>
-                        <div id="s-box-11c"></div>
-                    </div>
-                    <div class="span-1">
-                        <div class="label">12. Acceleration</div>
-                        <div id="s-box-12"></div>
-                    </div>
-                    <div class="span-1">
-                        <div class="label">13. Jump</div>
-                        <div id="s-box-13"></div>
-                    </div>
-                    <div class="span-1">
-                        <div class="label">14. Power Plant</div>
-                        <div id="s-box-14"></div>
-                    </div>
-                    <div class="span-1">
-                        <div class="label">15. Cargo <em>(in tons)</em></div>
-                        <div id="s-box-15"></div>
-                    </div>
-                    <div class="span-1">
-                        <div class="label">16. Staterooms</div>
-                        <div id="s-box-16"></div>
-                    </div>
-                    <div class="span-1">
-                        <div class="label">17. Low Berths</div>
-                        <div id="s-box-17"></div>
-                    </div>
-                    <div class="span-1">
-                        <div class="label">18. Full Crew</div>
-                        <div id="s-box-18"></div>
-                    </div>
-                    <div class="span-1">
-                        <div class="label">19. Minimal Crew</div>
-                        <div id="s-box-19"></div>
-                    </div>
-                    <div class="span-4">
-                        <div class="label">20. Ship's Vehicles <em>(describe)</em></div>
-                        <div id="s-box-20"></div>
-                    </div>
-                    <div class="span-4">
-                        <div class="label">21. Crew Manifest <em>(list names, UPPs, skills, salaries, and shares for all crew members)</em></div>
-                        <div></div>
-                    </div>
-                    <div class="span-3 border-right-0">
-                        <div class="label">22. Owner <em>(include full particulars on owner, whether present or not)</em></div>
-                        <div id="s-box-22"></div>
-                    </div>
-                    <div class="span-1 border-left-0">
-                        <div class="label"><label><input type="checkbox" disabled checked />Aboard</label> <label><input type="checkbox" disabled />Absent</label></div>
-                    </div>
-                </div>
-                    <div><h3>TAS Form 3</h3></div>
-                    <div class="barcode">⑉⑆⑈⑇⑆⑈⑇⑇⑉</div>
-                </div>
-        
-    </main>
+    <div class="outer-form" id="tas-form-3" hidden>
+      <div class="form">
+        <div class="span-3">
+          <h2>Ship's Papers (Commercial)</h2>
+        </div>
+        <div class="span-1">
+          <div class="label">1. Date of preparation</div>
+          <div id="s-box-1"></div>
+        </div>
+        <div>
+          <div class="label">2. Ship Name</div>
+          <div id="s-box-2"></div>
+        </div>
+        <div>
+          <div class="label">3. Registration Number</div>
+          <div id="s-box-3"></div>
+        </div>
+        <div class="span-1">
+          <div class="label">4. Ship Type</div>
+          <div id="s-box-4"></div>
+        </div>
+        <div class="span-1">
+          <div class="label">5. Builder</div>
+          <div id="s-box-5"></div>
+        </div>
+        <div>
+          <div class="label">6. Homeworld</div>
+          <div id="s-box-6"></div>
+        </div>
+        <div class="span-1">
+          <div class="label">7. Laid Down</div>
+          <div id="s-box-7"></div>
+        </div>
+        <div class="span-1">
+          <div class="label">8. First Flight</div>
+          <div id="s-box-8"></div>
+        </div>
+        <div class="span-1">
+          <div class="label">9. Cost <em>(New)</em></div>
+          <div id="s-box-9"></div>
+        </div>
+        <div class="span-1">
+          <div class="label">10. Occupation</div>
+          <div id="s-box-10"></div>
+        </div>
+        <div class="border-right-0">
+          <h2>Statistics</h2>
+        </div>
+        <div class="border-left-0 label">Basic ship information for classification and registration purposes
+        </div>
+        <div class="tonnage">
+          <div class="label span-2">11a. Hull Tonnage</div>
+          <div id="s-box-11a" class="span-1"></div>
+          <div class="span-1"><label><input id="std-hull-yes" type="checkbox" disabled />Std</label>
+            <label><input id="std-hull-no" type="checkbox" disabled />Custom</label>
+          </div>
+        </div>
+        <div class="span-1">
+          <div class="label">11b. Streamlined?</div>
+          <div><label><input id="streamlined-yes" type="checkbox" disabled />Yes</label> <label><input
+                id="streamlined-no" type="checkbox" disabled />No</label></div>
+        </div>
+        <div class="span-1">
+          <div class="label">11c. Max Atmosphere</div>
+          <div id="s-box-11c"></div>
+        </div>
+        <div class="span-1">
+          <div class="label">12. Acceleration</div>
+          <div id="s-box-12"></div>
+        </div>
+        <div class="span-1">
+          <div class="label">13. Jump</div>
+          <div id="s-box-13"></div>
+        </div>
+        <div class="span-1">
+          <div class="label">14. Power Plant</div>
+          <div id="s-box-14"></div>
+        </div>
+        <div class="span-1">
+          <div class="label">15. Cargo <em>(in tons)</em></div>
+          <div id="s-box-15"></div>
+        </div>
+        <div class="span-1">
+          <div class="label">16. Staterooms</div>
+          <div id="s-box-16"></div>
+        </div>
+        <div class="span-1">
+          <div class="label">17. Low Berths</div>
+          <div id="s-box-17"></div>
+        </div>
+        <div class="span-1">
+          <div class="label">18. Full Crew</div>
+          <div id="s-box-18"></div>
+        </div>
+        <div class="span-1">
+          <div class="label">19. Minimal Crew</div>
+          <div id="s-box-19"></div>
+        </div>
+        <div class="span-4">
+          <div class="label">20. Ship's Vehicles <em>(describe)</em></div>
+          <div id="s-box-20"></div>
+        </div>
+        <div class="span-4">
+          <div class="label">21. Crew Manifest <em>(list names, UPPs, skills, salaries, and shares for all
+              crew members)</em></div>
+          <div></div>
+        </div>
+        <div class="span-3 border-right-0">
+          <div class="label">22. Owner <em>(include full particulars on owner, whether present or not)</em>
+          </div>
+          <div id="s-box-22"></div>
+        </div>
+        <div class="span-1 border-left-0">
+          <div class="label"><label><input type="checkbox" disabled checked />Aboard</label> <label><input
+                type="checkbox" disabled />Absent</label></div>
+        </div>
+      </div>
+      <div>
+        <h3>TAS Form 3</h3>
+      </div>
+      <div class="barcode">⑉⑆⑈⑇⑆⑈⑇⑇⑉</div>
+    </div>
+
+  </main>
 </body>
 
 </html>
