@@ -356,6 +356,7 @@ class Character {
     }
 
     addVehicleSkill() {
+        // FIXME: Currently first chooses a random skill and then only ever improves that one.
         const known: string[] = [];
         for (const skill of Object.keys(this.skills)) {
             if (vehicleSkills.includes(skill)) {

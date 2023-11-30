@@ -1,8 +1,7 @@
 {
   "name": "traveller-chargen",
   "source": [
-    "./src/index.html",
-    "./src/worldgen.html"
+    "./src/index.html"
   ],
   "scripts": {
     "start": "parcel",
