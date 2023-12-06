@@ -79,25 +79,25 @@ function rollCharacter(): Character {
     // ADD: box-16 (Awards and Decorations)
 
     // identify weapons & devices qualified on
-    const equipmentSkills: string[] = Object.keys(c.skills).filter(s => weaponSkills["gun"].concat(weaponSkills["blade"]).includes(s));
-    document.getElementById("box-17")!.textContent = c.skillsToString(equipmentSkills);
-    const additionalSkills: string[] = Object.keys(c.skills).filter(s => !weaponSkills["gun"].concat(weaponSkills["blade"]).includes(s));
-    document.getElementById("box-17")!.textContent = c.skillsToString(equipmentSkills);
+    const equipmentSkills: string[] = c.skills.filter(weaponSkills["gun"].concat(weaponSkills["blade"]));
+    const additionalSkills: string[] = c.skills.list.filter((x) => !equipmentSkills.includes(x))
+    document.getElementById("box-17")!.textContent = c.skills.toString(equipmentSkills);
 
     if (Object.keys(additionalSkills).length > 0) {
-        const sortedSkills = c.sortSkills(additionalSkills);
-        document.getElementById("box-18a")!.textContent = sortedSkills[0] + "-" + c.skills[sortedSkills[0]];
+        const sortedSkills = c.skills.sorted(additionalSkills);
+
+        document.getElementById("box-18a")!.textContent = c.skills.toString(sortedSkills[0]);
         if (sortedSkills.length > 1) {
-            document.getElementById("box-18b")!.textContent = sortedSkills[1] + "-" + c.skills[sortedSkills[1]];
+            document.getElementById("box-18b")!.textContent = c.skills.toString(sortedSkills[1]);
         }
         if (sortedSkills.length > 2) {
-            document.getElementById("box-18c")!.textContent = c.skillsToString(sortedSkills.slice(2));
+            document.getElementById("box-18c")!.textContent = c.skills.toString(sortedSkills.slice(2));
         }
     } 
 
 
     function preferredWeapon(type: string): string | null {
-        const skills: string[] = c.sortSkills(Object.keys(c.skills).filter(s => weaponSkills[type].includes(s)));
+        const skills: string[] = c.skills.sorted(weaponSkills[type]);
         if (skills.length > 0) {
             return skills[0];
         }
@@ -124,7 +124,7 @@ function rollCharacter(): Character {
         document.getElementById("box-19c")!.textContent = preferredBlade;
     }
 
-    if (c.hasTravellers) {
+    if (c.items.hasTravellers) {
         document.getElementById("tas-yes")!.setAttribute("checked", "");
     } else {
         document.getElementById("tas-no")!.setAttribute("checked", "");
@@ -134,7 +134,7 @@ function rollCharacter(): Character {
         document.getElementById("box-26")!.textContent = "Cr" + new Intl.NumberFormat().format(c.credits);
     }
 
-    document.getElementById("box-27")!.textContent = c.itemsToString();
+    document.getElementById("box-27")!.textContent = c.items.toString();
 
     if (c.ship) {
         document.getElementById("tas-form-3")!.hidden = false;

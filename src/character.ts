@@ -51,19 +51,31 @@ class Name {
 
 type Gender = "male" | "female"
 
-class Skills {
+export class Skills {
     private skills: Record<string, number> = {}; // FIXME: replace string with list of valid skills
 
     get list(): string[] {
         return Object.keys(this.skills)
     }
 
-    toString(): string {
-        return Object.keys(this.skills).map((s: string) => s + "-" + this.skills[s]).join(", ");
+    filter(subset: string[]): string[] {
+        return Object.keys(this.skills).filter((s) => subset.includes(s))
     }
 
-    sorted(): string[] {
-        return Object.keys(this.skills).sort((a, b) => (this.skills[a] < this.skills[b]) ? 1 : -1);
+    toString(subset?: string[] | string): string {
+        if (subset == undefined) {
+            return Object.keys(this.skills).map((s: string) => s + "-" + this.skills[s]).join(", ");            
+        } else if (typeof subset == "string") {
+            return subset + "-" + this.skills[subset]
+        }
+        return Object.keys(this.skills).filter((s) => subset.includes(s)).map((s: string) => s + "-" + this.skills[s]).join(", ");
+    }
+
+    sorted(subset?: string[]): string[] {
+        if (subset == undefined) {
+            return Object.keys(this.skills).sort((a, b) => (this.skills[a] < this.skills[b]) ? 1 : -1);
+        }
+        return Object.keys(this.skills).filter((s) => subset.includes(s)).sort((a, b) => (this.skills[a] < this.skills[b]) ? 1 : -1); 
     }
 
     addZeroSkill(skill: string) {
@@ -81,6 +93,7 @@ class Skills {
         }
         console.debug(`Character earned skill ${skill}-${this.skills[skill]}`);
     }
+
 }
 
 class Items {
@@ -196,7 +209,7 @@ export class Character {
 
         console.log((this.dead ? "✝ " : "") + this.toString());
         if (this.skills.list.length > 0) { console.log(this.skills.toString()) }
-        if (Object.keys(this.items).length > 0) { console.log(this.items.toString()) }
+        if (this.items.list.length > 0) { console.log(this.items.toString()) }
         if (this.ship) { console.log(this.ship.toString()) }
     }
 
