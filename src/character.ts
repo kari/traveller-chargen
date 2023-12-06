@@ -9,14 +9,14 @@ import { ImperialDate } from "./imperial_date";
 
 const numberFormat = new Intl.NumberFormat("en-us", { maximumFractionDigits: 2 });
 
-type Attributes = {
+interface Attributes {
     strength: number,
     dexterity: number,
     endurance: number,
     intelligence: number,
     education: number,
     socialStanding: number
-};
+}
 
 type Attribute = keyof Attributes;
 
@@ -49,7 +49,90 @@ class Name {
     }
 }
 
-class Character {
+type Gender = "male" | "female"
+
+class Skills {
+    private skills: Record<string, number> = {}; // FIXME: replace string with list of valid skills
+
+    get list(): string[] {
+        return Object.keys(this.skills)
+    }
+
+    toString(): string {
+        return Object.keys(this.skills).map((s: string) => s + "-" + this.skills[s]).join(", ");
+    }
+
+    sorted(): string[] {
+        return Object.keys(this.skills).sort((a, b) => (this.skills[a] < this.skills[b]) ? 1 : -1);
+    }
+
+    addZeroSkill(skill: string) {
+        if (skill in this.skills) {
+            console.warn(`Skill already exists at level ${skill}-${this.skills[skill]}`);
+        }
+        this.increase(skill, 0)
+    }
+
+    increase(skill: string, by: number = 1) {
+        if (skill in this.list) {
+            this.skills[skill] += by;
+        } else {
+            this.skills[skill] = by;
+        }
+        console.debug(`Character earned skill ${skill}-${this.skills[skill]}`);
+    }
+}
+
+class Items {
+    private items: Record<string, number> = {} // FIXME: replace string with valid items
+
+    toString(): string {
+        return Object.keys(this.items).map(i => this.items[i] + " " + i).join(", ");
+    }
+
+    get list(): string[] {
+        return Object.keys(this.items)
+    }
+
+    convertPassges(): number {
+        const PassagePrices: { [key: string]: number } = {
+            "Low Psg": 1_000,
+            "Mid Psg": 8_000,
+            "High Psg": 10_000,
+        }
+        const passages = this.list.filter(x => Object.keys(PassagePrices).includes(x));
+        let credits = 0;
+
+        for (const p of passages) {
+            console.debug(`Converted ${this.items[p]} ${p} to credits`);
+            credits += PassagePrices[p] * 0.9 * this.items[p];
+            delete (this.items[p]);
+        }
+
+        return credits;
+    }
+
+    add(item: string) {
+        console.debug(`Character earned item ${item}`);
+        if (item in this.items && item != "Travellers'") {
+            this.items[item] += 1;
+        } else {
+            this.items[item] = 1;
+        }
+    }
+
+    get hasTravellers(): boolean {
+        if (Object.keys(this.items).includes("Travellers'")) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+}
+
+// FIXME: refactor out stuff not directly related to Character class
+export class Character {
     seed: number;
     random: Random;
 
@@ -74,26 +157,10 @@ class Character {
     drafted = false;
     commissioned = false;
 
-    skills: Record<string, number> = {};
-    items: Record<string, number> = {};
-    ship: Ship | null = null;
+    skills = new Skills();
+    items = new Items();
+    ship?: Ship;
     credits = 0;
-
-    toString(): string {
-        return `${this.retired ? 'Retired ' : ''}${this.career.memberName ? (this.retired ? this.career.memberName : 'Ex-' + this.career.memberName.toLowerCase()) + ' ' : ''}${this.career.ranks && this.career.ranks[this.rank] && this.career.memberName != this.career.ranks[this.rank] ? this.career.ranks[this.rank] + " " : ""}${this.name.toString()} ${this.upp} Age ${this.age} ${this.terms} terms Cr${numberFormat.format(this.credits)}`;
-    }
-
-    skillsToString(skills: string[] = Object.keys(this.skills)): string {
-        return skills.map(s => s + "-" + this.skills[s]).join(", ");
-    }
-
-    itemsToString(): string {
-        return Object.keys(this.items).map(i => this.items[i] + " " + i).join(", ");
-    }
-
-    get skillAvg(): number {
-        return (this.attributes.strength + this.attributes.dexterity + this.attributes.endurance + this.attributes.intelligence + this.attributes.education + this.attributes.socialStanding) / 6;
-    }
 
     constructor(seed?: number) {
         this.random = new Random(seed);
@@ -113,12 +180,8 @@ class Character {
 
         console.debug(`Initial UPP ${this.upp}`);
 
-        this.gender = this.random.pick([Gender.Male, Gender.Female]);
-        if (this.gender == Gender.Female) {
-            this.name = new Name(this.random.pick(names["female"]), this.random.pick(names["last"]));
-        } else {
-            this.name = new Name(this.random.pick(names["male"]), this.random.pick(names["last"]));
-        }
+        this.gender = this.random.pick(["male", "female"]);
+        this.name = new Name(this.random.pick(names[this.gender]), this.random.pick(names["last"]));
         this.name.title = this.addTitle();
 
         this.birthworld = new World(this.random);
@@ -132,17 +195,20 @@ class Character {
         this.birthDate = new ImperialDate(this.random.integer(1, 365), 1105 - this.age); // FIXME: this might not always be correct, should ensure date of preparation - birthdate >= age
 
         console.log((this.dead ? "✝ " : "") + this.toString());
-        if (Object.keys(this.skills).length > 0) { console.log(this.skillsToString()) }
-        if (Object.keys(this.items).length > 0) { console.log(this.itemsToString()) }
+        if (this.skills.list.length > 0) { console.log(this.skills.toString()) }
+        if (Object.keys(this.items).length > 0) { console.log(this.items.toString()) }
         if (this.ship) { console.log(this.ship.toString()) }
     }
 
-    sortSkills(skills = Object.keys(this.skills)): string[] {
-
-        return skills.sort((a, b) => (this.skills[a] < this.skills[b]) ? 1 : -1);
+    toString(): string {
+        return `${this.retired ? 'Retired ' : ''}${this.career.memberName ? (this.retired ? this.career.memberName : 'Ex-' + this.career.memberName.toLowerCase()) + ' ' : ''}${this.career.ranks && this.career.ranks[this.rank] && this.career.memberName != this.career.ranks[this.rank] ? this.career.ranks[this.rank] + " " : ""}${this.name.toString()} ${this.upp} Age ${this.age} ${this.terms} terms Cr${numberFormat.format(this.credits)}`;
     }
 
-    doCareer() {
+    get attrAvg(): number {
+        return (this.attributes.strength + this.attributes.dexterity + this.attributes.endurance + this.attributes.intelligence + this.attributes.education + this.attributes.socialStanding) / 6;
+    }
+
+    private doCareer() {
         let activeDuty = true;
         do {
             console.debug(`Starting term ${this.terms + 1} of service`);
@@ -193,8 +259,8 @@ class Character {
             // skills and training
             while (eligibleSkills > 0) {
                 eligibleSkills -= 1;
-                if (this.skillAvg <= 7) {
-                    console.debug(`Avg. skill ${numberFormat.format(this.skillAvg)}, focusing on personal development`);
+                if (this.attrAvg <= 7) {
+                    console.debug(`Avg. skill ${numberFormat.format(this.attrAvg)}, focusing on personal development`);
                     this.career.personalDevelopment(this, this.random.roll(1));
                 } else {
                     switch (this.random.roll(1)) {
@@ -289,13 +355,13 @@ class Character {
                 break;
         }
         const benefitsDM = (this.rank >= 5) ? 1 : 0;
-        const cashDM = ('Gambling' in this.skills) ? 1 : 0;
+        const cashDM = ('Gambling' in this.skills.list) ? 1 : 0;
         console.debug(`Character is eligible to ${benefits} benefits, with benefits DM ${benefitsDM} and cash table DM ${cashDM}`);
 
         let cashTableRolls = 0;
         while (benefits > 0) {
             benefits -= 1;
-            if (cashTableRolls > 0 && (cashTableRolls >= 3 || this.skillAvg <= 7 || this.random.roll(1) >= 3)) {
+            if (cashTableRolls > 0 && (cashTableRolls >= 3 || this.attrAvg <= 7 || this.random.roll(1) >= 3)) {
                 // benefits
                 console.debug("Character rolls for benefits table");
                 this.career.benefitsTable(this, this.random.roll(1) + benefitsDM);
@@ -308,17 +374,7 @@ class Character {
         }
 
         if (this.ship) {
-            const PassagePrices: { [key: string]: number } = {
-                "Low Psg": 1000,
-                "Mid Psg": 8000,
-                "High Psg": 10000,
-            }
-            const passages = Object.keys(this.items).filter(x => Object.keys(PassagePrices).includes(x));
-            for (const p of passages) {
-                console.debug(`Converted ${this.items[p]} ${p} to credits`);
-                this.credits += PassagePrices[p] * 0.9 * this.items[p];
-                delete (this.items[p]);
-            }
+            this.credits += this.items.convertPassges();
         }
 
     }
@@ -347,18 +403,13 @@ class Character {
             return;
         }
 
-        if (skill in this.skills) {
-            this.skills[skill] += 1;
-        } else {
-            this.skills[skill] = 1;
-        }
-        console.debug(`Character earned skill ${skill}-${this.skills[skill]}`);
+        this.skills.increase(skill);
     }
 
     addVehicleSkill() {
         // FIXME: Currently first chooses a random skill and then only ever improves that one.
         const known: string[] = [];
-        for (const skill of Object.keys(this.skills)) {
+        for (const skill of this.skills.list) {
             if (vehicleSkills.includes(skill)) {
                 known.push(skill);
             }
@@ -368,32 +419,6 @@ class Character {
             this.addSkill(this.random.pick(known));
         } else {
             this.addSkill(this.random.pick(vehicleSkills));
-        }
-    }
-
-    addZeroSkill(skill: string) {
-        if (skill in this.skills) {
-            console.warn(`Skill already exists at level ${skill}-${this.skills[skill]}`);
-            return;
-        } else {
-            this.skills[skill] = 0;
-        }
-    }
-
-    addItem(item: string) {
-        console.debug(`Character earned item ${item}`);
-        if (item in this.items && item != "Travellers'") {
-            this.items[item] += 1;
-        } else {
-            this.items[item] = 1;
-        }
-    }
-
-    get hasTravellers(): boolean {
-        if (Object.keys(this.items).includes("Travellers'")) {
-            return true;
-        } else {
-            return false;
         }
     }
 
@@ -414,7 +439,7 @@ class Character {
             }
         }
         const known: string[] = [];
-        for (const skill of Object.keys(this.skills)) {
+        for (const skill of this.skills.list) {
             if (weapons.includes(skill)) {
                 known.push(skill);
             }
@@ -475,14 +500,14 @@ class Character {
         const preferAndKnownAndNotOwned = preferAndKnown.filter(x => !prefs.owned.includes(x));
 
         if (preferAndKnownAndNotOwned.length > 0) {
-            this.addItem(this.random.pick(preferAndKnownAndNotOwned)); // add a weapon that is preferred and skilled but not owned
+            this.items.add(this.random.pick(preferAndKnownAndNotOwned)); // add a weapon that is preferred and skilled but not owned
 
             return;
         } else {
             const proficientAndKnown = prefs.known.filter(x => !prefs.avoid.includes(x));
             const proficientAndKnownAndNotOwned = proficientAndKnown.filter(x => !prefs.owned.includes(x));
             if (proficientAndKnownAndNotOwned.length > 0) {
-                this.addItem(this.random.pick(proficientAndKnownAndNotOwned)); // add a weapon that doesn't incur STR penalty and skilled but not owned
+                this.items.add(this.random.pick(proficientAndKnownAndNotOwned)); // add a weapon that doesn't incur STR penalty and skilled but not owned
 
                 return;
             }
@@ -492,24 +517,24 @@ class Character {
         const preferAndNotOwned = prefs.prefer.filter(x => !prefs.owned.includes(x));
         if (preferAndNotOwned.length > 0) {
             const randomWeapon = this.random.pick(preferAndNotOwned);
-            this.addItem(randomWeapon);
-            this.addZeroSkill(randomWeapon);
+            this.items.add(randomWeapon);
+            this.skills.addZeroSkill(randomWeapon);
 
             return;
         } else {
             const proficientAndNotOwned = prefs.known.filter(x => !prefs.avoid.includes(x) && !prefs.owned.includes(x));
             if (proficientAndNotOwned.length > 0) {
                 const randomWeapon = this.random.pick(proficientAndNotOwned);
-                this.addItem(randomWeapon);
-                this.addZeroSkill(randomWeapon);
+                this.items.add(randomWeapon);
+                this.skills.addZeroSkill(randomWeapon);
 
                 return;
             }
         }
         // give a random weapon not owned
         const randomWeapon = this.random.pick(weaponSkills[type].filter(x => !prefs.owned.includes(x)))
-        this.addItem(randomWeapon);
-        this.addZeroSkill(randomWeapon);
+        this.items.add(randomWeapon);
+        this.skills.addZeroSkill(randomWeapon);
 
         return;
     }
@@ -638,14 +663,14 @@ class Character {
     protected addTitle(): string | undefined {
         switch (this.attributes.socialStanding) {
             case 11: // Knight
-                if (this.gender == Gender.Male) {
+                if (this.gender == "male") {
                     return "Sir";
                 } else {
                     return "Dame";
                 }
             case 12:
                 if (this.name.prefix || this.random.roll(1) <= 3) {
-                    if (this.gender == Gender.Male) {
+                    if (this.gender == "male") {
                         return "Baron";
                     } else {
                         return this.random.pick(["Baronet", "Baroness"]);
@@ -656,19 +681,19 @@ class Character {
                     return undefined;
                 }
             case 13:
-                if (this.gender == Gender.Male) {
+                if (this.gender == "male") {
                     return "Marquis";
                 } else {
                     return this.random.pick(["Marquesa", "Marchioness"]);
                 }
             case 14:
-                if (this.gender == Gender.Male) {
+                if (this.gender == "male") {
                     return "Count";
                 } else {
                     return "Countess";
                 }
             case 15:
-                if (this.gender == Gender.Male) {
+                if (this.gender == "male") {
                     return "Duke";
                 } else {
                     return "Duchess";
@@ -679,12 +704,6 @@ class Character {
     }
 }
 
-enum Gender {
-    Male = 1,
-    Female
-}
-
-// for weapons, add strength requirements for DM, only choose skills in weapons for which strength+ is met or at least strength- is not met 
 const weaponSkills: { [key: string]: string[] } = {
     blade: ["Dagger", "Blade", "Foil", "Sword", "Cutlass", "Broadsword", "Bayonet", "Spear", "Halberd", "Pike", "Cudgel"],
     weapon: ["Carbine", "Rifle", "Auto Rifle", "Shotgun", "SMG", "Laser Carbine", "Laser Rifle"],
@@ -719,4 +738,4 @@ const weaponStrDM: Record<string, [bonus: number, penalty: number]> = {
 }
 const careers: Career[] = [Navy, Marines, Army, Scouts, Merchants, Other];
 
-export { Character, weaponSkills };
+export { weaponSkills };

@@ -7,9 +7,11 @@ enum TravelZoneType { Amber = "A", Red = "R" }
 
 enum TradeClassification { Agricultural = "Agricultural", NonAgricultural = "Non-agricultural", Industrial = "Industrial", NonIndustrial = "Non-industrial", Rich = "Rich", Poor = "Poor", Water = "Water", Desert = "Desert", Vacuum = "Vacuum", AsteroidBelt = "Asteroid Belt", IceCapped = "Ice-capped", SubsectorCapital = "Subsector Capital" }
 
+type Starport = "A" | "B" | "C" | "D" | "E" | "X"
+
 class World {
     name: string;
-    starport: string;
+    starport: Starport;
     planetarySize: number;
     planetaryAthmosphere: number;
     hydrographicPercentage: number;
@@ -27,7 +29,7 @@ class World {
         return this.tradeClassifications.join(", ");
     }
 
-    constructor(random: Random, starport?: string)  {
+    constructor(random: Random, starport?: Starport)  {
 
         this.starport = starport ?? Hex.rollStarport(random)
         const namegen = new NameGenerator(names, 3, 0.01, true)
@@ -153,7 +155,7 @@ class World {
 class Hex {
     coordinates: Coordinate;
     world?: World;
-    starport: string = "X";
+    starport: Starport = "X";
     navalBase: boolean = false;
     scoutBase: boolean = false;
     gasGiant: boolean = false;
@@ -185,7 +187,7 @@ class Hex {
         return this.coordinates[0] * 100 + this.coordinates[1];
     }
 
-    static rollStarport(random: Random): string {
+    static rollStarport(random: Random): Starport {
         switch (random.roll(2)) {
             case 2:
             case 3:

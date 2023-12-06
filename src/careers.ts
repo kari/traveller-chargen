@@ -1,7 +1,7 @@
 import { ScoutCourier, FreeTrader } from "./ships";
 import { type Character } from "./character";
 
-type Career = {
+interface Career {
     name: string,
     memberName: string | null,
     military: boolean;
@@ -95,7 +95,7 @@ const Navy: Career = {
     benefitsTable(c, i) {
         switch (i) {
             case 1:
-                c.addItem('Low Psg');
+                c.items.add('Low Psg');
                 break;
             case 2:
                 c.modifyAttribute("intelligence", 1);
@@ -107,10 +107,10 @@ const Navy: Career = {
                 c.addWeapon("blade");
                 break;
             case 5:
-                c.addItem("Travellers'");
+                c.items.add("Travellers'");
                 break;
             case 6:
-                c.addItem('High Psg');
+                c.items.add('High Psg');
                 break;
             case 7:
                 c.modifyAttribute("socialStanding", 2);
@@ -193,7 +193,7 @@ const Marines: Career = {
     benefitsTable(c, i) {
         switch (i) {
             case 1:
-                c.addItem('Low Psg');
+                c.items.add('Low Psg');
                 break;
             case 2:
                 c.modifyAttribute("intelligence", 2);
@@ -205,10 +205,10 @@ const Marines: Career = {
                 c.addWeapon("blade");
                 break;
             case 5:
-                c.addItem("Travellers'");
+                c.items.add("Travellers'");
                 break;
             case 6:
-                c.addItem('High Psg');
+                c.items.add('High Psg');
                 break;
             case 7:
                 c.modifyAttribute("socialStanding", 2);
@@ -293,7 +293,7 @@ const Army: Career = {
     benefitsTable(c, i) {
         switch (i) {
             case 1:
-                c.addItem('Low Psg');
+                c.items.add('Low Psg');
                 break;
             case 2:
                 c.modifyAttribute("intelligence", 1);
@@ -305,10 +305,10 @@ const Army: Career = {
                 c.addWeapon("gun");
                 break;
             case 5:
-                c.addItem("High Psg");
+                c.items.add("High Psg");
                 break;
             case 6:
-                c.addItem('Mid Psg');
+                c.items.add('Mid Psg');
                 break;
             case 7:
                 c.modifyAttribute("socialStanding", 1);
@@ -389,7 +389,7 @@ const Scouts: Career = {
     benefitsTable(c, i) {
         switch (i) {
             case 1:
-                c.addItem('Low Psg');
+                c.items.add('Low Psg');
                 break;
             case 2:
                 c.modifyAttribute("intelligence", 2);
@@ -490,7 +490,7 @@ const Merchants: Career = {
     benefitsTable(c, i) {
         switch (i) {
             case 1:
-                c.addItem('Low Psg');
+                c.items.add('Low Psg');
                 break;
             case 2:
                 c.modifyAttribute("intelligence", 1);
@@ -505,7 +505,7 @@ const Merchants: Career = {
                 c.addWeapon("blade");
                 break;
             case 6:
-                c.addItem('Low Psg');
+                c.items.add('Low Psg');
                 break;
             case 7:
                 if (!c.ship) {
@@ -588,7 +588,7 @@ const Other: Career = {
     benefitsTable(c, i) {
         switch (i) {
             case 1:
-                c.addItem('Low Psg');
+                c.items.add('Low Psg');
                 break;
             case 2:
                 c.modifyAttribute("intelligence", 1);
@@ -600,7 +600,7 @@ const Other: Career = {
                 c.addWeapon("gun");
                 break;
             case 5:
-                c.addItem("High Psg");
+                c.items.add("High Psg");
                 break;
             case 6:
                 // no benefit
