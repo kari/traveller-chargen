@@ -55,7 +55,7 @@ function rollSubsector(): Subsector {
         addWorldNode(h.world.name);
         addBoxedWorldNode(('0000' + h.hexNumber).slice(-4))
         addBoxedWorldNode(h.world.uwp);
-        addWorldNode(""); // FIXME: remarks
+        addWorldNode(h.world.tradeClassificationsToString()); // FIXME: remarks
     }
 
     // https://www.redblobgames.com/grids/hexagons/#basics

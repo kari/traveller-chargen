@@ -39,7 +39,6 @@ Possibly there's a need for SHIPGEN as well.
 
 ### Todo
 
-- Add remarks to the form
 - Create communication routes
 - Select subsector capital world
 - Generate possible ships to encounter when entering system?

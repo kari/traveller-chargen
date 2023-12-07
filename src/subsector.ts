@@ -5,7 +5,7 @@ import { clamp } from "./utils";
 
 enum TravelZoneType { Amber = "A", Red = "R" }
 
-enum TradeClassification { Agricultural = "Agricultural", NonAgricultural = "Non-agricultural", Industrial = "Industrial", NonIndustrial = "Non-industrial", Rich = "Rich", Poor = "Poor", Water = "Water", Desert = "Desert", Vacuum = "Vacuum", AsteroidBelt = "Asteroid Belt", IceCapped = "Ice-capped", SubsectorCapital = "Subsector Capital" }
+enum TradeClassification { Agricultural = "Ag", NonAgricultural = "Na", Industrial = "In", NonIndustrial = "Ni", Rich = "Ri", Poor = "Po", Water = "Wa", Desert = "De", Vacuum = "Va", AsteroidBelt = "As", IceCapped = "Ic", SubsectorCapital = "Cp" }
 
 type Starport = "A" | "B" | "C" | "D" | "E" | "X"
 
@@ -26,7 +26,7 @@ class World {
     }
 
     tradeClassificationsToString(): string {
-        return this.tradeClassifications.join(", ");
+        return this.tradeClassifications.join(" ");
     }
 
     constructor(random: Random, starport?: Starport)  {
