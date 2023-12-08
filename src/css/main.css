@@ -255,3 +255,14 @@ div#map-grid {
     border-top-width: 4px;
     padding: 0;
 }
+
+main + footer {
+    padding: 3em;
+    padding-top: 0;
+    padding-bottom: 2rem;
+}
+
+main + footer p {
+    font-size: 75%;
+    font-style: italic;
+}
