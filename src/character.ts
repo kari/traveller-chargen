@@ -146,7 +146,6 @@ class Items {
 
 // FIXME: refactor out stuff not directly related to Character class
 export class Character {
-    seed: number;
     random: Random;
 
     age: number;
@@ -177,8 +176,7 @@ export class Character {
 
     constructor(seed?: number) {
         this.random = new Random(seed);
-        this.seed = this.random.seed;
-        console.debug(`Using seed ${this.seed} to generate a character`);
+        console.debug(`Using seed ${this.random.seed} to generate a character`);
 
         this.age = 18;
 

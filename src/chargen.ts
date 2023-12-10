@@ -30,7 +30,7 @@ function rollCharacter(): Character {
     }
 
     document.getElementById("box-1")!.textContent = today.toString();
-    document.getElementById("seed")!.setAttribute("data-seed", c.seed.toString());
+    document.getElementById("seed")!.setAttribute("data-seed", c.random.seed.toString());
 
     document.getElementById("box-2")!.textContent = c.name.toString(false);
     document.getElementById("box-25")!.textContent = c.name.toString(false);
