@@ -8,6 +8,10 @@ This project has three parts,
 
 Possibly there's a need for SHIPGEN as well.
 
+## Common TODOs
+
+- Updated to PicoCSS v2
+
 ## CHARGEN
 
 ### References
