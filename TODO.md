@@ -25,6 +25,7 @@ Possibly there's a need for SHIPGEN as well.
 - Option to specify what to look for in generation
   - async function
   - timeout
+- fix checkboxes, <https://www.htmhell.dev/adventcalendar/2023/2/>
 
 ## WORLDGEN
 
@@ -40,6 +41,9 @@ Possibly there's a need for SHIPGEN as well.
 ### Todo
 
 - Create communication routes
+  - trade routes using ant colony optimization, <https://en.wikipedia.org/wiki/Ant_colony_optimization_algorithms>
 - Select subsector capital world
+- Look into Book 7 for trade codes?
+  - Also look at the thread for some clarifications
 - Generate possible ships to encounter when entering system?
 - Spin out to its own project?

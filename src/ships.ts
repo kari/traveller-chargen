@@ -6,7 +6,7 @@ abstract class Ship {
     type!: string;
     tonnage!: number;
     hullStandard!: boolean;
-    age: number = 0;
+    age = 0;
     mortgage?: Mortgage;
     minCrew!: number;
     streamlined!: boolean;
@@ -19,7 +19,6 @@ abstract class Ship {
     staterooms!: number;
     lowBerths!: number;
 
-
     constructor(name?: string) {
         const random = new Random();
         this.name = name ? name : random.pick(names);
@@ -28,11 +27,10 @@ abstract class Ship {
     toString(): string {
         return `${this.name} (type: ${this.type})`;
     }
-
 }
 
 class ScoutCourier extends Ship {
-    type = 'S';
+    type = "S";
     tonnage = 100;
     hullStandard = true;
     minCrew = 1;
@@ -48,7 +46,7 @@ class ScoutCourier extends Ship {
 }
 
 class FreeTrader extends Ship {
-    type = 'A';
+    type = "A";
     tonnage = 200;
     hullStandard = true;
     minCrew = 4;
@@ -56,7 +54,7 @@ class FreeTrader extends Ship {
     cargoCapacity = 82;
     cost = 37.08;
     jump = 1;
-    powerPlant = 'A';
+    powerPlant = "A";
     acceleration = 1;
     staterooms = 10;
     lowBerths = 20;
@@ -77,4 +75,4 @@ class Mortgage {
     }
 }
 
-export { ScoutCourier, FreeTrader, Ship }
+export { ScoutCourier, FreeTrader, Ship };

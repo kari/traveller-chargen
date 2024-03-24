@@ -1,11 +1,16 @@
-import { Random as RandomJS, MersenneTwister19937, createEntropy, nativeMath } from "random-js";
+import {
+    Random as RandomJS,
+    MersenneTwister19937,
+    createEntropy,
+    nativeMath,
+} from "random-js";
 
 class Random {
     private _random: RandomJS;
     private _seed: number;
 
     constructor(seed: number = createEntropy(nativeMath, 1)[0]) {
-        this._random = new RandomJS(MersenneTwister19937.seed(seed))
+        this._random = new RandomJS(MersenneTwister19937.seed(seed));
         this._seed = seed;
     }
 
@@ -21,7 +26,8 @@ class Random {
         return this._random.date(start, end);
     }
 
-    roll(dice: number = 2): number { // default roll in Traveller two dice
+    roll(dice = 2): number {
+        // default roll in Traveller two dice
         return this._random.dice(6, dice).reduce((a, b) => a + b, 0);
     }
 
@@ -29,10 +35,9 @@ class Random {
         return this._random.integer(min, max);
     }
 
-    real(min: number, max: number, inclusive: boolean = true) {
-        return this._random.real(min, max, inclusive)
+    real(min: number, max: number, inclusive = true) {
+        return this._random.real(min, max, inclusive);
     }
-
 }
 
-export { Random }
+export { Random };

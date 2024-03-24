@@ -1,9 +1,9 @@
 import { ScoutCourier, FreeTrader } from "./ships";
-import { type Character } from "./character";
+import type { Character } from "./character";
 
 interface Career {
-    name: string,
-    memberName: string | null,
+    name: string;
+    memberName: string | null;
     military: boolean;
     enlistment: number;
     draft: number;
@@ -37,18 +37,47 @@ const Navy: Career = {
     promotion: 8,
     reenlist: 6,
     retirementPay: true,
-    ranks: ["Starman", "Ensign", "Lieutenant", "Lt Cmdr", "Commander", "Captain", "Admiral"],
+    ranks: [
+        "Starman",
+        "Ensign",
+        "Lieutenant",
+        "Lt Cmdr",
+        "Commander",
+        "Captain",
+        "Admiral",
+    ],
     cashTable: [1000, 5000, 5000, 10_000, 20_000, 50_000, 50_000],
-    skillsTable: ["Ship's Boat", "Vacc Suit", "Fwd Obsvr", "Gunnery", "Blade Cbt", "Gun Cbt"],
-    advancedEducationTable: ["Vacc Suit", "Mechanical", "Electronics", "Engineering", "Gunnery", "Jack-o-T"],
-    advancedEducationTable8: ["Medical", "Navigation", "Engineering", "Computer", "Pilot", "Admin"],
+    skillsTable: [
+        "Ship's Boat",
+        "Vacc Suit",
+        "Fwd Obsvr",
+        "Gunnery",
+        "Blade Cbt",
+        "Gun Cbt",
+    ],
+    advancedEducationTable: [
+        "Vacc Suit",
+        "Mechanical",
+        "Electronics",
+        "Engineering",
+        "Gunnery",
+        "Jack-o-T",
+    ],
+    advancedEducationTable8: [
+        "Medical",
+        "Navigation",
+        "Engineering",
+        "Computer",
+        "Pilot",
+        "Admin",
+    ],
     enlistmentDM(c) {
         let dm = 0;
         if (c.attributes.intelligence >= 8) {
-            dm += 1
+            dm += 1;
         }
         if (c.attributes.education >= 9) {
-            dm += 2
+            dm += 2;
         }
         return dm;
     },
@@ -95,7 +124,7 @@ const Navy: Career = {
     benefitsTable(c, i) {
         switch (i) {
             case 1:
-                c.items.add('Low Psg');
+                c.items.add("Low Psg");
                 break;
             case 2:
                 c.modifyAttribute("intelligence", 1);
@@ -110,7 +139,7 @@ const Navy: Career = {
                 c.items.add("Travellers'");
                 break;
             case 6:
-                c.items.add('High Psg');
+                c.items.add("High Psg");
                 break;
             case 7:
                 c.modifyAttribute("socialStanding", 2);
@@ -118,11 +147,12 @@ const Navy: Career = {
         }
     },
     rankAndServiceSkills(c) {
-        if (c.rank == 5 || c.rank == 6) { // Navy Captain / Admiral
+        if (c.rank === 5 || c.rank === 6) {
+            // Navy Captain / Admiral
             c.modifyAttribute("socialStanding", 1);
         }
-    }
-}
+    },
+};
 
 const Marines: Career = {
     name: "Marines",
@@ -135,18 +165,47 @@ const Marines: Career = {
     promotion: 9,
     reenlist: 6,
     retirementPay: true,
-    ranks: ["Marine", "Lieutenant", "Captain", "Force Cmdr", "Lt Colonel", "Colonel", "Brigadier"],
+    ranks: [
+        "Marine",
+        "Lieutenant",
+        "Captain",
+        "Force Cmdr",
+        "Lt Colonel",
+        "Colonel",
+        "Brigadier",
+    ],
     cashTable: [2000, 5000, 5000, 10_000, 20_000, 30_000, 40_000],
-    skillsTable: ["Vehicle", "Vacc Suit", "Blade Cbt", "Gun Cbt", "Blade Cbt", "Gun Cbt"],
-    advancedEducationTable: ["Vehicle", "Mechanical", "Electronics", "Tactics", "Blade Cbt", "Gun Cbt"],
-    advancedEducationTable8: ["Medical", "Tactics", "Tactics", "Computer", "Leader", "Admin"],
+    skillsTable: [
+        "Vehicle",
+        "Vacc Suit",
+        "Blade Cbt",
+        "Gun Cbt",
+        "Blade Cbt",
+        "Gun Cbt",
+    ],
+    advancedEducationTable: [
+        "Vehicle",
+        "Mechanical",
+        "Electronics",
+        "Tactics",
+        "Blade Cbt",
+        "Gun Cbt",
+    ],
+    advancedEducationTable8: [
+        "Medical",
+        "Tactics",
+        "Tactics",
+        "Computer",
+        "Leader",
+        "Admin",
+    ],
     enlistmentDM(c) {
         let dm = 0;
         if (c.attributes.intelligence >= 8) {
-            dm += 1
+            dm += 1;
         }
         if (c.attributes.strength >= 8) {
-            dm += 2
+            dm += 2;
         }
         return dm;
     },
@@ -180,20 +239,20 @@ const Marines: Career = {
                 c.modifyAttribute("endurance", 1);
                 break;
             case 4:
-                c.addSkill('Gambling');
+                c.addSkill("Gambling");
                 break;
             case 5:
-                c.addSkill('Brawling');
+                c.addSkill("Brawling");
                 break;
             case 6:
-                c.addSkill('Blade Cbt');
+                c.addSkill("Blade Cbt");
                 break;
         }
     },
     benefitsTable(c, i) {
         switch (i) {
             case 1:
-                c.items.add('Low Psg');
+                c.items.add("Low Psg");
                 break;
             case 2:
                 c.modifyAttribute("intelligence", 2);
@@ -208,7 +267,7 @@ const Marines: Career = {
                 c.items.add("Travellers'");
                 break;
             case 6:
-                c.items.add('High Psg');
+                c.items.add("High Psg");
                 break;
             case 7:
                 c.modifyAttribute("socialStanding", 2);
@@ -216,13 +275,15 @@ const Marines: Career = {
         }
     },
     rankAndServiceSkills(c) {
-        if (c.rank == 0) { // Marine
-            c.addSkill('Cutlass');
-        } else if (c.rank == 1) { // Marine Lt
-            c.addSkill('Revolver');
+        if (c.rank === 0) {
+            // Marine
+            c.addSkill("Cutlass");
+        } else if (c.rank === 1) {
+            // Marine Lt
+            c.addSkill("Revolver");
         }
-    }
-}
+    },
+};
 
 const Army: Career = {
     name: "Army",
@@ -235,18 +296,47 @@ const Army: Career = {
     promotion: 6,
     reenlist: 7,
     retirementPay: true,
-    ranks: ["Trooper", "Lieutenant", "Captain", "Major", "Lt Colonel", "Colonel", "General"],
+    ranks: [
+        "Trooper",
+        "Lieutenant",
+        "Captain",
+        "Major",
+        "Lt Colonel",
+        "Colonel",
+        "General",
+    ],
     cashTable: [2000, 5000, 10_000, 10_000, 10_000, 20_000, 30_000],
-    skillsTable: ["Vehicle", "Air/Raft", "Gun Cbt", "Fwd Obsvr", "Blade Cbt", "Gun Cbt"],
-    advancedEducationTable: ["Vehicle", "Mechanical", "Electronics", "Tactics", "Blade Cbt", "Gun Cbt"],
-    advancedEducationTable8: ["Medical", "Tactics", "Tactics", "Computer", "Leader", "Admin"],
+    skillsTable: [
+        "Vehicle",
+        "Air/Raft",
+        "Gun Cbt",
+        "Fwd Obsvr",
+        "Blade Cbt",
+        "Gun Cbt",
+    ],
+    advancedEducationTable: [
+        "Vehicle",
+        "Mechanical",
+        "Electronics",
+        "Tactics",
+        "Blade Cbt",
+        "Gun Cbt",
+    ],
+    advancedEducationTable8: [
+        "Medical",
+        "Tactics",
+        "Tactics",
+        "Computer",
+        "Leader",
+        "Admin",
+    ],
     enlistmentDM(c) {
         let dm = 0;
         if (c.attributes.dexterity >= 6) {
-            dm += 1
+            dm += 1;
         }
         if (c.attributes.endurance >= 5) {
-            dm += 2
+            dm += 2;
         }
         return dm;
     },
@@ -280,20 +370,20 @@ const Army: Career = {
                 c.modifyAttribute("endurance", 1);
                 break;
             case 4:
-                c.addSkill('Gambling');
+                c.addSkill("Gambling");
                 break;
             case 5:
                 c.modifyAttribute("education", 1);
                 break;
             case 6:
-                c.addSkill('Brawling');
+                c.addSkill("Brawling");
                 break;
         }
     },
     benefitsTable(c, i) {
         switch (i) {
             case 1:
-                c.items.add('Low Psg');
+                c.items.add("Low Psg");
                 break;
             case 2:
                 c.modifyAttribute("intelligence", 1);
@@ -308,7 +398,7 @@ const Army: Career = {
                 c.items.add("High Psg");
                 break;
             case 6:
-                c.items.add('Mid Psg');
+                c.items.add("Mid Psg");
                 break;
             case 7:
                 c.modifyAttribute("socialStanding", 1);
@@ -316,13 +406,15 @@ const Army: Career = {
         }
     },
     rankAndServiceSkills(c) {
-        if (c.rank == 0) { // Army
-            c.addSkill('Rifle');
-        } else if (c.rank == 1) { // Army Lt
-            c.addSkill('SMG');
+        if (c.rank === 0) {
+            // Army
+            c.addSkill("Rifle");
+        } else if (c.rank === 1) {
+            // Army Lt
+            c.addSkill("SMG");
         }
-    }
-}
+    },
+};
 
 const Scouts: Career = {
     name: "Scouts",
@@ -337,16 +429,37 @@ const Scouts: Career = {
     ranks: null,
     retirementPay: false,
     cashTable: [20_000, 20_000, 30_000, 30_000, 50_000, 50_000, 50_000],
-    skillsTable: ["Vehicle", "Vacc Suit", "Mechanical", "Navigation", "Electronics", "Jack-o-T"],
-    advancedEducationTable: ["Vehicle", "Mechanical", "Electronics", "Jack-o-T", "Gunnery", "Medical"],
-    advancedEducationTable8: ["Medical", "Navigation", "Engineering", "Computer", "Pilot", "Jack-o-T"],
+    skillsTable: [
+        "Vehicle",
+        "Vacc Suit",
+        "Mechanical",
+        "Navigation",
+        "Electronics",
+        "Jack-o-T",
+    ],
+    advancedEducationTable: [
+        "Vehicle",
+        "Mechanical",
+        "Electronics",
+        "Jack-o-T",
+        "Gunnery",
+        "Medical",
+    ],
+    advancedEducationTable8: [
+        "Medical",
+        "Navigation",
+        "Engineering",
+        "Computer",
+        "Pilot",
+        "Jack-o-T",
+    ],
     enlistmentDM(c) {
         let dm = 0;
         if (c.attributes.intelligence >= 6) {
-            dm += 1
+            dm += 1;
         }
         if (c.attributes.strength >= 8) {
-            dm += 2
+            dm += 2;
         }
         return dm;
     },
@@ -382,14 +495,14 @@ const Scouts: Career = {
                 c.modifyAttribute("education", 1);
                 break;
             case 6:
-                c.addSkill('Gun Cbt');
+                c.addSkill("Gun Cbt");
                 break;
         }
     },
     benefitsTable(c, i) {
         switch (i) {
             case 1:
-                c.items.add('Low Psg');
+                c.items.add("Low Psg");
                 break;
             case 2:
                 c.modifyAttribute("intelligence", 2);
@@ -414,12 +527,12 @@ const Scouts: Career = {
         }
     },
     rankAndServiceSkills(c) {
-        if (c.rank == 0) { // Scout
-            c.addSkill('Pilot');
+        if (c.rank === 0) {
+            // Scout
+            c.addSkill("Pilot");
         }
-    }
-
-}
+    },
+};
 
 const Merchants: Career = {
     name: "Merchants",
@@ -432,18 +545,46 @@ const Merchants: Career = {
     promotion: 10,
     reenlist: 4,
     retirementPay: true,
-    ranks: [null, "4th Officer", "3rd Officer", "2nd Officer", "1st Officer", "Captain"],
+    ranks: [
+        null,
+        "4th Officer",
+        "3rd Officer",
+        "2nd Officer",
+        "1st Officer",
+        "Captain",
+    ],
     cashTable: [1000, 5000, 10_000, 20_000, 20_000, 40_000, 40_000],
-    skillsTable: ["Vehicle", "Vacc Suit", "Jack-o-T", "Steward", "Electronics", "Gun Cbt"],
-    advancedEducationTable: ["Streetwise", "Mechanical", "Electronics", "Navigation", "Gunnery", "Medical"],
-    advancedEducationTable8: ["Medical", "Navigation", "Engineering", "Computer", "Pilot", "Admin"],
+    skillsTable: [
+        "Vehicle",
+        "Vacc Suit",
+        "Jack-o-T",
+        "Steward",
+        "Electronics",
+        "Gun Cbt",
+    ],
+    advancedEducationTable: [
+        "Streetwise",
+        "Mechanical",
+        "Electronics",
+        "Navigation",
+        "Gunnery",
+        "Medical",
+    ],
+    advancedEducationTable8: [
+        "Medical",
+        "Navigation",
+        "Engineering",
+        "Computer",
+        "Pilot",
+        "Admin",
+    ],
     enlistmentDM(c) {
         let dm = 0;
         if (c.attributes.strength >= 7) {
-            dm += 1
+            dm += 1;
         }
         if (c.attributes.intelligence >= 6) {
-            dm += 2
+            dm += 2;
         }
         return dm;
     },
@@ -480,17 +621,17 @@ const Merchants: Career = {
                 c.modifyAttribute("strength", 1);
                 break;
             case 5:
-                c.addSkill('Blade Cbt');
+                c.addSkill("Blade Cbt");
                 break;
             case 6:
-                c.addSkill('Bribery');
+                c.addSkill("Bribery");
                 break;
         }
     },
     benefitsTable(c, i) {
         switch (i) {
             case 1:
-                c.items.add('Low Psg');
+                c.items.add("Low Psg");
                 break;
             case 2:
                 c.modifyAttribute("intelligence", 1);
@@ -505,7 +646,7 @@ const Merchants: Career = {
                 c.addWeapon("blade");
                 break;
             case 6:
-                c.items.add('Low Psg');
+                c.items.add("Low Psg");
                 break;
             case 7:
                 if (!c.ship) {
@@ -522,12 +663,12 @@ const Merchants: Career = {
         }
     },
     rankAndServiceSkills(c) {
-        if (c.rank == 4) { // Merchant 1st Officer
-            c.addSkill('Pilot');
+        if (c.rank === 4) {
+            // Merchant 1st Officer
+            c.addSkill("Pilot");
         }
-    }
-
-}
+    },
+};
 
 const Other: Career = {
     name: "Other",
@@ -542,9 +683,30 @@ const Other: Career = {
     ranks: null,
     retirementPay: false,
     cashTable: [1000, 5000, 10_000, 10_000, 10_000, 50_000, 100_000],
-    skillsTable: ["Vehicle", "Gambling", "Brawling", "Bribery", "Blade Cbt", "Gun Cbt"],
-    advancedEducationTable: ["Streetwise", "Mechanical", "Electronics", "Gambling", "Brawling", "Forgery"],
-    advancedEducationTable8: ["Medical", "Forgery", "Electronics", "Computer", "Streetwise", "Jack-o-T"],
+    skillsTable: [
+        "Vehicle",
+        "Gambling",
+        "Brawling",
+        "Bribery",
+        "Blade Cbt",
+        "Gun Cbt",
+    ],
+    advancedEducationTable: [
+        "Streetwise",
+        "Mechanical",
+        "Electronics",
+        "Gambling",
+        "Brawling",
+        "Forgery",
+    ],
+    advancedEducationTable8: [
+        "Medical",
+        "Forgery",
+        "Electronics",
+        "Computer",
+        "Streetwise",
+        "Jack-o-T",
+    ],
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     enlistmentDM(_c) {
         return 0;
@@ -575,10 +737,10 @@ const Other: Career = {
                 c.modifyAttribute("endurance", 1);
                 break;
             case 4:
-                c.addSkill('Blade Cbt');
+                c.addSkill("Blade Cbt");
                 break;
             case 5:
-                c.addSkill('Brawling');
+                c.addSkill("Brawling");
                 break;
             case 6:
                 c.modifyAttribute("socialStanding", 1);
@@ -588,7 +750,7 @@ const Other: Career = {
     benefitsTable(c, i) {
         switch (i) {
             case 1:
-                c.items.add('Low Psg');
+                c.items.add("Low Psg");
                 break;
             case 2:
                 c.modifyAttribute("intelligence", 1);
@@ -613,7 +775,7 @@ const Other: Career = {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     rankAndServiceSkills(_c) {
         // no skills
-    }
-}
+    },
+};
 
-export { Navy, Marines, Army, Scouts, Merchants, Other, Career };
+export { Navy, Marines, Army, Scouts, Merchants, Other, type Career };
