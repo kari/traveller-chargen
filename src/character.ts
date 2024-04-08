@@ -67,6 +67,7 @@ export class Skills {
         return Object.keys(this.skills).filter((s) => subset.includes(s));
     }
 
+    // FIXME: no sorting
     toString(subset?: string[] | string): string {
         if (subset === undefined) {
             return Object.keys(this.skills)
@@ -82,6 +83,8 @@ export class Skills {
             .join(", ");
     }
 
+    // sorts by skill value (descending)
+    // FIXME: sort secondarily by name
     sorted(subset?: string[]): string[] {
         if (subset === undefined) {
             return Object.keys(this.skills).sort((a, b) =>
@@ -103,7 +106,7 @@ export class Skills {
     }
 
     increase(skill: string, by = 1) {
-        if (skill in this.list) {
+        if (this.list.includes(skill)) {
             this.skills[skill] += by;
         } else {
             this.skills[skill] = by;
@@ -147,7 +150,7 @@ class Items {
 
     add(item: string) {
         console.debug(`Character earned item ${item}`);
-        if (item in this.items && item !== "Travellers'") {
+        if (this.list.includes(item) && item !== "Travellers'") {
             this.items[item] += 1;
         } else {
             this.items[item] = 1;
@@ -155,7 +158,7 @@ class Items {
     }
 
     get hasTravellers(): boolean {
-        if (Object.keys(this.items).includes("Travellers'")) {
+        if (this.list.includes("Travellers'")) {
             return true;
         }
         return false;
@@ -968,4 +971,4 @@ const weaponStrDM: Record<string, [bonus: number, penalty: number]> = {
 };
 const careers: Career[] = [Navy, Marines, Army, Scouts, Merchants, Other];
 
-export { weaponSkills };
+export { weaponSkills, Name, Items };

@@ -376,4 +376,4 @@ class Subsector {
     }
 }
 
-export { Subsector, World, TravelZoneType };
+export { Subsector, World, Hex, TravelZoneType };

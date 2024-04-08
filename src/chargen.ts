@@ -326,6 +326,6 @@ if (typeof window === "undefined") {
         });
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     window.addEventListener("load", (_event) => {
-        rollCharacter();
+        rollCharacter(); // FIXME: preferably roll an alive character
     });
 }

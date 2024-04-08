@@ -10,7 +10,10 @@ Possibly there's a need for SHIPGEN as well.
 
 ## Common TODOs
 
-- Updated to PicoCSS v2
+- Use Vitest
+- Control logging
+- Update to PicoCSS v2
+- migrate from Parcel to Vite?
 
 ## CHARGEN
 
