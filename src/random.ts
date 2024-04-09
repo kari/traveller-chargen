@@ -5,6 +5,9 @@ import {
     nativeMath,
 } from "random-js";
 
+/**
+ * Wrapper for Random.js's class giving some convienence methods
+ */
 class Random {
     private _random: RandomJS;
     private _seed: number;
@@ -27,7 +30,7 @@ class Random {
     }
 
     roll(dice = 2): number {
-        // default roll in Traveller two dice
+        // default roll in Traveller are two dice
         return this._random.dice(6, dice).reduce((a, b) => a + b, 0);
     }
 

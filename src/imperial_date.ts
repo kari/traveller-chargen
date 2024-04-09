@@ -1,6 +1,15 @@
 import { Temporal } from "temporal-polyfill";
 
-// @see https://wiki.travellerrpg.com/Imperial_Calendar
+/**
+ * Format a Date in Imperial Calendar format
+ * 
+ * @remarks
+ * Uses Temporal API because Date doesn't have dayOfYear. Doesn't implement
+ * Imperial Calendar arithmetic or conversions, only extracts day of year 
+ * and year for formatting purposes.
+ * 
+ * @see {@link https://wiki.travellerrpg.com/Imperial_Calendar}
+ */ 
 class ImperialDate {
     dayOfYear: number;
     year: number;
@@ -24,10 +33,10 @@ class ImperialDate {
         } else {
             const temporal = Temporal.Now.plainDateISO();
             this.dayOfYear = temporal.dayOfYear;
-            this.year = 1105;
+            this.year = 1105; // note that other constructors use given year, here we set year to Milieu 1105 for Classic Traveller.
         }
         if (this.dayOfYear > 365) {
-            // crude way to handle leap years
+            // crude way to handle leap years, as IC doesn't have them
             this.dayOfYear = 1;
             this.year += 1;
         }

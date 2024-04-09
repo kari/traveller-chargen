@@ -153,7 +153,7 @@ class World {
 
         this.technologicalLevel = clamp(random.roll(1) + techLevelDM, 0, 20);
 
-        // trade classifications
+        // Define trade classifications bsaed on world's attributes
         if (
             this.planetaryAthmosphere >= 4 &&
             this.planetaryAthmosphere <= 9 &&
@@ -172,7 +172,7 @@ class World {
             this.tradeClassifications.push(TradeClassification.NonAgricultural);
         }
         if (
-            this.planetaryAthmosphere in [0, 1, 2, 4, 7, 9] &&
+            [0, 1, 2, 4, 7, 9].includes(this.planetaryAthmosphere) &&
             this.population >= 9
         ) {
             this.tradeClassifications.push(TradeClassification.Industrial);
@@ -183,13 +183,13 @@ class World {
         if (
             this.planetaryGovernment >= 4 &&
             this.planetaryGovernment <= 9 &&
-            this.planetaryAthmosphere in [6, 8] &&
-            this.population in [6, 7, 8]
+            [6, 8].includes(this.planetaryAthmosphere) &&
+            [6, 7, 8].includes(this.population)
         ) {
             this.tradeClassifications.push(TradeClassification.Rich);
         }
         if (
-            this.planetaryAthmosphere in [2, 3, 4, 5] &&
+            [2, 3, 4, 5].includes(this.planetaryAthmosphere) &&
             this.hydrographicPercentage <= 3
         ) {
             this.tradeClassifications.push(TradeClassification.Poor);
@@ -207,7 +207,7 @@ class World {
             this.tradeClassifications.push(TradeClassification.AsteroidBelt);
         }
         if (
-            this.planetaryAthmosphere in [0, 1] &&
+            [0, 1].includes(this.planetaryAthmosphere) &&
             this.hydrographicPercentage >= 1
         ) {
             this.tradeClassifications.push(TradeClassification.IceCapped);
@@ -307,7 +307,7 @@ class Hex {
             }
             // Naval base presence
             if (
-                !(this.starport in ["C", "D", "E", "X"]) &&
+                !(["C", "D", "E", "X"].includes(this.starport)) &&
                 random.roll(2) >= 8
             ) {
                 this.navalBase = true;
@@ -324,7 +324,7 @@ class Hex {
             // travel advisory, https://www.traveller-srd.com/core-rules/world-creation/
             if (
                 this.world.planetaryAthmosphere >= 10 ||
-                this.world.planetaryGovernment in [0, 7, 10] ||
+                [0, 7, 10].includes(this.world.planetaryGovernment) ||
                 this.world.lawLevel === 0 ||
                 this.world.lawLevel >= 9
             ) {

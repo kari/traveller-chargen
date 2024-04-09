@@ -97,7 +97,7 @@ export class Skills {
     }
 
     addZeroSkill(skill: string) {
-        if (skill in this.skills) {
+        if (this.list.includes(skill)) {
             console.warn(
                 `Skill already exists at level ${skill}-${this.skills[skill]}`,
             );
@@ -512,7 +512,7 @@ export class Character {
                 break;
         }
         const benefitsDM = this.rank >= 5 ? 1 : 0;
-        const cashDM = "Gambling" in this.skills.list ? 1 : 0;
+        const cashDM = this.skills.list.includes("Gambling") ? 1 : 0;
         console.debug(
             `Character is eligible to ${benefits} benefits, with benefits DM ${benefitsDM} and cash table DM ${cashDM}`,
         );
