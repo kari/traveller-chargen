@@ -18,7 +18,7 @@
     "temporal-polyfill": "^0.2.3"
   },
   "devDependencies": {
-    "@biomejs/biome": "1.6.4",
+    "@biomejs/biome": "1.7.2",
     "@types/node": "^20.8.7",
     "buffer": "^6.0.3",
     "crypto-browserify": "^3.12.0",

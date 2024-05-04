@@ -22,5 +22,5 @@ test("test seeded random", () => {
     expect(r.pick([1,2,3,4])).toBe(2);
     expect(r.integer(1,100)).toBe(29);
     expect(r.real(0,10)).toBeCloseTo(5.821340698085646);
-    expect(r.date(new Date(2021,0,1), new Date(2021,11,31))).toStrictEqual(new Date('2021-01-03T14:54:38.085Z'));
+    expect(r.date(new Date(2021,0,1), new Date(2021,11,31))).toStrictEqual(new Date('2021-01-03T14:54:38.085Z')); // bun:test has two hour offset?
 })

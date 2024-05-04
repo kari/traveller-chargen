@@ -16,6 +16,7 @@ test('test ehex', () => {
     expect(utils.ehex(10)).toBe('A');
     expect(utils.ehex(15)).toBe('F');
     expect(utils.ehex(33)).toBe('Z');
+    // bun:test fails on .toThrow
     expect(utils.ehex(-1)).toThrow(Error);
     expect(utils.ehex(34)).toThrow(Error);
 });
