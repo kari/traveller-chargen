@@ -12,7 +12,7 @@
     "@ksilvennoinen/markov-namegen": "^1.0.2",
     "@ksilvennoinen/urw-classico": "^1.0.0",
     "@ksilvennoinen/urw-classicsans": "^1.0.0",
-    "@picocss/pico": "^1.5.10",
+    "@picocss/pico": "^2.0.6",
     "@svgdotjs/svg.js": "^3.2.0",
     "random-js": "^2.1.0",
     "temporal-polyfill": "^0.2.3"
