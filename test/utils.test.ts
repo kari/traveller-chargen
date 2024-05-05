@@ -1,3 +1,5 @@
+// @vitest-environment happy-dom
+
 import { expect, test } from 'vitest'
 import * as utils from '../src/utils'
 
@@ -19,4 +21,11 @@ test('test ehex', () => {
     // bun:test fails on .toThrow
     expect(utils.ehex(-1)).toThrow(Error);
     expect(utils.ehex(34)).toThrow(Error);
+});
+
+test("test setBoxContent", () => {
+    document.body.innerHTML = '<div id="test"></div>';
+    const el = document.getElementById("test");
+    utils.setBoxContent("test", "test string");
+    expect(el?.textContent).toBe("test string");  
 });
