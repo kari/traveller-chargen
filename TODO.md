@@ -11,7 +11,7 @@ Possibly there's a need for SHIPGEN as well.
 ## Common TODOs
 
 - Control logging
-- migrate from Parcel to Vite?
+- migrate from jsdom to cheerio
 
 ## CHARGEN
 

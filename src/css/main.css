@@ -1,9 +1,9 @@
-@import 'npm:@picocss/pico/css/pico.red.css';
-@import 'npm:@ksilvennoinen/urw-classico/700-italic.css';
-@import 'npm:@ksilvennoinen/urw-classicsans';
-@import 'npm:@ksilvennoinen/urw-classicsans/400-italic.css';
-@import 'npm:@ksilvennoinen/urw-classicsans/700.css';
-@import 'npm:@ksilvennoinen/urw-classicsans/700-italic.css';
+@import '@picocss/pico/css/pico.red.css';
+@import '@ksilvennoinen/urw-classico/700-italic.css';
+@import '@ksilvennoinen/urw-classicsans';
+@import '@ksilvennoinen/urw-classicsans/400-italic.css';
+@import '@ksilvennoinen/urw-classicsans/700.css';
+@import '@ksilvennoinen/urw-classicsans/700-italic.css';
 
 :root {
     --font-family: "URW Classic Sans", "Helvetica Neue", Arial, Helvetica, sans-serif;
@@ -68,7 +68,7 @@ div.outer-form.deceased .form {
 }
 
 #tas-form-6 .form {
-    grid-template-rows: repeat(2, 1fr) 20fr;     
+    grid-template-rows: repeat(2, 1fr) 20fr;
 }
 
 #tas-form-7 .form {
