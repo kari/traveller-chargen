@@ -1,6 +1,5 @@
 import { expect, test } from 'vitest'
 import { FreeTrader, ScoutCourier } from '../src/ships'
-import { exec } from 'child_process';
 
 test("a new Scout/Courier", () => {
   const name = "SS Test IV";
