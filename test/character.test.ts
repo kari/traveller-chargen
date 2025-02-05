@@ -1,5 +1,5 @@
 import { expect, test } from "vitest";
-import { Character, Skills, Items, Name } from "../src/character";
+import { Character, Skills, Items, Name } from "../src/scripts/character";
 
 test("Create a character", () => {
     const c = new Character();

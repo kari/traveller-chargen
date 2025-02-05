@@ -1,8 +1,5 @@
 {
   "name": "traveller-chargen",
-  "source": [
-    "./src/index.html"
-  ],
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",

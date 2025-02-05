@@ -1,6 +1,6 @@
 import { expect, test } from "vitest";
-import { Subsector, World, Hex } from "../src/subsector";
-import { Random } from "../src/random";
+import { Subsector, World, Hex } from "../src/scripts/subsector";
+import { Random } from "../src/scripts/random";
 
 test("create a random world", () => {
     const r = new Random();

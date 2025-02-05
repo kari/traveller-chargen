@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 
 import { expect, test } from 'vitest'
-import * as utils from '../src/utils'
+import * as utils from '../src/scripts/utils'
 
 test('test clamp', () => {
     expect(utils.clamp(1, 2, 9)).toBe(2);
@@ -27,5 +27,5 @@ test("test setBoxContent", () => {
     document.body.innerHTML = '<div id="test"></div>';
     const el = document.getElementById("test");
     utils.setBoxContent("test", "test string");
-    expect(el?.textContent).toBe("test string");  
+    expect(el?.textContent).toBe("test string");
 });

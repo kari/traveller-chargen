@@ -1,5 +1,5 @@
 import { expect, test } from 'vitest'
-import { Random } from '../src/random'
+import { Random } from '../src/scripts/random'
 
 test('construct without seed', () => {
     const r = new Random();
@@ -18,7 +18,7 @@ test('construct with seed', () => {
 test("test seeded random", () => {
     const r = new Random(123456);
     expect(r.roll(1)).toBe(2);
-    expect(r.roll(2)).toBe(10);    
+    expect(r.roll(2)).toBe(10);
     expect(r.pick([1,2,3,4])).toBe(2);
     expect(r.integer(1,100)).toBe(29);
     expect(r.real(0,10)).toBeCloseTo(5.821340698085646);

@@ -1,5 +1,5 @@
 import { expect, test } from 'vitest'
-import { ImperialDate } from '../src/imperial_date'
+import { ImperialDate } from '../src/scripts/imperial_date'
 
 test('default constructor', () => {
     const di = new ImperialDate();

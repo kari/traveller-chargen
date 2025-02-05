@@ -1,5 +1,5 @@
 import { expect, test } from 'vitest'
-import { FreeTrader, ScoutCourier } from '../src/ships'
+import { FreeTrader, ScoutCourier } from '../src/scripts/ships'
 
 test("a new Scout/Courier", () => {
   const name = "SS Test IV";
