@@ -11,7 +11,8 @@ Possibly there's a need for SHIPGEN as well.
 ## Common TODOs
 
 - Control logging
-- use lightningcss in vite
+- use astro?
+- use lightningcss in vite?
 
 ## CHARGEN
 

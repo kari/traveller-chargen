@@ -1,0 +1,35 @@
+---
+const { title } = Astro.props;
+import "../styles/main.css";
+---
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{ title }</title>
+  <script src="../scripts/chargen.ts"></script>
+  <script src="../scripts/worldgen.ts"></script>
+</head>
+
+<body>
+  <main class="container">
+    <h1>{ title }</h1>
+    <nav>
+      <ul>
+        <li><a href="index.html">Chargen</li>
+        <li><a href="worldgen.html">Worldgen</a></li>
+        <li><a href="about.html">About</a></li>
+      </ul>
+    </nav>
+    <slot />
+  </main>
+  <footer>
+    <p>The Traveller game in all forms is owned by Far Future Enterprises. Copyright 1977 - 2023 Far Future Enterprises.
+    </p>
+  </footer>
+
+</body>
+
+</html>

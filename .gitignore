@@ -1,6 +1,6 @@
 build/
 node_modules/
 dist/
-.parcel-cache/
+.astro/
 .venv/
 coverage/
