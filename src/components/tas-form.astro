@@ -1,0 +1,12 @@
+---
+const { title, id, barcode, hidden = false } = Astro.props;
+---
+  <div class="outer-form" id={id} hidden={hidden}>
+  <div class="form">
+    <slot />
+  </div>
+  <div>
+    <h3>{title}</h3>
+  </div>
+  <div class="barcode">{barcode}</div>
+</div>

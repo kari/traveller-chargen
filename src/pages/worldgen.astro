@@ -1,69 +1,62 @@
 ---
 import SiteLayout from "../layouts/sitelayout.astro";
+import TasForm from "../components/tas-form.astro";
 ---
 
 <SiteLayout title="Classic Traveller Worldgen">
-  <button id="reroll" type="button" class="contrast">Reroll</button>
-  <div id="result"></div>
-  <div class="outer-form" id="tas-form-6">
-    <div class="form">
-      <div class="span-2 border-right-0">
-        <h2>Subsector Map Grid</h2>
-      </div>
-      <div class="span-2 border-left-0">
-        Indicate adjacent subsectors at boundaries of this map grid.
-      </div>
-      <div class="span-2">
-        <div class="label">1. Subsector Name</div>
-        <div id="t6-box-1"></div>
-      </div>
-      <div class="span-2">
-        <div class="label">2. Date of preparation</div>
-        <div id="t6-box-2"></div>
-      </div>
-      <div class="span-4" id="map-grid"></div>
-    </div>
-    <div>
-      <h3>TAS Form 6</h3>
-    </div>
-    <div class="barcode" id="seed">⑉⑉⑈⑆⑇⑈⑉</div>
-  </div>
+  <script src="../scripts/worldgen.ts"></script>
 
-  <div class="outer-form" id="tas-form-7">
-    <div class="form">
-      <div class="span-3">
-        <h2>Subsector World Data</h2>
-      </div>
-      <div class="span-1">
-        <div class="label">1. Date of preparation</div>
-        <div id="box-1"></div>
-      </div>
-      <div class="span-3">
-        <div class="label">2. Subsector Name</div>
-        <div id="box-2"></div>
-      </div>
-      <div class="span-1">
-        <div class="label">3. Sector Name</div>
-        <div id="box-3"></div>
-      </div>
-      <div class="span-1 border-right-0 align-bottom">
-        <h4>World Name</h4>
-      </div>
-      <div class="span-1 border-left-0 border-right-0 align-bottom">
-        <h4>Location</h4>
-      </div>
-      <div class="span-1 border-left-0 border-right-0 align-bottom">
-        <h4>UWP</h4>
-      </div>
-      <div class="span-1 border-left-0 align-bottom">
-        <h4>Remarks</h4>
-      </div>
-      <div class="world span-4" id="world-list"></div>
-      <div class="span-4"></div>
+  <button id="reroll" type="button" class="contrast">Reroll</button>
+
+  <div id="result"></div>
+
+  <TasForm id="tas-form-6" title="TAS Form 6" barcode="⑉⑉⑈⑆⑇⑈⑉">
+    <div class="span-2 border-right-0">
+      <h2>Subsector Map Grid</h2>
     </div>
-    <div>
-      <h3>TAS Form 7</h3>
+    <div class="span-2 border-left-0">
+      Indicate adjacent subsectors at boundaries of this map grid.
     </div>
-    <div class="barcode">⑈⑆⑇⑈⑆⑆⑇⑇⑈</div>
-  </div>
+    <div class="span-2">
+      <div class="label">1. Subsector Name</div>
+      <div id="t6-box-1"></div>
+    </div>
+    <div class="span-2">
+      <div class="label">2. Date of preparation</div>
+      <div id="t6-box-2"></div>
+    </div>
+    <div class="span-4" id="map-grid"></div>
+  </TasForm>
+
+  <TasForm id="tas-form-7" title="TAS Form 7" barcode="⑈⑆⑇⑈⑆⑆⑇⑇⑈">
+    <div class="span-3">
+      <h2>Subsector World Data</h2>
+    </div>
+    <div class="span-1">
+      <div class="label">1. Date of preparation</div>
+      <div id="box-1"></div>
+    </div>
+    <div class="span-3">
+      <div class="label">2. Subsector Name</div>
+      <div id="box-2"></div>
+    </div>
+    <div class="span-1">
+      <div class="label">3. Sector Name</div>
+      <div id="box-3"></div>
+    </div>
+    <div class="span-1 border-right-0 align-bottom">
+      <h4>World Name</h4>
+    </div>
+    <div class="span-1 border-left-0 border-right-0 align-bottom">
+      <h4>Location</h4>
+    </div>
+    <div class="span-1 border-left-0 border-right-0 align-bottom">
+      <h4>UWP</h4>
+    </div>
+    <div class="span-1 border-left-0 align-bottom">
+      <h4>Remarks</h4>
+    </div>
+    <div class="world span-4" id="world-list"></div>
+    <div class="span-4"></div>
+  </TasForm>
 </SiteLayout>
