@@ -1,6 +1,7 @@
 ---
 import SiteLayout from "../layouts/sitelayout.astro";
 import TasForm from "../components/tas-form.astro";
+import ResultContainer from "../components/result-container.astro";
 ---
 
 <SiteLayout title="Classic Traveller Chargen">
@@ -9,7 +10,7 @@ import TasForm from "../components/tas-form.astro";
   <button id="reroll" type="button" class="contrast">Reroll</button>
   <button id="roll-ship" type="button" class="contrast">Roll Ship</button>
 
-  <div id="result"></div>
+  <ResultContainer/>
 
   <TasForm title="TAS Form 2" id="tas-form-2" barcode="⑉⑆⑇⑈⑇⑆⑆⑉">
     <div class="span-3">
