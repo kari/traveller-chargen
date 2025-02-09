@@ -2,7 +2,7 @@ import { Character, weaponSkills } from "./character";
 import { ImperialDate } from "./imperial_date";
 import { ehex } from "./utils";
 
-console.log("Traveller Chargen");
+// console.log("Traveller Chargen");
 
 function resetSheets() {
     // note this only clears optional fields, not full sheet

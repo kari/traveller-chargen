@@ -349,7 +349,7 @@ class Subsector {
     constructor(seed?: number) {
         this.random = new Random(seed);
         this.seed = this.random.seed;
-        console.debug(`Using seed ${this.seed} to generate a new subsector`);
+        // console.debug(`Using seed ${this.seed} to generate a new subsector`);
 
         const namegen = new NameGenerator(names, 3, 0.01, true);
         const sector_names = namegen.generateNames(2, 4, 12, "", "", "", "");

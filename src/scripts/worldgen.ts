@@ -3,7 +3,7 @@ import { Random } from "./random";
 import { Subsector, TravelZoneType } from "./subsector";
 import { SVG } from "@svgdotjs/svg.js";
 
-console.log("Traveller Subsector Generator");
+// console.log("Traveller Subsector Generator");
 
 function resetSheets() {
     // note this only clears optional fields, not full sheet

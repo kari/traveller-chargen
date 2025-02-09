@@ -16,10 +16,10 @@ npm i
 
 ## Running
 
-This project uses [Parcel](https://parceljs.org/) and can be run locally using an NPM script
+This project uses [Astro](https://astro.build) and can be run locally using an NPM script
 
 ```sh
-npm start 
+npm start dev
 ```
 
 ## Building
