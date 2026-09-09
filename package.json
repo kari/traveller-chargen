@@ -18,15 +18,15 @@
     "@picocss/pico": "^2.0.6",
     "@svgdotjs/svg.js": "^3.2.0",
     "random-js": "^2.1.0",
-    "temporal-polyfill": "^0.2.3"
+    "temporal-polyfill": "^1.0.4"
   },
   "devDependencies": {
-    "@biomejs/biome": "~1.9.4",
+    "@biomejs/biome": "2.5.12",
     "@types/node": "^22.10.2",
-    "@vitest/coverage-v8": "^3.0.5",
-    "jsdom": "^24.0.0",
-    "typescript": "^5.2.2",
-    "vite": "^6.0.0",
-    "vitest": "^3.0.0"
+    "@vitest/coverage-v8": "^5.0.0",
+    "jsdom": "^30.0.1",
+    "typescript": "^7.0.2",
+    "vite": "^8.2.2",
+    "vitest": "^5.0.0"
   }
 }
