@@ -1,34 +1,46 @@
 # Classic Traveller Chargen
 
-This is a character generator for [the 1981 edition of the classic Traveller role-playing game](https://preview.drivethrurpg.com/en/product/355200/classic-traveller-facsimile-edition) as defined in the Book 1 (and Book 2 if the character is lucky enough to earn a starship).
+This is a character generator for [the 1981 edition of the classic Traveller role-playing game](https://preview.drivethrurpg.com/en/product/355200/classic-traveller-facsimile-edition), following Book 1 and Book 2 when a character earns a starship.
 
-By necessity, the generator is opionated because the generation process includes multiple decision points. While these are not necessarily the most optimized choices, they should anyway be quite reasonable.
+The generator is opinionated because character generation includes multiple decision points. Its choices are not necessarily optimized, but should produce reasonable characters.
 
-## Roadmap
+## Features
 
-This project will also include Subsector and World Generation as defined in Book 3. See `src/worldgen.ts`.
+- Character generation based on Classic Traveller Book 1
+- Starship generation for eligible Scout and Merchant characters
+- Subsector and world generation based on Book 3
+- Printable TAS-style character and ship forms
 
-## Installation
+## Development
 
 ```bash
-npm i
+npm install
 ```
 
-## Running
+Start the local development server with [Vite](https://vite.dev/):
 
-This project uses [Vite] and can be run locally using an NPM script
-
-```sh
+```bash
 npm start
 ```
 
-## Building
+The development server serves the character generator at `/`, the world generator at `/worldgen.html`, and project information at `/about.html`.
+
+Create a production build with:
 
 ```bash
 npm run build
 ```
 
 This builds the project to `dist/`.
+
+Run the test suite and coverage report with:
+
+```bash
+npm test
+npm run coverage
+```
+
+The generators use seeded pseudo-randomness internally, so generated results can be reproduced in code by supplying the same seed.
 
 ## See also
 
