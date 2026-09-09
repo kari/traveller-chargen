@@ -1,6 +1,5 @@
 import { SVG } from "@svgdotjs/svg.js";
 import { ImperialDate } from "./imperial_date";
-import { Random } from "./random";
 import { Subsector, TravelZoneType } from "./subsector";
 
 console.log("Traveller Subsector Generator");
@@ -171,7 +170,7 @@ function rollSubsector(): Subsector {
         );
 
         // world symbol (full = ocean, empty = no ocean, asteroid belt)
-        const r = new Random();
+        const r = s.random;
         if (h.world.planetarySize === 0) {
             // Asteroid Belt
             for (let i = 0; i <= r.integer(12, 18); i++) {

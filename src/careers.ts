@@ -518,7 +518,7 @@ const Scouts: Career = {
                 break;
             case 6:
                 if (!c.ship) {
-                    c.ship = new ScoutCourier();
+                    c.ship = new ScoutCourier(c.random);
                 }
                 break;
             case 7:
@@ -650,7 +650,7 @@ const Merchants: Career = {
                 break;
             case 7:
                 if (!c.ship) {
-                    c.ship = new FreeTrader();
+                    c.ship = new FreeTrader(c.random);
                 } else if (c.ship.mortgage) {
                     // pay off mortgage
                     c.ship.age += 10;

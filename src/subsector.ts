@@ -346,8 +346,11 @@ class Subsector {
         name: string;
     };
 
-    constructor(seed?: number) {
-        this.random = new Random(seed);
+    constructor(seedOrRandom?: number | Random) {
+        this.random =
+            seedOrRandom instanceof Random
+                ? seedOrRandom
+                : new Random(seedOrRandom);
         this.seed = this.random.seed;
         console.debug(`Using seed ${this.seed} to generate a new subsector`);
 

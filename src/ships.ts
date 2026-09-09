@@ -1,5 +1,5 @@
 import names from "./names/ships";
-import { Random } from "./random";
+import type { Random } from "./random";
 
 abstract class Ship {
     name?: string;
@@ -19,8 +19,7 @@ abstract class Ship {
     staterooms!: number;
     lowBerths!: number;
 
-    constructor(name?: string) {
-        const random = new Random();
+    constructor(random: Random, name?: string) {
         this.name = name ? name : random.pick(names);
     }
 

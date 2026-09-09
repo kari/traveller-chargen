@@ -194,8 +194,11 @@ export class Character {
     ship?: Ship;
     credits = 0;
 
-    constructor(seed?: number) {
-        this.random = new Random(seed);
+    constructor(seedOrRandom?: number | Random) {
+        this.random =
+            seedOrRandom instanceof Random
+                ? seedOrRandom
+                : new Random(seedOrRandom);
         console.debug(`Using seed ${this.random.seed} to generate a character`);
 
         this.age = 18;
