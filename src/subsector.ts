@@ -26,16 +26,16 @@ enum TradeClassification {
 type Starport = "A" | "B" | "C" | "D" | "E" | "X";
 
 class World {
-    name: string;
-    starport: Starport;
-    planetarySize: number;
-    planetaryAthmosphere: number;
-    hydrographicPercentage: number;
-    population: number;
-    planetaryGovernment: number;
-    lawLevel: number;
-    technologicalLevel: number;
-    tradeClassifications: TradeClassification[] = [];
+    readonly name: string;
+    readonly starport: Starport;
+    readonly planetarySize: number;
+    readonly planetaryAthmosphere: number;
+    readonly hydrographicPercentage: number;
+    readonly population: number;
+    readonly planetaryGovernment: number;
+    readonly lawLevel: number;
+    readonly technologicalLevel: number;
+    readonly tradeClassifications: readonly TradeClassification[];
 
     get uwp(): string {
         return `${this.starport}${[
@@ -153,7 +153,9 @@ class World {
 
         this.technologicalLevel = clamp(random.roll(1) + techLevelDM, 0, 20);
 
-        // Define trade classifications bsaed on world's attributes
+        const tradeClassifications: TradeClassification[] = [];
+
+        // Define trade classifications based on world's attributes
         if (
             this.planetaryAthmosphere >= 4 &&
             this.planetaryAthmosphere <= 9 &&
@@ -162,23 +164,23 @@ class World {
             this.population >= 5 &&
             this.population <= 7
         ) {
-            this.tradeClassifications.push(TradeClassification.Agricultural);
+            tradeClassifications.push(TradeClassification.Agricultural);
         }
         if (
             this.planetaryAthmosphere <= 3 &&
             this.hydrographicPercentage <= 3 &&
             this.population >= 6
         ) {
-            this.tradeClassifications.push(TradeClassification.NonAgricultural);
+            tradeClassifications.push(TradeClassification.NonAgricultural);
         }
         if (
             [0, 1, 2, 4, 7, 9].includes(this.planetaryAthmosphere) &&
             this.population >= 9
         ) {
-            this.tradeClassifications.push(TradeClassification.Industrial);
+            tradeClassifications.push(TradeClassification.Industrial);
         }
         if (this.population <= 6) {
-            this.tradeClassifications.push(TradeClassification.NonIndustrial);
+            tradeClassifications.push(TradeClassification.NonIndustrial);
         }
         if (
             this.planetaryGovernment >= 4 &&
@@ -186,31 +188,54 @@ class World {
             [6, 8].includes(this.planetaryAthmosphere) &&
             [6, 7, 8].includes(this.population)
         ) {
-            this.tradeClassifications.push(TradeClassification.Rich);
+            tradeClassifications.push(TradeClassification.Rich);
         }
         if (
             [2, 3, 4, 5].includes(this.planetaryAthmosphere) &&
             this.hydrographicPercentage <= 3
         ) {
-            this.tradeClassifications.push(TradeClassification.Poor);
+            tradeClassifications.push(TradeClassification.Poor);
         }
         if (this.hydrographicPercentage === 10) {
-            this.tradeClassifications.push(TradeClassification.Water);
+            tradeClassifications.push(TradeClassification.Water);
         }
         if (this.hydrographicPercentage === 0) {
-            this.tradeClassifications.push(TradeClassification.Desert);
+            tradeClassifications.push(TradeClassification.Desert);
         }
         if (this.planetaryAthmosphere === 0) {
-            this.tradeClassifications.push(TradeClassification.Vacuum);
+            tradeClassifications.push(TradeClassification.Vacuum);
         }
         if (this.planetarySize === 0) {
-            this.tradeClassifications.push(TradeClassification.AsteroidBelt);
+            tradeClassifications.push(TradeClassification.AsteroidBelt);
         }
         if (
             [0, 1].includes(this.planetaryAthmosphere) &&
             this.hydrographicPercentage >= 1
         ) {
-            this.tradeClassifications.push(TradeClassification.IceCapped);
+            tradeClassifications.push(TradeClassification.IceCapped);
+        }
+
+        this.tradeClassifications = tradeClassifications;
+        assertWorldBounds(this);
+    }
+}
+
+function assertWorldBounds(world: World): void {
+    const boundedValues: Array<[string, number, number, number]> = [
+        ["planetary size", world.planetarySize, 0, 10],
+        ["planetary atmosphere", world.planetaryAthmosphere, 0, 12],
+        ["hydrographic percentage", world.hydrographicPercentage, 0, 10],
+        ["population", world.population, 0, 10],
+        ["planetary government", world.planetaryGovernment, 0, 13],
+        ["law level", world.lawLevel, 0, 9],
+        ["technological level", world.technologicalLevel, 0, 20],
+    ];
+
+    for (const [name, value, minimum, maximum] of boundedValues) {
+        if (!Number.isInteger(value) || value < minimum || value > maximum) {
+            throw new RangeError(
+                `${name} must be an integer between ${minimum} and ${maximum}: ${value}`,
+            );
         }
     }
 }
