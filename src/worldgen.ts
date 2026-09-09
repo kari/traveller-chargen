@@ -1,4 +1,5 @@
 import { SVG } from "@svgdotjs/svg.js";
+import { DomView } from "./dom";
 import { ImperialDate } from "./imperial_date";
 import type { Subsector } from "./subsector";
 import { generateSubsector, TravelZoneType } from "./subsector";
@@ -6,34 +7,27 @@ import { generateSubsector, TravelZoneType } from "./subsector";
 console.log("Traveller Subsector Generator");
 
 function resetSheets() {
+    const view = new DomView(document);
     // note this only clears optional fields, not full sheet
-    document.getElementById("world-list")?.replaceChildren();
-    document.getElementById("map-grid")?.replaceChildren();
+    view.element("world-list").replaceChildren();
+    view.element("map-grid").replaceChildren();
 }
 
 function rollSubsector(): Subsector {
     const s = generateSubsector();
+    const view = new DomView(document);
 
     const today = new ImperialDate();
 
-    // biome-ignore lint/style/noNonNullAssertion: exists in HTML
-    document.getElementById("box-1")!.textContent = today.toString();
-    // biome-ignore lint/style/noNonNullAssertion: exists in HTML
-    document.getElementById("t6-box-2")!.textContent = today.toString();
-
-    document
-        .getElementById("seed")
-        ?.setAttribute("data-seed", s.seed.toString());
-
-    // biome-ignore lint/style/noNonNullAssertion: exists in HTML
-    document.getElementById("box-2")!.textContent = s.name;
-    // biome-ignore lint/style/noNonNullAssertion: exists in HTML
-    document.getElementById("t6-box-1")!.textContent = s.name;
-    // biome-ignore lint/style/noNonNullAssertion: exists in HTML
-    document.getElementById("box-3")!.textContent = s.sector.name;
+    view.text("box-1", today.toString());
+    view.text("t6-box-2", today.toString());
+    view.data("seed", "seed", s.seed.toString());
+    view.text("box-2", s.name);
+    view.text("t6-box-1", s.name);
+    view.text("box-3", s.sector.name);
 
     function addWorldNode(text: string) {
-        const worlds = document.getElementById("world-list");
+        const worlds = view.element("world-list");
         const div = document.createElement("div");
         const divText = document.createTextNode(text);
         div.appendChild(divText);
@@ -41,7 +35,7 @@ function rollSubsector(): Subsector {
     }
 
     function addBoxedWorldNode(text: string) {
-        const worlds = document.getElementById("world-list");
+        const worlds = view.element("world-list");
         const div = document.createElement("div");
         div.classList.add("boxed");
         for (const l of text) {
@@ -115,7 +109,7 @@ function rollSubsector(): Subsector {
     }
 
     // FIXME: refactor into "drawTemplateGrid" and draw it before new Subsector() and in resetSheets()
-    const draw = SVG().addTo("#map-grid").size("100%", "100%");
+    const draw = SVG().addTo(view.element("map-grid")).size("100%", "100%");
     const size = 100;
     draw.viewbox(
         0,
