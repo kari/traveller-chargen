@@ -1,6 +1,7 @@
 import { SVG } from "@svgdotjs/svg.js";
 import { ImperialDate } from "./imperial_date";
-import { Subsector, TravelZoneType } from "./subsector";
+import type { Subsector } from "./subsector";
+import { generateSubsector, TravelZoneType } from "./subsector";
 
 console.log("Traveller Subsector Generator");
 
@@ -11,7 +12,7 @@ function resetSheets() {
 }
 
 function rollSubsector(): Subsector {
-    const s = new Subsector();
+    const s = generateSubsector();
 
     const today = new ImperialDate();
 
@@ -253,7 +254,7 @@ function rollSubsector(): Subsector {
 
 if (typeof window === "undefined") {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const s = new Subsector();
+    const s = generateSubsector();
     for (const h of s.hexes) {
         console.log(h.toString());
     }

@@ -913,6 +913,10 @@ export class Character {
     }
 }
 
+function generateCharacter(seedOrRandom?: number | Random): Character {
+    return new Character(seedOrRandom);
+}
+
 const weaponSkills: { [key: string]: string[] } = {
     blade: [
         "Dagger",
@@ -973,4 +977,4 @@ const weaponStrDM: Record<string, [bonus: number, penalty: number]> = {
 };
 const careers: Career[] = [Navy, Marines, Army, Scouts, Merchants, Other];
 
-export { Items, Name, weaponSkills };
+export { generateCharacter, Items, Name, weaponSkills };

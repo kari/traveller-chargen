@@ -1,4 +1,5 @@
-import { Character, weaponSkills } from "./character";
+import type { Character } from "./character";
+import { generateCharacter, weaponSkills } from "./character";
 import { ImperialDate } from "./imperial_date";
 import { ehex } from "./utils";
 
@@ -56,7 +57,7 @@ function resetSheets() {
 }
 
 function rollCharacter(): Character {
-    const c = new Character();
+    const c = generateCharacter();
     const today = new ImperialDate();
 
     if (c.dead) {
@@ -308,7 +309,7 @@ function rollCharacter(): Character {
 
 if (typeof window === "undefined") {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const _c = new Character();
+    const _c = generateCharacter();
 } else {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     document.getElementById("reroll")?.addEventListener("click", (_event) => {

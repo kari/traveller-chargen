@@ -379,4 +379,8 @@ class Subsector {
     }
 }
 
-export { Hex, Subsector, TravelZoneType, World };
+function generateSubsector(seedOrRandom?: number | Random): Subsector {
+    return new Subsector(seedOrRandom);
+}
+
+export { generateSubsector, Hex, Subsector, TravelZoneType, World };

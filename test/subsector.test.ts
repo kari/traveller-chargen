@@ -1,6 +1,11 @@
 import { expect, test } from "vitest";
 import { Random } from "../src/random";
-import { Hex, Subsector, World } from "../src/subsector";
+import {
+    generateSubsector,
+    Hex,
+    Subsector,
+    World,
+} from "../src/subsector";
 
 test("create a random world", () => {
     const r = new Random();
@@ -26,5 +31,13 @@ test("uses an injected random source", () => {
     const random = new Random(12345);
     const subsector = new Subsector(random);
 
+    expect(subsector.random).toBe(random);
+});
+
+test("generates a subsector through the public generation API", () => {
+    const random = new Random(12345);
+    const subsector = generateSubsector(random);
+
+    expect(subsector).toBeInstanceOf(Subsector);
     expect(subsector.random).toBe(random);
 });
