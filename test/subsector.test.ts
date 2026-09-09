@@ -1,11 +1,6 @@
 import { expect, test } from "vitest";
 import { Random } from "../src/random";
-import {
-    generateSubsector,
-    Hex,
-    Subsector,
-    World,
-} from "../src/subsector";
+import { generateSubsector, Hex, Subsector, World } from "../src/subsector";
 
 test("create a random world", () => {
     const r = new Random();
@@ -20,7 +15,6 @@ test("create a hex", () => {
     expect(h.hexNumber).toBe(101);
     expect(h.toString()).toBeTruthy();
     expect(h.basesToString()).toBeTypeOf("string");
-
 });
 
 test("create a subsector", () => {

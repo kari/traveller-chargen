@@ -1,19 +1,19 @@
-import { expect, test } from 'vitest'
-import { Random } from '../src/random'
+import { expect, test } from "vitest";
+import { Random } from "../src/random";
 
-test('construct without seed', () => {
+test("construct without seed", () => {
     const r = new Random();
     expect(r.seed).toBeTypeOf("number");
     const roll = r.roll(1);
     expect(roll).toBeGreaterThanOrEqual(1);
     expect(roll).toBeLessThanOrEqual(6);
-    expect(r.pick(['me'])).toBe('me');
-})
+    expect(r.pick(["me"])).toBe("me");
+});
 
-test('construct with seed', () => {
+test("construct with seed", () => {
     const r = new Random(12345);
     expect(r.seed).toBe(12345);
-})
+});
 
 test("test seeded random", () => {
     const first = new Random(123456);
@@ -43,7 +43,7 @@ test("test seeded random", () => {
     expect(firstValues[0]).toBeLessThanOrEqual(6);
     expect(firstValues[4]).toBeGreaterThanOrEqual(0);
     expect(firstValues[4]).toBeLessThan(10);
-})
+});
 
 test("cannot pick from an empty collection", () => {
     expect(() => new Random(1).pick([])).toThrow(RangeError);

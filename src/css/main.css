@@ -1,12 +1,13 @@
-@import '@picocss/pico/css/pico.red.css';
-@import '@ksilvennoinen/urw-classico/700-italic.css';
-@import '@ksilvennoinen/urw-classicsans';
-@import '@ksilvennoinen/urw-classicsans/400-italic.css';
-@import '@ksilvennoinen/urw-classicsans/700.css';
-@import '@ksilvennoinen/urw-classicsans/700-italic.css';
+@import "@picocss/pico/css/pico.red.css";
+@import "@ksilvennoinen/urw-classico/700-italic.css";
+@import "@ksilvennoinen/urw-classicsans";
+@import "@ksilvennoinen/urw-classicsans/400-italic.css";
+@import "@ksilvennoinen/urw-classicsans/700.css";
+@import "@ksilvennoinen/urw-classicsans/700-italic.css";
 
 :root {
-    --font-family: "URW Classic Sans", "Helvetica Neue", Arial, Helvetica, sans-serif;
+    --font-family:
+        "URW Classic Sans", "Helvetica Neue", Arial, Helvetica, sans-serif;
 }
 
 main {
@@ -215,7 +216,7 @@ div.form div.world > div {
     padding-left: 0.5em;
     border-bottom: 1px solid;
     display: flex;
-    align-items: center;;
+    align-items: center;
 }
 
 div.align-bottom {
@@ -227,7 +228,7 @@ div.form div.world > div:nth-child(4n) {
     border-right: 1px solid;
 }
 
-div.form div.world > div:nth-child(4n+1) {
+div.form div.world > div:nth-child(4n + 1) {
     border-left: 1px solid;
 }
 
@@ -239,7 +240,7 @@ div.boxed div {
     margin-top: 0.25em;
     margin-bottom: 0.25em;
 
-    font-family: Courier, 'Courier New', monospace;
+    font-family: Courier, "Courier New", monospace;
     font-size: 85%;
     display: inline;
     border-left: 1px solid;

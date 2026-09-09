@@ -1,5 +1,5 @@
 import type { Character } from "./character";
-import { FreeTrader, ScoutCourier} from "./ships";
+import { FreeTrader, ScoutCourier } from "./ships";
 
 interface Career {
     name: string;

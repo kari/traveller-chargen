@@ -1,7 +1,7 @@
 // Source: Moby Word Lists (Public Domain)
 // https://www.gutenberg.org/files/3201/files/NAMES-F.TXT
 
-export { names as default }
+export { names as default };
 
 const names: string[] = [
     "Aaren",
@@ -4949,5 +4949,5 @@ const names: string[] = [
     "Zsa Zsa",
     "Zsazsa",
     "Zulema",
-    "Zuzana"
+    "Zuzana",
 ];

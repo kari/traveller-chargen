@@ -2,7 +2,7 @@
 // https://en.wikipedia.org/wiki/List_of_ship_names_of_the_Royal_Navy
 // https://en.wikipedia.org/wiki/List_of_United_States_Navy_ships
 
-export { names as default} 
+export { names as default };
 
 const names: string[] = [
     "Abbotsham",
@@ -8894,5 +8894,5 @@ const names: string[] = [
     "Zuiderdijk",
     "Zumbrota",
     "Zumwalt",
-    "Zuni"    
+    "Zuni",
 ];

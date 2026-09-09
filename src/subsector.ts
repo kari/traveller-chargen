@@ -332,7 +332,7 @@ class Hex {
             }
             // Naval base presence
             if (
-                !(["C", "D", "E", "X"].includes(this.starport)) &&
+                !["C", "D", "E", "X"].includes(this.starport) &&
                 random.roll(2) >= 8
             ) {
                 this.navalBase = true;

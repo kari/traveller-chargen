@@ -23,7 +23,42 @@ function clamp(value: number, min: number, max: number): number {
  * @returns an extended hexadecimal notation
  */
 function ehex(value: number): string {
-    const symbols = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
+    const symbols = [
+        "0",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "A",
+        "B",
+        "C",
+        "D",
+        "E",
+        "F",
+        "G",
+        "H",
+        "J",
+        "K",
+        "L",
+        "M",
+        "N",
+        "P",
+        "Q",
+        "R",
+        "S",
+        "T",
+        "U",
+        "V",
+        "W",
+        "X",
+        "Y",
+        "Z",
+    ];
     const symbol = symbols[value];
     if (symbol === undefined) {
         throw new RangeError(`EHex value must be between 0 and 33: ${value}`);
@@ -44,4 +79,4 @@ function setBoxContent(box: string, text: string) {
     }
 }
 
-export { clamp, ehex, setBoxContent }
+export { clamp, ehex, setBoxContent };

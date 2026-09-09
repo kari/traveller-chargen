@@ -2,14 +2,14 @@ import { Temporal } from "temporal-polyfill";
 
 /**
  * Format a Date in Imperial Calendar format
- * 
+ *
  * @remarks
  * Uses Temporal API because Date doesn't have dayOfYear. Doesn't implement
- * Imperial Calendar arithmetic or conversions, only extracts day of year 
+ * Imperial Calendar arithmetic or conversions, only extracts day of year
  * and year for formatting purposes.
- * 
+ *
  * @see {@link https://wiki.travellerrpg.com/Imperial_Calendar}
- */ 
+ */
 class ImperialDate {
     dayOfYear: number;
     year: number;

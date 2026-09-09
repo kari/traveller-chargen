@@ -1,7 +1,7 @@
 // Source: markov-namegen-lib (CC-BY-SA 3.0)
 // https://github.com/Tw1ddle/markov-namegen-lib/blob/master/word_lists/american_surnames.txt
 
-export {names as default }
+export { names as default };
 
 const names: string[] = [
     "Abbott",
@@ -1003,5 +1003,5 @@ const names: string[] = [
     "York",
     "Young",
     "Zamora",
-    "Zimmerman"
+    "Zimmerman",
 ];

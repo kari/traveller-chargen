@@ -4,7 +4,8 @@ import { expect, test } from "vitest";
 import { DomView } from "../src/dom";
 
 test("writes through the DOM adapter", () => {
-    document.body.innerHTML = '<input id="flag" type="checkbox"><div id="value"></div>';
+    document.body.innerHTML =
+        '<input id="flag" type="checkbox"><div id="value"></div>';
     const view = new DomView(document);
 
     view.text("value", "hello");

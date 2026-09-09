@@ -40,6 +40,12 @@ npm test
 npm run coverage
 ```
 
+Run all CI quality checks locally with:
+
+```bash
+npm run check
+```
+
 The generators use seeded pseudo-randomness internally, so generated results can be reproduced in code by supplying the same seed.
 
 ## See also

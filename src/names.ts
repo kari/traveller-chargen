@@ -5,5 +5,5 @@ import male from "./names/male";
 export const names = {
     male: male,
     female: female,
-    last: last
-}
+    last: last,
+};

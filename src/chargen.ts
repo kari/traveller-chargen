@@ -188,10 +188,7 @@ function rollCharacter(): Character {
         );
         // 10: Occupation
 
-        view.text(
-            "s-box-11a",
-            new Intl.NumberFormat().format(c.ship.tonnage),
-        );
+        view.text("s-box-11a", new Intl.NumberFormat().format(c.ship.tonnage));
 
         if (c.ship.hullStandard) {
             view.checked("std-hull-yes", true);
