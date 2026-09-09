@@ -1,8 +1,8 @@
 import {
-    Random as RandomJS,
-    MersenneTwister19937,
     createEntropy,
+    MersenneTwister19937,
     nativeMath,
+    Random as RandomJS,
 } from "random-js";
 
 /**

@@ -1,6 +1,6 @@
-import { Random } from "./random";
-import names from "./names/worlds";
 import { NameGenerator } from "@ksilvennoinen/markov-namegen";
+import names from "./names/worlds";
+import { Random } from "./random";
 import { clamp, ehex } from "./utils";
 
 enum TravelZoneType {
@@ -100,7 +100,7 @@ class World {
         );
 
         let techLevelDM = 0;
-        switch (starport) {
+        switch (this.starport) {
             case "A":
                 techLevelDM += 6;
                 break;
@@ -376,4 +376,4 @@ class Subsector {
     }
 }
 
-export { Subsector, World, Hex, TravelZoneType };
+export { Hex, Subsector, TravelZoneType, World };

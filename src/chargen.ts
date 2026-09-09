@@ -4,6 +4,13 @@ import { ehex } from "./utils";
 
 console.log("Traveller Chargen");
 
+function setCheckbox(id: string, checked: boolean) {
+    const checkbox = document.getElementById(id);
+    if (checkbox instanceof HTMLInputElement) {
+        checkbox.checked = checked;
+    }
+}
+
 function resetSheets() {
     // note this only clears optional fields, not full sheet
     document.getElementById("tas-form-2")?.classList.remove("deceased");
@@ -44,7 +51,7 @@ function resetSheets() {
         "streamlined-no",
     ];
     for (const box of checkboxes) {
-        document.getElementById(box)?.removeAttribute("checked");
+        setCheckbox(box, false);
     }
 }
 
@@ -128,14 +135,14 @@ function rollCharacter(): Character {
     }
 
     if (c.retired) {
-        document.getElementById("retired-yes")?.setAttribute("checked", "");
+        setCheckbox("retired-yes", true);
         if (c.career.retirementPay) {
             // biome-ignore lint/style/noNonNullAssertion: exists in HTML
             document.getElementById("box-14b")!.textContent =
                 `Cr${new Intl.NumberFormat().format(c.retirementPay)}`;
         }
     } else {
-        document.getElementById("retired-no")?.setAttribute("checked", "");
+        setCheckbox("retired-no", true);
     }
 
     // ADD: box-15 (Special Assignments)
@@ -205,9 +212,9 @@ function rollCharacter(): Character {
     }
 
     if (c.items.hasTravellers) {
-        document.getElementById("tas-yes")?.setAttribute("checked", "");
+        setCheckbox("tas-yes", true);
     } else {
-        document.getElementById("tas-no")?.setAttribute("checked", "");
+        setCheckbox("tas-no", true);
     }
 
     if (c.credits > 0) {
@@ -246,21 +253,15 @@ function rollCharacter(): Character {
             new Intl.NumberFormat().format(c.ship.tonnage);
 
         if (c.ship.hullStandard) {
-            document
-                .getElementById("std-hull-yes")
-                ?.setAttribute("checked", "");
+            setCheckbox("std-hull-yes", true);
         } else {
-            document.getElementById("std-hull-no")?.setAttribute("checked", "");
+            setCheckbox("std-hull-no", true);
         }
 
         if (c.ship.streamlined) {
-            document
-                .getElementById("streamlined-yes")
-                ?.setAttribute("checked", "");
+            setCheckbox("streamlined-yes", true);
         } else {
-            document
-                .getElementById("streamlined-no")
-                ?.setAttribute("checked", "");
+            setCheckbox("streamlined-no", true);
         }
 
         // 11c. Max Atmosphere

@@ -75,4 +75,4 @@ class Mortgage {
     }
 }
 
-export { ScoutCourier, FreeTrader, Ship };
+export { FreeTrader, ScoutCourier, Ship };

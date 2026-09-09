@@ -1,12 +1,11 @@
-import { Navy, Marines, Army, Scouts, Merchants, Other } from "./careers";
 import type { Career } from "./careers";
-import type { Ship } from "./ships";
+import { Army, Marines, Merchants, Navy, Other, Scouts } from "./careers";
+import { ImperialDate } from "./imperial_date";
 import { names } from "./names";
 import { Random } from "./random";
-import { clamp } from "./utils";
+import type { Ship } from "./ships";
 import { World } from "./subsector";
-import { ImperialDate } from "./imperial_date";
-import { ehex } from "./utils";
+import { clamp, ehex } from "./utils";
 
 const numberFormat = new Intl.NumberFormat("en-us", {
     maximumFractionDigits: 2,
@@ -128,7 +127,7 @@ class Items {
         return Object.keys(this.items);
     }
 
-    convertPassges(): number {
+    convertPassages(): number {
         const PassagePrices: { [key: string]: number } = {
             "Low Psg": 1_000,
             "Mid Psg": 8_000,
@@ -544,7 +543,7 @@ export class Character {
         }
 
         if (this.ship) {
-            this.credits += this.items.convertPassges();
+            this.credits += this.items.convertPassages();
         }
     }
 
@@ -971,4 +970,4 @@ const weaponStrDM: Record<string, [bonus: number, penalty: number]> = {
 };
 const careers: Career[] = [Navy, Marines, Army, Scouts, Merchants, Other];
 
-export { weaponSkills, Name, Items };
+export { Items, Name, weaponSkills };

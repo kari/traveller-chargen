@@ -1,5 +1,5 @@
-import { ScoutCourier, FreeTrader } from "./ships";
 import type { Character } from "./character";
+import { FreeTrader, ScoutCourier} from "./ships";
 
 interface Career {
     name: string;
@@ -778,4 +778,4 @@ const Other: Career = {
     },
 };
 
-export { Navy, Marines, Army, Scouts, Merchants, Other, type Career };
+export { Army, type Career, Marines, Merchants, Navy, Other, Scouts };

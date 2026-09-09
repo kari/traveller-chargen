@@ -1,7 +1,7 @@
+import { SVG } from "@svgdotjs/svg.js";
 import { ImperialDate } from "./imperial_date";
 import { Random } from "./random";
 import { Subsector, TravelZoneType } from "./subsector";
-import { SVG } from "@svgdotjs/svg.js";
 
 console.log("Traveller Subsector Generator");
 

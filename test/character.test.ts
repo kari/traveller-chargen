@@ -1,8 +1,9 @@
 import { expect, test } from "vitest";
-import { Character, Skills, Items, Name } from "../src/character";
+import { Character, Items, Name, Skills } from "../src/character";
 
 test("Create a character", () => {
     const c = new Character();
+    expect(c).toBeInstanceOf(Character);
 });
 
 test("Add a skill", () => {
@@ -70,29 +71,29 @@ test("Add Travellers", () => {
 
 test("Convert passages", () => {
     const i = new Items();
-    expect(i.convertPassges()).toBe(0);
+    expect(i.convertPassages()).toBe(0);
 
     i.add("Low Psg");
-    expect(i.convertPassges()).toBe(900);
+    expect(i.convertPassages()).toBe(900);
 
     i.add("Low Psg");
     i.add("Low Psg");
-    expect(i.convertPassges()).toBe(1800);
-
-    i.add("Mid Psg");
-    expect(i.convertPassges()).toBe(7200);
+    expect(i.convertPassages()).toBe(1800);
 
     i.add("Mid Psg");
+    expect(i.convertPassages()).toBe(7200);
+
+    i.add("Mid Psg");
     i.add("Low Psg");
-    expect(i.convertPassges()).toBe(8100);
+    expect(i.convertPassages()).toBe(8100);
 
     i.add("High Psg");
-    expect(i.convertPassges()).toBe(9000);
+    expect(i.convertPassages()).toBe(9000);
 
     i.add("High Psg");
     i.add("Mid Psg");
     i.add("Low Psg");
-    expect(i.convertPassges()).toBe(17100);
+    expect(i.convertPassages()).toBe(17100);
 });
 
 test("Create a simple name", () => {

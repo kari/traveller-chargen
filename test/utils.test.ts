@@ -19,8 +19,8 @@ test('test ehex', () => {
     expect(utils.ehex(15)).toBe('F');
     expect(utils.ehex(33)).toBe('Z');
     // bun:test fails on .toThrow
-    expect(utils.ehex(-1)).toThrow(Error);
-    expect(utils.ehex(34)).toThrow(Error);
+    expect(() => utils.ehex(-1)).toThrow(RangeError);
+    expect(() => utils.ehex(34)).toThrow(RangeError);
 });
 
 test("test setBoxContent", () => {
