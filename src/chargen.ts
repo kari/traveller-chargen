@@ -1,4 +1,5 @@
 import type { Character } from "./character";
+import type { SkillName } from "./domain_types";
 import { generateCharacter, weaponSkills } from "./character";
 import { DomView } from "./dom";
 import { ImperialDate } from "./imperial_date";
@@ -109,10 +110,10 @@ function rollCharacter(): Character {
     // ADD: box-16 (Awards and Decorations)
 
     // identify weapons & devices qualified on
-    const equipmentSkills: string[] = c.skills.filter(
+    const equipmentSkills: SkillName[] = c.skills.filter(
         weaponSkills.gun.concat(weaponSkills.blade),
     );
-    const additionalSkills: string[] = c.skills.list.filter(
+    const additionalSkills: SkillName[] = c.skills.list.filter(
         (x) => !equipmentSkills.includes(x),
     );
     view.text("box-17", c.skills.toString(equipmentSkills));
@@ -129,8 +130,10 @@ function rollCharacter(): Character {
         }
     }
 
-    function preferredWeapon(type: string): string | null {
-        const skills: string[] = c.skills.sorted(weaponSkills[type]);
+    function preferredWeapon(
+        type: "weapon" | "pistol" | "blade",
+    ): SkillName | null {
+        const skills: SkillName[] = c.skills.sorted(weaponSkills[type]);
         if (skills.length > 0) {
             return skills[0];
         }

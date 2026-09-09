@@ -1,5 +1,6 @@
 import type { Character } from "./character";
 import { FreeTrader, ScoutCourier } from "./ships";
+import type { D6Table, D7Table, SkillName } from "./domain_types";
 
 interface Career {
     name: string;
@@ -12,10 +13,10 @@ interface Career {
     promotion: number | null;
     reenlist: number;
     ranks: (string | null)[] | null;
-    cashTable: number[];
-    skillsTable: string[];
-    advancedEducationTable: string[];
-    advancedEducationTable8: string[];
+    cashTable: D7Table<number>;
+    skillsTable: D6Table<SkillName>;
+    advancedEducationTable: D6Table<SkillName>;
+    advancedEducationTable8: D6Table<SkillName>;
     retirementPay: boolean;
     enlistmentDM(c: Character): number;
     survivalDM(c: Character): number;

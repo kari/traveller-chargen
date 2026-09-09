@@ -5,6 +5,7 @@ import { names } from "./names";
 import { Random } from "./random";
 import type { Ship } from "./ships";
 import { World } from "./subsector";
+import type { ItemName, SkillName, WeaponCategory } from "./domain_types";
 import { clamp, ehex } from "./utils";
 
 const numberFormat = new Intl.NumberFormat("en-us", {
@@ -56,46 +57,46 @@ class Name {
 type Gender = "male" | "female";
 
 export class Skills {
-    private skills: Record<string, number> = {}; // FIXME: replace string with list of valid skills
+    private skills: Partial<Record<SkillName, number>> = {};
 
-    get list(): string[] {
-        return Object.keys(this.skills);
+    get list(): SkillName[] {
+        return Object.keys(this.skills) as SkillName[];
     }
 
-    filter(subset: string[]): string[] {
-        return Object.keys(this.skills).filter((s) => subset.includes(s));
+    filter(subset: readonly SkillName[]): SkillName[] {
+        return this.list.filter((s) => subset.includes(s));
     }
 
     // FIXME: no sorting
-    toString(subset?: string[] | string): string {
+    toString(subset?: readonly SkillName[] | SkillName): string {
         if (subset === undefined) {
-            return Object.keys(this.skills)
-                .map((s: string) => `${s}-${this.skills[s]}`)
-                .join(", ");
+            return this.list.map((s) => `${s}-${this.skills[s]}`).join(", ");
         }
         if (typeof subset === "string") {
             return `${subset}-${this.skills[subset]}`;
         }
-        return Object.keys(this.skills)
+        return this.list
             .filter((s) => subset.includes(s))
-            .map((s: string) => `${s}-${this.skills[s]}`)
+            .map((s) => `${s}-${this.skills[s]}`)
             .join(", ");
     }
 
     // sorts by skill value (descending)
     // FIXME: sort secondarily by name
-    sorted(subset?: string[]): string[] {
+    sorted(subset?: readonly SkillName[]): SkillName[] {
         if (subset === undefined) {
-            return Object.keys(this.skills).sort((a, b) =>
-                this.skills[a] < this.skills[b] ? 1 : -1,
+            return this.list.sort((a, b) =>
+                (this.skills[a] ?? 0) < (this.skills[b] ?? 0) ? 1 : -1,
             );
         }
-        return Object.keys(this.skills)
+        return this.list
             .filter((s) => subset.includes(s))
-            .sort((a, b) => (this.skills[a] < this.skills[b] ? 1 : -1));
+            .sort((a, b) =>
+                (this.skills[a] ?? 0) < (this.skills[b] ?? 0) ? 1 : -1,
+            );
     }
 
-    addZeroSkill(skill: string) {
+    addZeroSkill(skill: SkillName) {
         if (this.list.includes(skill)) {
             console.warn(
                 `Skill already exists at level ${skill}-${this.skills[skill]}`,
@@ -104,9 +105,9 @@ export class Skills {
         this.increase(skill, 0);
     }
 
-    increase(skill: string, by = 1) {
+    increase(skill: SkillName, by = 1) {
         if (this.list.includes(skill)) {
-            this.skills[skill] += by;
+            this.skills[skill] = (this.skills[skill] ?? 0) + by;
         } else {
             this.skills[skill] = by;
         }
@@ -115,42 +116,49 @@ export class Skills {
 }
 
 class Items {
-    private items: Record<string, number> = {}; // FIXME: replace string with valid items
+    private items: Partial<Record<ItemName, number>> = {};
 
     toString(): string {
         return Object.keys(this.items)
-            .map((i) => `${this.items[i]} ${i}`)
+            .map((i) => `${this.items[i as ItemName] ?? 0} ${i}`)
             .join(", ");
     }
 
-    get list(): string[] {
-        return Object.keys(this.items);
+    get list(): ItemName[] {
+        return Object.keys(this.items) as ItemName[];
     }
 
     convertPassages(): number {
-        const PassagePrices: { [key: string]: number } = {
+        const passagePrices: Record<
+            Extract<ItemName, "Low Psg" | "Mid Psg" | "High Psg">,
+            number
+        > = {
             "Low Psg": 1_000,
             "Mid Psg": 8_000,
             "High Psg": 10_000,
         };
         const passages = this.list.filter((x) =>
-            Object.keys(PassagePrices).includes(x),
+            Object.keys(passagePrices).includes(x),
         );
         let credits = 0;
 
         for (const p of passages) {
             console.debug(`Converted ${this.items[p]} ${p} to credits`);
-            credits += PassagePrices[p] * 0.9 * this.items[p];
+            const price = passagePrices[p as keyof typeof passagePrices];
+            const quantity = this.items[p];
+            if (price !== undefined && quantity !== undefined) {
+                credits += price * 0.9 * quantity;
+            }
             delete this.items[p];
         }
 
         return credits;
     }
 
-    add(item: string) {
+    add(item: ItemName) {
         console.debug(`Character earned item ${item}`);
         if (this.list.includes(item) && item !== "Travellers'") {
-            this.items[item] += 1;
+            this.items[item] = (this.items[item] ?? 0) + 1;
         } else {
             this.items[item] = 1;
         }
@@ -573,7 +581,7 @@ export class Character {
         return this.attributes[attribute];
     }
 
-    addSkill(skill: string) {
+    addSkill(skill: SkillName) {
         if (skill === "Blade Cbt") {
             this.addWeaponSkill("blade");
             return;
@@ -592,7 +600,7 @@ export class Character {
 
     addVehicleSkill() {
         // FIXME: Currently first chooses a random skill and then only ever improves that one.
-        const known: string[] = [];
+        const known: SkillName[] = [];
         for (const skill of this.skills.list) {
             if (vehicleSkills.includes(skill)) {
                 known.push(skill);
@@ -607,7 +615,7 @@ export class Character {
     }
 
     weaponPreferences(type: "blade" | "gun") {
-        const avoid: string[] = [];
+        const avoid: SkillName[] = [];
         const weapons = weaponSkills[type];
 
         // FIXME: convert for loops into filters
@@ -616,19 +624,19 @@ export class Character {
                 avoid.push(w);
             }
         }
-        const prefer: string[] = [];
+        const prefer: SkillName[] = [];
         for (const w of weapons) {
             if (this.attributes.strength >= weaponStrDM[w][0]) {
                 prefer.push(w);
             }
         }
-        const known: string[] = [];
+        const known: SkillName[] = [];
         for (const skill of this.skills.list) {
             if (weapons.includes(skill)) {
                 known.push(skill);
             }
         }
-        const owned: string[] = [];
+        const owned: ItemName[] = [];
         for (const w of weapons) {
             if (this.items.list.includes(w)) {
                 owned.push(w);
@@ -917,7 +925,7 @@ function generateCharacter(seedOrRandom?: number | Random): Character {
     return new Character(seedOrRandom);
 }
 
-const weaponSkills: { [key: string]: string[] } = {
+const weaponSkills: Record<WeaponCategory, SkillName[]> = {
     blade: [
         "Dagger",
         "Blade",
@@ -941,10 +949,11 @@ const weaponSkills: { [key: string]: string[] } = {
         "Laser Rifle",
     ],
     pistol: ["Body Pistol", "Auto Pistol", "Revolver"],
+    gun: [],
 };
 weaponSkills.gun = weaponSkills.weapon.concat(weaponSkills.pistol);
 
-const vehicleSkills = [
+const vehicleSkills: SkillName[] = [
     "Ground Car",
     "Watercraft",
     "Winged Craft",

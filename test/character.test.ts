@@ -30,54 +30,54 @@ test("generates a character through the public generation API", () => {
 
 test("Add a skill", () => {
     const s = new Skills();
-    s.increase("Skill");
-    expect(s.toString()).toBe("Skill-1");
-    expect(s.list).toContain("Skill");
-    expect(s.filter(["Skill"])).toContain("Skill");
-    s.increase("Skill");
-    expect(s.toString()).toBe("Skill-2");
+    s.increase("Gambling");
+    expect(s.toString()).toBe("Gambling-1");
+    expect(s.list).toContain("Gambling");
+    expect(s.filter(["Gambling"])).toContain("Gambling");
+    s.increase("Gambling");
+    expect(s.toString()).toBe("Gambling-2");
 });
 
 test("Add a zero skill", () => {
     const s = new Skills();
-    s.addZeroSkill("Skill");
-    expect(s.toString()).toBe("Skill-0");
-    expect(s.list).toContain("Skill");
-    expect(s.filter(["Skill"])).toContain("Skill");
-    s.increase("Skill");
-    expect(s.toString()).toBe("Skill-1");
-    s.increase("Skill", 2);
-    expect(s.toString()).toBe("Skill-3");
+    s.addZeroSkill("Brawling");
+    expect(s.toString()).toBe("Brawling-0");
+    expect(s.list).toContain("Brawling");
+    expect(s.filter(["Brawling"])).toContain("Brawling");
+    s.increase("Brawling");
+    expect(s.toString()).toBe("Brawling-1");
+    s.increase("Brawling", 2);
+    expect(s.toString()).toBe("Brawling-3");
 });
 
 test("Test skill sorting and filtering", () => {
     const s = new Skills();
-    s.increase("A");
-    s.increase("B");
+    s.increase("Gambling");
+    s.increase("Brawling");
     expect(s.list.length).toBe(2);
-    expect(s.list).toContain("A");
-    expect(s.list).toContain("B");
-    expect(s.filter(["A"])).toContain("A");
-    expect(s.filter(["A"]).length).toBe(1);
-    s.increase("A");
-    expect(s.sorted()).toEqual(["A", "B"]);
-    s.increase("C");
+    expect(s.list).toContain("Gambling");
+    expect(s.list).toContain("Brawling");
+    expect(s.filter(["Gambling"])).toContain("Gambling");
+    expect(s.filter(["Gambling"]).length).toBe(1);
+    s.increase("Gambling");
+    expect(s.sorted()).toEqual(["Gambling", "Brawling"]);
+    s.increase("Forgery");
 
-    const s2 = s.filter(["A", "C"]);
+    const s2 = s.filter(["Gambling", "Forgery"]);
     expect(s2.length).toBe(2);
 });
 
 test("Add items", () => {
     const i = new Items();
-    i.add("Item");
+    i.add("Low Psg");
     expect(i.list.length).toBe(1);
-    expect(i.list).toContain("Item");
-    expect(i.toString()).toBe("1 Item");
+    expect(i.list).toContain("Low Psg");
+    expect(i.toString()).toBe("1 Low Psg");
     expect(i.hasTravellers).toBeFalsy();
-    i.add("Item");
+    i.add("Low Psg");
     expect(i.list.length).toBe(1);
-    expect(i.toString()).toBe("2 Item");
-    i.add("AnotherItem");
+    expect(i.toString()).toBe("2 Low Psg");
+    i.add("Mid Psg");
     expect(i.list.length).toBe(2);
 });
 
