@@ -56,8 +56,22 @@ class World {
 
     constructor(random: Random, starport?: Starport) {
         this.starport = starport ?? Hex.rollStarport(random);
-        const namegen = new NameGenerator(names, 3, 0.01, true);
-        this.name = namegen.generateNames(1, 4, 12, "", "", "", "")[0];
+        const namegen = new NameGenerator(names, 3, 0.01, true, () =>
+            random.real(0, 1),
+        );
+        const generatedName = namegen.generateNames(
+            1,
+            4,
+            12,
+            "",
+            "",
+            "",
+            "",
+        )[0];
+        if (generatedName === undefined) {
+            throw new Error("World name generation failed");
+        }
+        this.name = generatedName;
         this.name =
             this.name.substring(0, 1).toUpperCase() + this.name.substring(1); // FIXME: add capitalization function to handle spaces etc.
 
@@ -379,8 +393,13 @@ class Subsector {
         this.seed = this.random.seed;
         console.debug(`Using seed ${this.seed} to generate a new subsector`);
 
-        const namegen = new NameGenerator(names, 3, 0.01, true);
+        const namegen = new NameGenerator(names, 3, 0.01, true, () =>
+            this.random.real(0, 1),
+        );
         const sector_names = namegen.generateNames(2, 4, 12, "", "", "", "");
+        if (sector_names.length < 2) {
+            throw new Error("Subsector name generation failed");
+        }
         this.name =
             sector_names[0].substring(0, 1).toUpperCase() +
             sector_names[0].substring(1);

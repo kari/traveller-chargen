@@ -9,6 +9,13 @@ test("create a random world", () => {
     expect(w.uwp).toMatch(/^[A-X][0-9A-Z]{6}-[0-9A-Z]$/);
 });
 
+test("generates the same world name from the same seed", () => {
+    const first = new World(new Random(12345));
+    const second = new World(new Random(12345));
+
+    expect(first.name).toBe(second.name);
+});
+
 test("create a hex", () => {
     const r = new Random();
     const h = new Hex(1, 1, r);
@@ -20,6 +27,14 @@ test("create a hex", () => {
 test("create a subsector", () => {
     const s = new Subsector();
     expect(s.hexes.length).toBe(80);
+});
+
+test("generates the same subsector names from the same seed", () => {
+    const first = new Subsector(12345);
+    const second = new Subsector(12345);
+
+    expect(first.name).toBe(second.name);
+    expect(first.sector.name).toBe(second.sector.name);
 });
 
 test("uses an injected random source", () => {
