@@ -1,6 +1,6 @@
 import type { Character } from "./character";
-import { FreeTrader, ScoutCourier } from "./ships";
 import type { D6Table, D7Table, SkillName } from "./domain_types";
+import { createFreeTrader, createScoutCourier, randomShipName } from "./ships";
 
 interface Career {
     name: string;
@@ -470,11 +470,9 @@ const Scouts: Career = {
         }
         return 0;
     },
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     commissionDM(_c) {
         return 0;
     },
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     promotionDM(_c) {
         return 0;
     },
@@ -519,7 +517,7 @@ const Scouts: Career = {
                 break;
             case 6:
                 if (!c.ship) {
-                    c.ship = new ScoutCourier(c.random);
+                    c.ship = createScoutCourier(randomShipName(c.random));
                 }
                 break;
             case 7:
@@ -651,7 +649,7 @@ const Merchants: Career = {
                 break;
             case 7:
                 if (!c.ship) {
-                    c.ship = new FreeTrader(c.random);
+                    c.ship = createFreeTrader(randomShipName(c.random));
                 } else if (c.ship.mortgage) {
                     // pay off mortgage
                     c.ship.age += 10;
@@ -708,7 +706,6 @@ const Other: Career = {
         "Streetwise",
         "Jack-o-T",
     ],
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     enlistmentDM(_c) {
         return 0;
     },
@@ -718,11 +715,9 @@ const Other: Career = {
         }
         return 0;
     },
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     commissionDM(_c) {
         return 0;
     },
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     promotionDM(_c) {
         return 0;
     },
@@ -773,7 +768,6 @@ const Other: Career = {
                 break;
         }
     },
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     rankAndServiceSkills(_c) {
         // no skills
     },

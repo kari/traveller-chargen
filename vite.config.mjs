@@ -1,8 +1,5 @@
-import { dirname, resolve } from 'node:path'
-import { fileURLToPath } from 'node:url'
+import { resolve } from 'node:path'
 import { defineConfig } from 'vite'
-
-const __dirname = dirname(fileURLToPath(import.meta.url))
 
 export default defineConfig({
   root: 'src',
@@ -11,9 +8,9 @@ export default defineConfig({
     emptyOutDir: true,
     rollupOptions: {
       input: {
-        index: resolve(__dirname, 'src', 'index.html'),
-        about: resolve(__dirname, 'src', 'about.html'),
-        worldgen: resolve(__dirname, 'src', 'worldgen.html'),
+        index: resolve(import.meta.dirname, 'src', 'index.html'),
+        about: resolve(import.meta.dirname, 'src', 'about.html'),
+        worldgen: resolve(import.meta.dirname, 'src', 'worldgen.html'),
       },
     },
   },

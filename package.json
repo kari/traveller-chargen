@@ -1,8 +1,6 @@
 {
   "name": "traveller-chargen",
-  "source": [
-    "./src/index.html"
-  ],
+  "type": "module",
   "scripts": {
     "start": "vite",
     "build": "vite build",

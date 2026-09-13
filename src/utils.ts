@@ -10,7 +10,7 @@
  * @param max - Maximum value
  * @returns value if its between min/max, or min/max if outside
  */
-function clamp(value: number, min: number, max: number): number {
+export function clamp(value: number, min: number, max: number): number {
     return Math.max(min, Math.min(value, max));
 }
 
@@ -22,7 +22,7 @@ function clamp(value: number, min: number, max: number): number {
  * @param value - input value to be converted (between 0 - 33)
  * @returns an extended hexadecimal notation
  */
-function ehex(value: number): string {
+export function ehex(value: number): string {
     const symbols = [
         "0",
         "1",
@@ -65,18 +65,3 @@ function ehex(value: number): string {
     }
     return symbol;
 }
-
-/**
- * Sets an element's textContent property if element exists
- *
- * @param box - element ID to look for
- * @param text - set element's value to this
- */
-function setBoxContent(box: string, text: string) {
-    const el = document.getElementById(box);
-    if (el) {
-        el.textContent = text;
-    }
-}
-
-export { clamp, ehex, setBoxContent };

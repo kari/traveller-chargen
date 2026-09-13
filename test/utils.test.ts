@@ -22,10 +22,3 @@ test("test ehex", () => {
     expect(() => utils.ehex(-1)).toThrow(RangeError);
     expect(() => utils.ehex(34)).toThrow(RangeError);
 });
-
-test("test setBoxContent", () => {
-    document.body.innerHTML = '<div id="test"></div>';
-    const el = document.getElementById("test");
-    utils.setBoxContent("test", "test string");
-    expect(el?.textContent).toBe("test string");
-});

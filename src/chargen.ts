@@ -1,7 +1,7 @@
 import type { Character } from "./character";
-import type { SkillName } from "./domain_types";
 import { generateCharacter, weaponSkills } from "./character";
 import { DomView } from "./dom";
+import type { SkillName } from "./domain_types";
 import { ImperialDate } from "./imperial_date";
 import { ehex } from "./utils";
 
@@ -135,7 +135,9 @@ function rollCharacter(): Character {
     ): SkillName | null {
         const skills: SkillName[] = c.skills.sorted(weaponSkills[type]);
         if (skills.length > 0) {
-            return skills[0];
+            const skill = skills[0];
+            if (skill === undefined) throw new RangeError(`Skill out of range`);
+            return skill;
         }
 
         return null;
@@ -224,15 +226,12 @@ function rollCharacter(): Character {
 }
 
 if (typeof window === "undefined") {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const _c = generateCharacter();
 } else {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     document.getElementById("reroll")?.addEventListener("click", (_event) => {
         resetSheets();
         rollCharacter();
     });
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     document
         .getElementById("roll-ship")
         ?.addEventListener("click", (_event) => {
@@ -242,7 +241,6 @@ if (typeof window === "undefined") {
                 c = rollCharacter();
             } while (!c.ship);
         });
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     window.addEventListener("load", (_event) => {
         rollCharacter(); // FIXME: preferably roll an alive character
     });

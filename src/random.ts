@@ -18,7 +18,10 @@ class Random {
         if (globalThis.crypto !== undefined) {
             const values = new Uint32Array(1);
             globalThis.crypto.getRandomValues(values);
-            return values[0];
+            const value = values[0];
+            if (value === undefined)
+                throw new RangeError(`Random value out of range`);
+            return value;
         }
         return Math.floor(Math.random() * 0x1_0000_0000);
     }
@@ -28,10 +31,10 @@ class Random {
     }
 
     pick<Type>(arr: ArrayLike<Type>): Type {
-        if (arr.length === 0) {
-            throw new RangeError("Cannot pick from an empty collection");
-        }
-        return arr[this.integer(0, arr.length - 1)];
+        const picked = arr[this.integer(0, arr.length - 1)];
+        if (picked === undefined)
+            throw new RangeError(`"Cannot pick from an empty collection"`);
+        return picked;
     }
 
     date(start: Date, end: Date): Date {

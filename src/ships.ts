@@ -1,77 +1,84 @@
 import names from "./names/ships";
 import type { Random } from "./random";
 
-abstract class Ship {
-    name?: string;
-    type!: string;
-    tonnage!: number;
-    hullStandard!: boolean;
-    age = 0;
-    mortgage?: Mortgage;
-    minCrew!: number;
-    streamlined!: boolean;
-    cargoCapacity!: number;
-    cost!: number;
-    vehicles: string[] = [];
-    acceleration!: number;
-    jump!: number;
-    powerPlant!: string;
-    staterooms!: number;
-    lowBerths!: number;
-
-    constructor(random: Random, name?: string) {
-        this.name = name ? name : random.pick(names);
-    }
-
-    toString(): string {
-        return `${this.name} (type: ${this.type})`;
-    }
+export interface Ship {
+    name: string;
+    type: string;
+    tonnage: number;
+    hullStandard: boolean;
+    age: number;
+    mortgage?: Mortgage | undefined;
+    minCrew: number;
+    streamlined: boolean;
+    cargoCapacity: number;
+    cost: number;
+    vehicles: string[];
+    acceleration: number;
+    jump: number;
+    powerPlant: string;
+    staterooms: number;
+    lowBerths: number;
 }
 
-class ScoutCourier extends Ship {
-    type = "S";
-    tonnage = 100;
-    hullStandard = true;
-    minCrew = 1;
-    streamlined = true;
-    cargoCapacity = 3;
-    cost = 29.43;
-    vehicles = ["Air/Raft"];
-    jump = 2;
-    powerPlant = "A";
-    acceleration = 2;
-    staterooms = 4;
-    lowBerths = 0;
+export function shipToString(ship: Ship): string {
+    return `${ship.name} (type: ${ship.type})`;
 }
 
-class FreeTrader extends Ship {
-    type = "A";
-    tonnage = 200;
-    hullStandard = true;
-    minCrew = 4;
-    streamlined = true;
-    cargoCapacity = 82;
-    cost = 37.08;
-    jump = 1;
-    powerPlant = "A";
-    acceleration = 1;
-    staterooms = 10;
-    lowBerths = 20;
-    mortgage = new Mortgage(150_000, 40);
+export function randomShipName(random: Random) {
+    return random.pick(names);
+}
+
+export function createScoutCourier(name: string): Ship {
+    return {
+        name: name,
+        age: 0,
+        type: "S",
+        tonnage: 100,
+        hullStandard: true,
+        minCrew: 1,
+        streamlined: true,
+        cargoCapacity: 3,
+        cost: 29.43,
+        vehicles: ["Air/Raft"],
+        jump: 2,
+        powerPlant: "A",
+        acceleration: 2,
+        staterooms: 4,
+        lowBerths: 0,
+    };
+}
+
+export function createFreeTrader(name: string): Ship {
+    return {
+        name: name,
+        age: 0,
+        type: "A",
+        tonnage: 200,
+        hullStandard: true,
+        minCrew: 4,
+        streamlined: true,
+        cargoCapacity: 82,
+        cost: 37.08,
+        jump: 1,
+        powerPlant: "A",
+        acceleration: 1,
+        staterooms: 10,
+        lowBerths: 20,
+        mortgage: new Mortgage(150_000, 40),
+        vehicles: [],
+    };
 }
 
 class Mortgage {
-    monthly_payment: number;
+    monthlyPayment: number;
     maturity: number;
 
-    constructor(monthly_payment: number, maturity: number) {
-        this.monthly_payment = monthly_payment;
+    constructor(monthlyPayment: number, maturity: number) {
+        this.monthlyPayment = monthlyPayment;
         this.maturity = maturity;
     }
 
-    get total_payment(): number {
-        return this.monthly_payment * 12 * this.maturity;
+    get totalPayment(): number {
+        return this.monthlyPayment * 12 * this.maturity;
     }
 }
-
-export { FreeTrader, ScoutCourier, Ship };

@@ -1,11 +1,11 @@
 import type { Career } from "./careers";
 import { Army, Marines, Merchants, Navy, Other, Scouts } from "./careers";
+import type { ItemName, SkillName, WeaponCategory } from "./domain_types";
 import { ImperialDate } from "./imperial_date";
 import { names } from "./names";
 import { Random } from "./random";
 import type { Ship } from "./ships";
 import { World } from "./subsector";
-import type { ItemName, SkillName, WeaponCategory } from "./domain_types";
 import { clamp, ehex } from "./utils";
 
 const numberFormat = new Intl.NumberFormat("en-us", {
@@ -24,10 +24,10 @@ interface Attributes {
 type Attribute = keyof Attributes;
 
 class Name {
-    title?: string;
+    title?: string | undefined;
     first: string;
     middle?: string;
-    prefix?: string;
+    prefix?: string | undefined;
     last: string;
 
     toString(title = true): string {
@@ -395,9 +395,10 @@ export class Character {
                         case 3:
                         case 4:
                             this.addSkill(
-                                this.career.skillsTable[
-                                    this.random.roll(1) - 1
-                                ],
+                                rollTable(
+                                    this.career.skillsTable,
+                                    this.random.roll(1),
+                                ),
                             );
                             break;
                         case 5:
@@ -405,22 +406,25 @@ export class Character {
                             if (this.attributes.education >= 8) {
                                 if (this.random.roll(1) >= 3) {
                                     this.addSkill(
-                                        this.career.advancedEducationTable8[
-                                            this.random.roll(1) - 1
-                                        ],
+                                        rollTable(
+                                            this.career.advancedEducationTable8,
+                                            this.random.roll(1),
+                                        ),
                                     );
                                 } else {
                                     this.addSkill(
-                                        this.career.advancedEducationTable[
-                                            this.random.roll(1) - 1
-                                        ],
+                                        rollTable(
+                                            this.career.advancedEducationTable,
+                                            this.random.roll(1),
+                                        ),
                                     );
                                 }
                             } else {
                                 this.addSkill(
-                                    this.career.advancedEducationTable[
-                                        this.random.roll(1) - 1
-                                    ],
+                                    rollTable(
+                                        this.career.advancedEducationTable,
+                                        this.random.roll(1),
+                                    ),
                                 );
                             }
                             break;
@@ -494,8 +498,12 @@ export class Character {
         // retirement pay
         if (this.retired && this.career.retirementPay) {
             const retirementPay = [4_000, 6_000, 8_000, 10_000]; // retirement pay is 2_000 + 2_000 * terms 5+
-            this.retirementPay = retirementPay[this.terms - 5];
-            if (this.terms > 8) {
+            if (this.terms <= 8) {
+                const pay = retirementPay[this.terms - 5];
+                if (pay === undefined)
+                    throw new RangeError(`Invalid retirementPay index`);
+                this.retirementPay = pay;
+            } else {
                 this.retirementPay += (this.terms - 8) * 2_000;
             }
             console.debug(
@@ -544,8 +552,10 @@ export class Character {
                 );
             } else if (cashTableRolls < 3) {
                 // cash table
-                this.credits +=
-                    this.career.cashTable[this.random.roll(1) + cashDM - 1];
+                this.credits += rollTable(
+                    this.career.cashTable,
+                    this.random.roll(1) + cashDM,
+                );
                 cashTableRolls += 1;
                 console.debug(
                     `Character rolls for cash table (${cashTableRolls})`,
@@ -620,13 +630,15 @@ export class Character {
 
         // FIXME: convert for loops into filters
         for (const w of weapons) {
-            if (this.attributes.strength <= weaponStrDM[w][1]) {
+            const [, penalty] = weaponStrRequirements(w);
+            if (this.attributes.strength <= penalty) {
                 avoid.push(w);
             }
         }
         const prefer: SkillName[] = [];
         for (const w of weapons) {
-            if (this.attributes.strength >= weaponStrDM[w][0]) {
+            const [bonus] = weaponStrRequirements(w);
+            if (this.attributes.strength >= bonus) {
                 prefer.push(w);
             }
         }
@@ -760,11 +772,10 @@ export class Character {
         });
 
         const preferredCareer =
-            careers[
-                preferredCareerIndexes.length > 1
-                    ? this.random.pick(preferredCareerIndexes)
-                    : preferredCareerIndexes[0]
-            ];
+            careers[this.random.pick(preferredCareerIndexes)];
+        if (preferredCareer === undefined) {
+            throw new Error("No eligible career found");
+        }
 
         if (
             this.random.roll() + preferredCareer.enlistmentDM(this) >=
@@ -776,7 +787,10 @@ export class Character {
         }
         this.drafted = true;
         const draft = this.random.roll(1);
-        const draftedService = careers.filter((c) => c.draft === draft)[0];
+        const draftedService = careers.find((c) => c.draft === draft);
+        if (draftedService === undefined)
+            throw new Error(`No service for draft roll ${draft}`);
+
         console.log(
             `Character was rejected from ${preferredCareer.name} and was drafted to ${draftedService.name}`,
         );
@@ -925,6 +939,13 @@ function generateCharacter(seedOrRandom?: number | Random): Character {
     return new Character(seedOrRandom);
 }
 
+function rollTable<T>(table: readonly T[], roll: number): T {
+    const value = table[roll - 1];
+    if (value === undefined)
+        throw new RangeError(`Table roll ${roll} out of range`);
+    return value;
+}
+
 const weaponSkills: Record<WeaponCategory, SkillName[]> = {
     blade: [
         "Dagger",
@@ -961,7 +982,9 @@ const vehicleSkills: SkillName[] = [
     "Grav Belt",
 ];
 
-const weaponStrDM: Record<string, [bonus: number, penalty: number]> = {
+const weaponStrDM: Partial<
+    Record<SkillName, [bonus: number, penalty: number] | undefined>
+> = {
     Dagger: [8, 3],
     Blade: [9, 4],
     Foil: [10, 4],
@@ -984,6 +1007,19 @@ const weaponStrDM: Record<string, [bonus: number, penalty: number]> = {
     "Laser Carbine": [10, 5],
     "Laser Rifle": [11, 6],
 };
+
+function weaponStrRequirements(
+    weapon: SkillName,
+): [bonus: number, penalty: number] {
+    const requirements = weaponStrDM[weapon];
+    if (requirements === undefined) {
+        throw new RangeError(
+            `No STR requirements defined for weapon: ${weapon}`,
+        );
+    }
+    return requirements;
+}
+
 const careers: Career[] = [Navy, Marines, Army, Scouts, Merchants, Other];
 
 export { generateCharacter, Items, Name, weaponSkills };

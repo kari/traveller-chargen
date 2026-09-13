@@ -397,16 +397,17 @@ class Subsector {
             this.random.real(0, 1),
         );
         const sector_names = namegen.generateNames(2, 4, 12, "", "", "", "");
-        if (sector_names.length < 2) {
+        const [subsectorName, sectorName] = sector_names;
+        if (subsectorName === undefined || sectorName === undefined)
             throw new Error("Subsector name generation failed");
-        }
+
         this.name =
-            sector_names[0].substring(0, 1).toUpperCase() +
-            sector_names[0].substring(1);
+            subsectorName.substring(0, 1).toUpperCase() +
+            subsectorName.substring(1);
         this.sector = {
             name:
-                sector_names[1].substring(0, 1).toUpperCase() +
-                sector_names[1].substring(1),
+                sectorName.substring(0, 1).toUpperCase() +
+                sectorName.substring(1),
         };
 
         // create subsector 8x10 hexes

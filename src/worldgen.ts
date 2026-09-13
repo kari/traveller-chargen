@@ -6,6 +6,8 @@ import { generateSubsector, TravelZoneType } from "./subsector";
 
 console.log("Traveller Subsector Generator");
 
+type Point2D = readonly [x: number, y: number];
+
 function resetSheets() {
     const view = new DomView(document);
     // note this only clears optional fields, not full sheet
@@ -71,7 +73,7 @@ function rollSubsector(): Subsector {
     }
 
     // https://www.redblobgames.com/grids/hexagons/#hex-to-pixel
-    function hexToPixel(q: number, r: number) {
+    function hexToPixel(q: number, r: number): Point2D {
         // odd-q offset
         const x = ((size * 3) / 2) * q + size;
         const y =
@@ -90,22 +92,14 @@ function rollSubsector(): Subsector {
         return edges;
     }
 
-    function starPoints(r: number) {
-        const edges: number[][] = [];
-        for (let k = 0; k <= 4; k++) {
-            edges.push([
-                r * Math.cos((2 * Math.PI * k) / 5 + Math.PI / 2),
-                -r * Math.sin((2 * Math.PI * k) / 5 + Math.PI / 2),
-            ]);
-        }
-        return edges;
-    }
-
-    function drawStar(r: number) {
-        const points = starPoints(r);
-        const star = [points[0], points[2], points[4], points[1], points[3]];
-
-        return star.flat();
+    function drawStar(radius: number): number[] {
+        return Array.from({ length: 5 }, (_, k) => {
+            const angle = (4 * Math.PI * k) / 5 + Math.PI / 2;
+            return [
+                radius * Math.cos(angle),
+                -radius * Math.sin(angle),
+            ] as const;
+        }).flat();
     }
 
     // FIXME: refactor into "drawTemplateGrid" and draw it before new Subsector() and in resetSheets()

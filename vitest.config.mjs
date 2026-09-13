@@ -1,7 +1,3 @@
 import { defineConfig } from 'vite'
 
-export default defineConfig({
-  test: {
-    exclude: [],
-  },
-})
+export default defineConfig({})
