@@ -11,6 +11,8 @@ Possibly there's a need for SHIPGEN as well.
 ## Common TODOs
 
 - Control logging
+  - collect generation events into a `.history` array (on `Character` / `Subsector`) instead of `console.log` / `console.debug` / `console.warn`
+  - UI can then render the history; tests stay silent
 - use lightningcss in vite
 
 ## CHARGEN
@@ -31,6 +33,12 @@ Possibly there's a need for SHIPGEN as well.
   - async function
   - timeout
 - fix checkboxes, <https://www.htmhell.dev/adventcalendar/2023/2/>
+- Refactor `character.ts` (~1000 lines)
+  - extract `Name`, `Skills`, `Items` into their own modules
+  - move weapon tables (`weaponSkills`, `weaponStrDM`, `vehicleSkills`) to `weapons.ts`
+  - split `doCareer()` into per-phase methods (survival, commission, promotion, skills, aging, reenlistment, mustering out)
+- Make `careers.ts` data-driven
+  - extract shared personal development / benefits table logic, keep only per-career differences as data
 
 ## WORLDGEN
 
@@ -52,3 +60,4 @@ Possibly there's a need for SHIPGEN as well.
   - Also look at the thread for some clarifications
 - Generate possible ships to encounter when entering system?
 - Spin out to its own project?
+- Extract world generation from the `World` constructor into pure functions (e.g. `generateWorldProfile(random)`)
