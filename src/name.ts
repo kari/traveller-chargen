@@ -35,7 +35,7 @@ export class Name {
         this.first = random.pick(names[gender]);
         this.last = random.pick(names.last);
 
-        this.title = this.addTitle(socialStanding, gender, random);
+        this.addTitle(socialStanding, gender, random);
     }
 
     get middleInitial(): string | null {
@@ -49,42 +49,53 @@ export class Name {
         socialStanding: number,
         gender: "male" | "female",
         random: Random,
-    ): string | undefined {
+    ): void {
         switch (socialStanding) {
             case 11: // Knight
                 if (gender === "male") {
-                    return "Sir";
+                    this.title = "Sir";
+                } else {
+                    this.title = "Dame";
                 }
-                return "Dame";
+                break;
             case 12:
                 if (this.prefix || random.roll(1) <= 3) {
                     if (gender === "male") {
-                        return "Baron";
+                        this.title = "Baron";
+                    } else {
+                        this.title = random.pick(["Baronet", "Baroness"]);
                     }
-                    return random.pick(["Baronet", "Baroness"]);
-                }
+                } else {
                 // in lieu of a title, use prefix in name
-                if (!this.prefix) {
-                    this.prefix = this.addPrefix(socialStanding, random);
+                    if (!this.prefix) {
+                        this.addPrefix(socialStanding, random);
+                    }
+                    this.title = undefined;
                 }
-                return undefined;
+                break;
             case 13:
                 if (gender === "male") {
-                    return "Marquis";
+                    this.title = "Marquis";
+                } else {
+                    this.title = random.pick(["Marquesa", "Marchioness"]);
                 }
-                return random.pick(["Marquesa", "Marchioness"]);
+                break;
             case 14:
                 if (gender === "male") {
-                    return "Count";
+                    this.title = "Count";
+                } else {
+                    this.title = "Countess";
                 }
-                return "Countess";
+                break;
             case 15:
                 if (gender === "male") {
-                    return "Duke";
+                    this.title = "Duke";
+                } else {
+                    this.title = "Duchess";
                 }
-                return "Duchess";
+                break;
             default:
-                return undefined;
+                this.title = undefined;
         }
     }
 
@@ -92,10 +103,10 @@ export class Name {
     protected addPrefix(
         socialStanding: number,
         random: Random,
-    ): string | undefined {
+    ): void {
         if (socialStanding === 12) {
-            return random.pick(["von ", "hault-", "haut-"]);
+            this.prefix = random.pick(["von ", "hault-", "haut-"]);
         }
-        return undefined;
+        this.prefix = undefined;
     }
 }
