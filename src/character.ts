@@ -24,6 +24,8 @@ interface Attributes {
 
 type Attribute = keyof Attributes;
 
+export type Gender = "male" | "female";
+
 export class Character {
     random: Random;
 
@@ -37,7 +39,7 @@ export class Character {
 
     attributes: Attributes;
 
-    gender: "male" | "female";
+    gender: Gender;
     birthDate: ImperialDate;
 
     name: Name;

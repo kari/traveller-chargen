@@ -6,14 +6,13 @@ This project has three parts,
 - WORLDGEN - for subsector and world generation
 - NAMEGEN - for generating names using Markov chains, <https://github.com/kari/markov-namegen>
 
-Possibly there's a need for SHIPGEN as well.
+Possibly along the road there's a need for SHIPGEN as well.
 
 ## Common TODOs
 
 - Control logging
   - collect generation events into a `.history` array (on `Character` / `Subsector`) instead of `console.log` / `console.debug` / `console.warn`
   - UI can then render the history; tests stay silent
-- use lightningcss in vite
 
 ## CHARGEN
 
@@ -34,7 +33,6 @@ Possibly there's a need for SHIPGEN as well.
   - timeout
 - fix checkboxes, <https://www.htmhell.dev/adventcalendar/2023/2/>
 - Refactor `character.ts` (~1000 lines)
-  - extract `Name`, `Skills`, `Items` into their own modules
   - move weapon tables (`weaponSkills`, `weaponStrDM`, `vehicleSkills`) to `weapons.ts`
   - split `doCareer()` into per-phase methods (survival, commission, promotion, skills, aging, reenlistment, mustering out)
 - Make `careers.ts` data-driven

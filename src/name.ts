@@ -1,3 +1,4 @@
+import type { Gender } from "./character";
 import female_names from "./names/female";
 import last_names from "./names/last_name";
 import male_names from "./names/male";
@@ -28,7 +29,7 @@ export class Name {
     }
 
     constructor(
-        gender: "male" | "female",
+        gender: Gender,
         socialStanding: number,
         random: Random,
     ) {
@@ -48,7 +49,7 @@ export class Name {
 
     addTitle(
         socialStanding: number,
-        gender: "male" | "female",
+        gender: Gender,
         random: Random,
     ): void {
         switch (socialStanding) {
