@@ -1,8 +1,9 @@
 import type { Character } from "./character";
-import { generateCharacter, weaponSkills } from "./character";
+import { generateCharacter } from "./character";
 import { DomView } from "./dom";
 import type { SkillName } from "./domain_types";
 import { ImperialDate } from "./imperial_date";
+import { weaponSkills } from "./skills";
 import { ehex } from "./utils";
 
 console.log("Traveller Chargen");

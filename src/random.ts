@@ -5,7 +5,7 @@ import { xoroshiro128plus } from "pure-rand/generator/xoroshiro128plus";
 /**
  * Project-level random source used by all generation code.
  */
-class Random {
+export class Random {
     private _random: ReturnType<typeof xoroshiro128plus>;
     private _seed: number;
 
@@ -58,5 +58,3 @@ class Random {
         return min + uniformFloat64(this._random) * (max - min);
     }
 }
-
-export { Random };

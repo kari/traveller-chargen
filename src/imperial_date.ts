@@ -10,7 +10,7 @@ import { Temporal } from "temporal-polyfill";
  *
  * @see {@link https://wiki.travellerrpg.com/Imperial_Calendar}
  */
-class ImperialDate {
+export class ImperialDate {
     dayOfYear: number;
     year: number;
 
@@ -48,5 +48,3 @@ class ImperialDate {
         )}-${this.year.toString()}`;
     }
 }
-
-export { ImperialDate };
