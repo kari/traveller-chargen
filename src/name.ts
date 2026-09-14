@@ -1,5 +1,13 @@
-import { names } from "./names";
+import female_names from "./names/female";
+import last_names from "./names/last_name";
+import male_names from "./names/male";
 import type { Random } from "./random";
+
+const names = {
+    male: male_names,
+    female: female_names,
+    last: last_names,
+};
 
 export class Name {
     title?: string | undefined;
