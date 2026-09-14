@@ -58,8 +58,6 @@ export type ItemName =
     | "Travellers'"
     | SkillName;
 
-export type WeaponCategory = "blade" | "pistol" | "weapon" | "gun";
-
 export type D6Table<T> = readonly [T, T, T, T, T, T];
 
 export type D7Table<T> = readonly [T, T, T, T, T, T, T];

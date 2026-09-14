@@ -8,6 +8,7 @@ import { type Ship, shipToString } from "./ships";
 import { Skills } from "./skills";
 import { World } from "./subsector";
 import { clamp, ehex } from "./utils";
+import { chooseWeaponItem, resolveSkill } from "./weapons";
 
 const numberFormat = new Intl.NumberFormat("en-us", {
     maximumFractionDigits: 2,
@@ -247,49 +248,37 @@ export class Character {
                             break;
                         case 3:
                         case 4:
-                            this.skills.addSkill(
+                            this.addSkill(
                                 rollTable(
                                     this.career.skillsTable,
                                     this.random.roll(1),
                                 ),
-                                this.attributes.strength,
-                                this.items,
-                                this.random,
                             );
                             break;
                         case 5:
                         case 6:
                             if (this.attributes.education >= 8) {
                                 if (this.random.roll(1) >= 3) {
-                                    this.skills.addSkill(
+                                    this.addSkill(
                                         rollTable(
                                             this.career.advancedEducationTable8,
                                             this.random.roll(1),
                                         ),
-                                        this.attributes.strength,
-                                        this.items,
-                                        this.random,
                                     );
                                 } else {
-                                    this.skills.addSkill(
+                                    this.addSkill(
                                         rollTable(
                                             this.career.advancedEducationTable,
                                             this.random.roll(1),
                                         ),
-                                        this.attributes.strength,
-                                        this.items,
-                                        this.random,
                                     );
                                 }
                             } else {
-                                this.skills.addSkill(
+                                this.addSkill(
                                     rollTable(
                                         this.career.advancedEducationTable,
                                         this.random.roll(1),
                                     ),
-                                    this.attributes.strength,
-                                    this.items,
-                                    this.random,
                                 );
                             }
                             break;
@@ -588,21 +577,29 @@ export class Character {
     }
 
     addSkill(name: SkillName) {
-        this.skills.addSkill(
-            name,
-            this.attributes.strength,
-            this.items,
-            this.random,
+        this.skills.increase(
+            resolveSkill(
+                name,
+                this.attributes.strength,
+                this.skills,
+                this.items,
+                this.random,
+            ),
         );
     }
 
     addWeapon(type: "blade" | "gun") {
-        this.items.addWeapon(
+        const { item, hasSkill } = chooseWeaponItem(
             type,
             this.attributes.strength,
             this.skills,
+            this.items,
             this.random,
         );
+        this.items.add(item);
+        if (!hasSkill) {
+            this.skills.addZeroSkill(item);
+        }
     }
 }
 

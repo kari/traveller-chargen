@@ -28,11 +28,7 @@ export class Name {
         }${this.last}`;
     }
 
-    constructor(
-        gender: Gender,
-        socialStanding: number,
-        random: Random,
-    ) {
+    constructor(gender: Gender, socialStanding: number, random: Random) {
         this.first = random.pick(names[gender]);
         // FIXME: generate middle initial?
         this.last = random.pick(names.last);
@@ -47,11 +43,7 @@ export class Name {
         return null;
     }
 
-    addTitle(
-        socialStanding: number,
-        gender: Gender,
-        random: Random,
-    ): void {
+    addTitle(socialStanding: number, gender: Gender, random: Random): void {
         switch (socialStanding) {
             case 11: // Knight
                 if (gender === "male") {
