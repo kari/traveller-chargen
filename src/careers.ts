@@ -134,12 +134,7 @@ const Navy: Career = {
                 c.modifyAttribute("education", 2);
                 break;
             case 4:
-                c.items.addWeapon(
-                    "blade",
-                    c.attributes.strength,
-                    c.skills,
-                    c.random,
-                );
+                c.addWeapon("blade");
                 break;
             case 5:
                 c.items.add("Travellers'");
@@ -245,28 +240,13 @@ const Marines: Career = {
                 c.modifyAttribute("endurance", 1);
                 break;
             case 4:
-                c.skills.addSkill(
-                    "Gambling",
-                    c.attributes.strength,
-                    c.items,
-                    c.random,
-                );
+                c.addSkill("Gambling");
                 break;
             case 5:
-                c.skills.addSkill(
-                    "Brawling",
-                    c.attributes.strength,
-                    c.items,
-                    c.random,
-                );
+                c.addSkill("Brawling");
                 break;
             case 6:
-                c.skills.addSkill(
-                    "Blade Cbt",
-                    c.attributes.strength,
-                    c.items,
-                    c.random,
-                );
+                c.addSkill("Blade Cbt");
                 break;
         }
     },
@@ -282,12 +262,7 @@ const Marines: Career = {
                 c.modifyAttribute("education", 1);
                 break;
             case 4:
-                c.items.addWeapon(
-                    "blade",
-                    c.attributes.strength,
-                    c.skills,
-                    c.random,
-                );
+                c.addWeapon("blade");
                 break;
             case 5:
                 c.items.add("Travellers'");
@@ -303,20 +278,10 @@ const Marines: Career = {
     rankAndServiceSkills(c) {
         if (c.rank === 0) {
             // Marine
-            c.skills.addSkill(
-                "Cutlass",
-                c.attributes.strength,
-                c.items,
-                c.random,
-            );
+            c.addSkill("Cutlass");
         } else if (c.rank === 1) {
             // Marine Lt
-            c.skills.addSkill(
-                "Revolver",
-                c.attributes.strength,
-                c.items,
-                c.random,
-            );
+            c.addSkill("Revolver");
         }
     },
 };
@@ -406,23 +371,13 @@ const Army: Career = {
                 c.modifyAttribute("endurance", 1);
                 break;
             case 4:
-                c.skills.addSkill(
-                    "Gambling",
-                    c.attributes.strength,
-                    c.items,
-                    c.random,
-                );
+                c.addSkill("Gambling");
                 break;
             case 5:
                 c.modifyAttribute("education", 1);
                 break;
             case 6:
-                c.skills.addSkill(
-                    "Brawling",
-                    c.attributes.strength,
-                    c.items,
-                    c.random,
-                );
+                c.addSkill("Brawling");
                 break;
         }
     },
@@ -438,12 +393,7 @@ const Army: Career = {
                 c.modifyAttribute("education", 2);
                 break;
             case 4:
-                c.items.addWeapon(
-                    "gun",
-                    c.attributes.strength,
-                    c.skills,
-                    c.random,
-                );
+                c.addWeapon("gun");
                 break;
             case 5:
                 c.items.add("High Psg");
@@ -459,15 +409,10 @@ const Army: Career = {
     rankAndServiceSkills(c) {
         if (c.rank === 0) {
             // Army
-            c.skills.addSkill(
-                "Rifle",
-                c.attributes.strength,
-                c.items,
-                c.random,
-            );
+            c.addSkill("Rifle");
         } else if (c.rank === 1) {
             // Army Lt
-            c.skills.addSkill("SMG", c.attributes.strength, c.items, c.random);
+            c.addSkill("SMG");
         }
     },
 };
@@ -549,12 +494,7 @@ const Scouts: Career = {
                 c.modifyAttribute("education", 1);
                 break;
             case 6:
-                c.skills.addSkill(
-                    "Gun Cbt",
-                    c.attributes.strength,
-                    c.items,
-                    c.random,
-                );
+                c.addSkill("Gun Cbt");
                 break;
         }
     },
@@ -570,20 +510,10 @@ const Scouts: Career = {
                 c.modifyAttribute("education", 2);
                 break;
             case 4:
-                c.items.addWeapon(
-                    "blade",
-                    c.attributes.strength,
-                    c.skills,
-                    c.random,
-                );
+                c.addWeapon("blade");
                 break;
             case 5:
-                c.items.addWeapon(
-                    "gun",
-                    c.attributes.strength,
-                    c.skills,
-                    c.random,
-                );
+                c.addWeapon("gun");
                 break;
             case 6:
                 if (!c.ship) {
@@ -598,12 +528,7 @@ const Scouts: Career = {
     rankAndServiceSkills(c) {
         if (c.rank === 0) {
             // Scout
-            c.skills.addSkill(
-                "Pilot",
-                c.attributes.strength,
-                c.items,
-                c.random,
-            );
+            c.addSkill("Pilot");
         }
     },
 };
@@ -695,20 +620,10 @@ const Merchants: Career = {
                 c.modifyAttribute("strength", 1);
                 break;
             case 5:
-                c.skills.addSkill(
-                    "Blade Cbt",
-                    c.attributes.strength,
-                    c.items,
-                    c.random,
-                );
+                c.addSkill("Blade Cbt");
                 break;
             case 6:
-                c.skills.addSkill(
-                    "Bribery",
-                    c.attributes.strength,
-                    c.items,
-                    c.random,
-                );
+                c.addSkill("Bribery");
                 break;
         }
     },
@@ -724,20 +639,10 @@ const Merchants: Career = {
                 c.modifyAttribute("education", 1);
                 break;
             case 4:
-                c.items.addWeapon(
-                    "gun",
-                    c.attributes.strength,
-                    c.skills,
-                    c.random,
-                );
+                c.addWeapon("gun");
                 break;
             case 5:
-                c.items.addWeapon(
-                    "blade",
-                    c.attributes.strength,
-                    c.skills,
-                    c.random,
-                );
+                c.addWeapon("blade");
                 break;
             case 6:
                 c.items.add("Low Psg");
@@ -759,12 +664,7 @@ const Merchants: Career = {
     rankAndServiceSkills(c) {
         if (c.rank === 4) {
             // Merchant 1st Officer
-            c.skills.addSkill(
-                "Pilot",
-                c.attributes.strength,
-                c.items,
-                c.random,
-            );
+            c.addSkill("Pilot");
         }
     },
 };
@@ -833,20 +733,10 @@ const Other: Career = {
                 c.modifyAttribute("endurance", 1);
                 break;
             case 4:
-                c.skills.addSkill(
-                    "Blade Cbt",
-                    c.attributes.strength,
-                    c.items,
-                    c.random,
-                );
+                c.addSkill("Blade Cbt");
                 break;
             case 5:
-                c.skills.addSkill(
-                    "Brawling",
-                    c.attributes.strength,
-                    c.items,
-                    c.random,
-                );
+                c.addSkill("Brawling");
                 break;
             case 6:
                 c.modifyAttribute("socialStanding", 1);
@@ -865,12 +755,7 @@ const Other: Career = {
                 c.modifyAttribute("education", 1);
                 break;
             case 4:
-                c.items.addWeapon(
-                    "gun",
-                    c.attributes.strength,
-                    c.skills,
-                    c.random,
-                );
+                c.addWeapon("gun");
                 break;
             case 5:
                 c.items.add("High Psg");

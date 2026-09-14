@@ -1,9 +1,10 @@
 import { type Career, careers } from "./careers";
+import type { SkillName } from "./domain_types";
 import { ImperialDate } from "./imperial_date";
 import { Items } from "./items";
 import { Name } from "./name";
 import { Random } from "./random";
-import type { Ship } from "./ships";
+import { type Ship, shipToString } from "./ships";
 import { Skills } from "./skills";
 import { World } from "./subsector";
 import { clamp, ehex } from "./utils";
@@ -23,7 +24,6 @@ interface Attributes {
 
 type Attribute = keyof Attributes;
 
-// FIXME: refactor out stuff not directly related to Character class
 export class Character {
     random: Random;
 
@@ -101,7 +101,7 @@ export class Character {
             console.log(this.items.toString());
         }
         if (this.ship) {
-            console.log(this.ship.toString());
+            console.log(shipToString(this.ship));
         }
     }
 
@@ -367,7 +367,7 @@ export class Character {
                     throw new RangeError(`Invalid retirementPay index`);
                 this.retirementPay = pay;
             } else {
-                this.retirementPay += (this.terms - 8) * 2_000;
+                this.retirementPay += 10_000 + (this.terms - 8) * 2_000;
             }
             console.debug(
                 `Character is eligible to retirement pay of ${numberFormat.format(
@@ -448,7 +448,7 @@ export class Character {
             attribute === "socialStanding" &&
             (oldValue >= 11 || this.attributes.socialStanding >= 11)
         ) {
-            this.name.title = this.name.addTitle(
+            this.name.addTitle(
                 this.attributes.socialStanding,
                 this.gender,
                 this.random,
@@ -583,6 +583,24 @@ export class Character {
                 this.dead = true;
             }
         }
+    }
+
+    addSkill(name: SkillName) {
+        this.skills.addSkill(
+            name,
+            this.attributes.strength,
+            this.items,
+            this.random,
+        );
+    }
+
+    addWeapon(type: "blade" | "gun") {
+        this.items.addWeapon(
+            type,
+            this.attributes.strength,
+            this.skills,
+            this.random,
+        );
     }
 }
 

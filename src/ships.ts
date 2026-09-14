@@ -69,7 +69,7 @@ export function createFreeTrader(name: string): Ship {
     };
 }
 
-class Mortgage {
+export class Mortgage {
     monthlyPayment: number;
     maturity: number;
 

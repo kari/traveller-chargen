@@ -28,6 +28,8 @@ export class Skills {
     }
 
     // sorts by skill value (descending)
+    // FIXME: should return 0 for equal
+    // FIXME: mutates array before returning!
     // FIXME: sort secondarily by name
     sorted(subset?: readonly SkillName[]): SkillName[] {
         if (subset === undefined) {
@@ -132,6 +134,7 @@ export class Skills {
         // player either knowns no weapon skills or all known incur penalty
         if (prefs.prefer.length > 0) {
             this.addSkill(random.pick(prefs.prefer), strength, items, random); // get random skill in a preferred weapon
+            return;
         } else {
             const proficient = weaponSkills[type].filter(
                 (x) => !prefs.avoid.includes(x),

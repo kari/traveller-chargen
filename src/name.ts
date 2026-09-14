@@ -33,6 +33,7 @@ export class Name {
         random: Random,
     ) {
         this.first = random.pick(names[gender]);
+        // FIXME: generate middle initial?
         this.last = random.pick(names.last);
 
         this.addTitle(socialStanding, gender, random);
@@ -66,7 +67,7 @@ export class Name {
                         this.title = random.pick(["Baronet", "Baroness"]);
                     }
                 } else {
-                // in lieu of a title, use prefix in name
+                    // in lieu of a title, use prefix in name
                     if (!this.prefix) {
                         this.addPrefix(socialStanding, random);
                     }
@@ -100,13 +101,9 @@ export class Name {
     }
 
     // if character has the nobility of a Baron but doesn't (want to) use the title
-    protected addPrefix(
-        socialStanding: number,
-        random: Random,
-    ): void {
+    protected addPrefix(socialStanding: number, random: Random): void {
         if (socialStanding === 12) {
             this.prefix = random.pick(["von ", "hault-", "haut-"]);
         }
-        this.prefix = undefined;
     }
 }

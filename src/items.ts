@@ -34,9 +34,9 @@ export class Items {
             const price = passagePrices[p as keyof typeof passagePrices];
             const quantity = this.items[p];
             if (price !== undefined && quantity !== undefined) {
-                credits += price * 0.9 * quantity;
+                credits += (price * quantity * 9) / 10;
             }
-            delete this.items[p];
+            delete this.items[p]; // FIXME: rebuild map instead
         }
 
         return credits;
