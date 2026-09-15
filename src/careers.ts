@@ -1,6 +1,11 @@
 import { applyEffect, type DmRule, type Effect } from "./career_effects";
 import type { Attribute, Character } from "./character";
-import type { D6Table, D7Table, ItemName, SkillName } from "./domain_types";
+import type { ItemName } from "./items";
+import type { SkillName } from "./skills";
+
+export type D6Table<T> = readonly [T, T, T, T, T, T];
+
+export type D7Table<T> = readonly [T, T, T, T, T, T, T];
 
 export interface Career {
     name: string;

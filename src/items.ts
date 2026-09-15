@@ -1,4 +1,11 @@
-import type { ItemName } from "./domain_types";
+import type { SkillName } from "./skills";
+
+export type ItemName =
+    | "High Psg"
+    | "Low Psg"
+    | "Mid Psg"
+    | "Travellers'"
+    | SkillName;
 
 export class Items {
     private items: Map<ItemName, number>;

@@ -1,7 +1,6 @@
-import type { SkillName } from "./domain_types";
 import type { Items } from "./items";
 import type { Random } from "./random";
-import type { Skills } from "./skills";
+import type { Skills, SkillName } from "./skills";
 
 export type WeaponCategory = "blade" | "pistol" | "weapon" | "gun";
 

@@ -1,9 +1,8 @@
 import { expect, test } from "vitest";
 import { Character } from "../src/character";
-import type { SkillName } from "../src/domain_types";
 import { Items } from "../src/items";
 import { Random } from "../src/random";
-import { Skills } from "../src/skills";
+import { type SkillName, Skills } from "../src/skills";
 import {
     chooseVehicleSkill,
     chooseWeaponItem,

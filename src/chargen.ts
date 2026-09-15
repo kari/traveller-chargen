@@ -3,8 +3,8 @@
 import type { Character } from "./character";
 import { generateCharacter } from "./character";
 import { DomView } from "./dom";
-import type { SkillName } from "./domain_types";
 import { ImperialDate } from "./imperial_date";
+import type { SkillName } from "./skills";
 import { ehex, numberFormat } from "./utils";
 import { weaponSkills } from "./weapons";
 

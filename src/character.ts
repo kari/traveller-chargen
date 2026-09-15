@@ -1,12 +1,11 @@
 import { applyEffect, dm } from "./career_effects";
 import { applyRankRewards, type Career, careers } from "./careers";
-import type { SkillName } from "./domain_types";
 import { ImperialDate } from "./imperial_date";
 import { Items } from "./items";
 import { Name } from "./name";
 import { Random } from "./random";
 import { type Ship, shipToString } from "./ships";
-import { Skills } from "./skills";
+import { type SkillName, Skills } from "./skills";
 import { World } from "./subsector";
 import { clamp, ehex, numberFormat } from "./utils";
 import { chooseWeaponItem, resolveSkill } from "./weapons";

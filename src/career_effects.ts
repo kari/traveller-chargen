@@ -1,6 +1,7 @@
 import type { Attribute, Character } from "./character";
-import type { ItemName, SkillName } from "./domain_types";
+import type { ItemName } from "./items";
 import { createFreeTrader, createScoutCourier, randomShipName } from "./ships";
+import type { SkillName } from "./skills";
 
 /**
  * A benefit or development a career table grants to a character.
