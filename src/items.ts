@@ -28,7 +28,6 @@ export class Items {
         let credits = 0;
 
         for (const p of passages) {
-            console.debug(`Converted ${this.items[p]} ${p} to credits`);
             const price = passagePrices[p as keyof typeof passagePrices];
             const quantity = this.items[p];
             if (price !== undefined && quantity !== undefined) {
@@ -41,7 +40,6 @@ export class Items {
     }
 
     add(item: ItemName) {
-        console.debug(`Character earned item ${item}`);
         if (this.list.includes(item) && item !== "Travellers'") {
             this.items[item] = (this.items[item] ?? 0) + 1;
         } else {

@@ -1,12 +1,12 @@
+// Traveller Character Generator
+
 import type { Character } from "./character";
 import { generateCharacter } from "./character";
 import { DomView } from "./dom";
 import type { SkillName } from "./domain_types";
 import { ImperialDate } from "./imperial_date";
-import { weaponSkills } from "./weapons";
 import { ehex } from "./utils";
-
-console.log("Traveller Chargen");
+import { weaponSkills } from "./weapons";
 
 function resetSheets() {
     const view = new DomView(document);

@@ -11,22 +11,10 @@ import {
     resolveSkill,
     vehicleSkills,
     weaponPreferences,
-    weaponStrRequirements,
     weaponSkills,
+    weaponStrRequirements,
 } from "../src/weapons";
 
-beforeEach(() => {
-    // keep test output quiet: generation and weapon selection log heavily
-    vi.spyOn(console, "log").mockImplementation(() => {});
-    vi.spyOn(console, "debug").mockImplementation(() => {});
-    vi.spyOn(console, "group").mockImplementation(() => {});
-    vi.spyOn(console, "groupEnd").mockImplementation(() => {});
-    vi.spyOn(console, "warn").mockImplementation(() => {});
-});
-
-afterEach(() => {
-    vi.restoreAllMocks();
-});
 
 /** Reads a single skill's level; null when the skill is unknown. */
 function levelOf(skills: Skills, skill: SkillName): number | null {

@@ -1,10 +1,10 @@
+// Traveller Subsector Generator
+
 import { SVG } from "@svgdotjs/svg.js";
 import { DomView } from "./dom";
 import { ImperialDate } from "./imperial_date";
 import type { Subsector } from "./subsector";
 import { generateSubsector, TravelZoneType } from "./subsector";
-
-console.log("Traveller Subsector Generator");
 
 type Point2D = readonly [x: number, y: number];
 
@@ -88,7 +88,6 @@ function rollSubsector(): Subsector {
         for (let i = 0; i <= 5; i++) {
             edges.push(...hexCorner(x, y, size, i));
         }
-        // console.log(edges);
         return edges;
     }
 
@@ -240,19 +239,11 @@ function rollSubsector(): Subsector {
     return s;
 }
 
-if (typeof window === "undefined") {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const s = generateSubsector();
-    for (const h of s.hexes) {
-        console.log(h.toString());
-    }
-} else {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+if (typeof window !== "undefined") {
     document.getElementById("reroll")?.addEventListener("click", (_event) => {
         resetSheets();
         rollSubsector();
     });
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     window.addEventListener("load", (_event) => {
         rollSubsector();
     });

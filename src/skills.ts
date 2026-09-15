@@ -43,11 +43,11 @@ export class Skills {
     }
 
     addZeroSkill(skill: SkillName) {
-        if (this.list.includes(skill)) {
-            console.warn(
-                `Skill already exists at level ${skill}-${this.skills[skill]}`,
-            );
-        }
+        // if (this.list.includes(skill)) {
+        //     console.warn(
+        //         `Skill already exists at level ${skill}-${this.skills[skill]}`,
+        //     );
+        // }
         this.increase(skill, 0);
     }
 
@@ -57,6 +57,6 @@ export class Skills {
         } else {
             this.skills[skill] = by;
         }
-        console.debug(`Character earned skill ${skill}-${this.skills[skill]}`);
+        // console.debug(`Character earned skill ${skill}-${this.skills[skill]}`); // FIXME: Move to Character.history
     }
 }
