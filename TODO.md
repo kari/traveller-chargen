@@ -37,7 +37,7 @@ Possibly along the road there's a need for SHIPGEN as well.
   - [x] move weapon tables (`weaponSkills`, `weaponStrDM`, `vehicleSkills`) to `weapons.ts`
   - [x] split `doCareer()` into per-phase methods (survival, commission, promotion, skills, aging, reenlistment, mustering out)
 - Make `careers.ts` data-driven
-  - extract shared personal development / benefits table logic, keep only per-career differences as data
+  - [x] extract shared personal development / benefits table logic, keep only per-career differences as data (`career_effects.ts`)
 
 ## WORLDGEN
 

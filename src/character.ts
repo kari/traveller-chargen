@@ -1,4 +1,5 @@
-import { type Career, careers } from "./careers";
+import { applyEffect, dm } from "./career_effects";
+import { applyRankRewards, type Career, careers } from "./careers";
 import type { SkillName } from "./domain_types";
 import { ImperialDate } from "./imperial_date";
 import { Items } from "./items";
@@ -19,7 +20,7 @@ interface Attributes {
     socialStanding: number;
 }
 
-type Attribute = keyof Attributes;
+export type Attribute = keyof Attributes;
 
 export type Gender = "male" | "female";
 
@@ -83,7 +84,7 @@ export class Character {
 
         // generate career for the character
         this.career = this.enlist();
-        this.career.rankAndServiceSkills(this); // add automatic skills for service (rank = 0)
+        applyRankRewards(this); // add automatic skills for service (rank = 0)
         this.doCareer();
 
         this.birthDate = new ImperialDate(
@@ -184,7 +185,7 @@ export class Character {
     /** Survival phase: throws for survival. Returns false if the character died. */
     private surviveTerm(): boolean {
         if (
-            this.random.roll() + this.career.survivalDM(this) <
+            this.random.roll() + dm(this.career.survivalDMs, this.attributes) <
             this.career.survival
         ) {
             this.dead = true;
@@ -207,7 +208,8 @@ export class Character {
             return 0;
         }
         if (
-            this.random.roll() + this.career.commissionDM(this) >=
+            this.random.roll() +
+                dm(this.career.commissionDMs, this.attributes) >=
             this.career.commission
         ) {
             this.commissioned = true;
@@ -217,7 +219,7 @@ export class Character {
                     this.career.ranks?.[this.rank]
                 }`,
             );
-            this.career.rankAndServiceSkills(this); // automatic skills for rank = 1
+            applyRankRewards(this); // automatic skills for rank = 1
             return 1;
         }
         return 0;
@@ -237,7 +239,8 @@ export class Character {
             return 0;
         }
         if (
-            this.random.roll() + this.career.promotionDM(this) >=
+            this.random.roll() +
+                dm(this.career.promotionDMs, this.attributes) >=
             this.career.promotion
         ) {
             this.rank += 1;
@@ -246,7 +249,7 @@ export class Character {
                     this.career.ranks?.[this.rank]
                 })`,
             );
-            this.career.rankAndServiceSkills(this);
+            applyRankRewards(this);
             return 1;
         }
         return 0;
@@ -271,7 +274,9 @@ export class Character {
     }
 
     protected enlist(): Career {
-        const throws = careers.map((c) => c.enlistment - c.enlistmentDM(this));
+        const throws = careers.map(
+            (c) => c.enlistment - dm(c.enlistmentDMs, this.attributes),
+        );
         const preferredCareerIndexes: number[] = [];
 
         // filter off "too difficult" (throw > 7) and randomly choose one
@@ -289,7 +294,8 @@ export class Character {
 
         const enlistmentRoll = this.random.roll();
         if (
-            enlistmentRoll + preferredCareer.enlistmentDM(this) >=
+            enlistmentRoll +
+                dm(preferredCareer.enlistmentDMs, this.attributes) >=
             preferredCareer.enlistment
         ) {
             this.record(`Character was accepted to ${preferredCareer.name}`);
@@ -324,14 +330,23 @@ export class Character {
         while (eligibleSkills > 0) {
             eligibleSkills -= 1;
             if (this.attrAvg <= 7) {
-                this.career.personalDevelopment(this, this.random.roll(1));
+                applyEffect(
+                    this,
+                    rollTable(
+                        this.career.personalDevelopment,
+                        this.random.roll(1),
+                    ),
+                );
             } else {
                 switch (this.random.roll(1)) {
                     case 1:
                     case 2:
-                        this.career.personalDevelopment(
+                        applyEffect(
                             this,
-                            this.random.roll(1),
+                            rollTable(
+                                this.career.personalDevelopment,
+                                this.random.roll(1),
+                            ),
                         );
                         break;
                     case 3:
@@ -570,9 +585,12 @@ export class Character {
                     this.random.roll(1) >= 3)
             ) {
                 // benefits
-                this.career.benefitsTable(
+                applyEffect(
                     this,
-                    this.random.roll(1) + benefitsDM,
+                    rollTable(
+                        this.career.benefits,
+                        this.random.roll(1) + benefitsDM,
+                    ),
                 );
             } else if (cashTableRolls < 3) {
                 // cash table

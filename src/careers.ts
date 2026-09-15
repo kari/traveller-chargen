@@ -1,8 +1,8 @@
-import type { Character } from "./character";
-import type { D6Table, D7Table, SkillName } from "./domain_types";
-import { createFreeTrader, createScoutCourier, randomShipName } from "./ships";
+import { applyEffect, type DmRule, type Effect } from "./career_effects";
+import type { Attribute, Character } from "./character";
+import type { D6Table, D7Table, ItemName, SkillName } from "./domain_types";
 
-interface Career {
+export interface Career {
     name: string;
     memberName: string | null;
     military: boolean;
@@ -12,22 +12,50 @@ interface Career {
     commission: number | null;
     promotion: number | null;
     reenlist: number;
-    ranks: (string | null)[] | null;
+    ranks: readonly (string | null)[] | null;
     cashTable: D7Table<number>;
     skillsTable: D6Table<SkillName>;
     advancedEducationTable: D6Table<SkillName>;
     advancedEducationTable8: D6Table<SkillName>;
     retirementPay: boolean;
-    enlistmentDM(c: Character): number;
-    survivalDM(c: Character): number;
-    commissionDM(c: Character): number;
-    promotionDM(c: Character): number;
-    personalDevelopment(c: Character, i: number): void;
-    benefitsTable(c: Character, i: number): void;
-    rankAndServiceSkills(c: Character): void;
+    enlistmentDMs: readonly DmRule[];
+    survivalDMs: readonly DmRule[];
+    commissionDMs: readonly DmRule[];
+    promotionDMs: readonly DmRule[];
+    personalDevelopment: D6Table<Effect>;
+    benefits: D7Table<Effect>;
+    rankRewards: Partial<Record<number, readonly Effect[]>>;
 }
 
-const Navy: Career = {
+const strPlus1: Effect = {
+    kind: "attribute",
+    attribute: "strength",
+    amount: 1,
+};
+const dexPlus1: Effect = {
+    kind: "attribute",
+    attribute: "dexterity",
+    amount: 1,
+};
+const endPlus1: Effect = {
+    kind: "attribute",
+    attribute: "endurance",
+    amount: 1,
+};
+
+const attributeEffect = (attribute: Attribute, amount: number): Effect => ({
+    kind: "attribute",
+    attribute,
+    amount,
+});
+const skillEffect = (skill: SkillName): Effect => ({ kind: "skill", skill });
+const weaponEffect = (weapon: "blade" | "gun"): Effect => ({
+    kind: "weapon",
+    weapon,
+});
+const itemEffect = (item: ItemName): Effect => ({ kind: "item", item });
+
+const Navy = {
     name: "Navy",
     memberName: "Navy",
     military: true,
@@ -72,90 +100,37 @@ const Navy: Career = {
         "Pilot",
         "Admin",
     ],
-    enlistmentDM(c) {
-        let dm = 0;
-        if (c.attributes.intelligence >= 8) {
-            dm += 1;
-        }
-        if (c.attributes.education >= 9) {
-            dm += 2;
-        }
-        return dm;
+    enlistmentDMs: [
+        { attribute: "intelligence", threshold: 8, bonus: 1 },
+        { attribute: "education", threshold: 9, bonus: 2 },
+    ],
+    survivalDMs: [{ attribute: "intelligence", threshold: 7, bonus: 2 }],
+    commissionDMs: [{ attribute: "socialStanding", threshold: 9, bonus: 1 }],
+    promotionDMs: [{ attribute: "education", threshold: 8, bonus: 1 }],
+    personalDevelopment: [
+        strPlus1,
+        dexPlus1,
+        endPlus1,
+        attributeEffect("intelligence", 1),
+        attributeEffect("education", 1),
+        attributeEffect("socialStanding", 1),
+    ],
+    benefits: [
+        itemEffect("Low Psg"),
+        attributeEffect("intelligence", 1),
+        attributeEffect("education", 2),
+        weaponEffect("blade"),
+        itemEffect("Travellers'"),
+        itemEffect("High Psg"),
+        attributeEffect("socialStanding", 2),
+    ],
+    rankRewards: {
+        5: [attributeEffect("socialStanding", 1)],
+        6: [attributeEffect("socialStanding", 1)],
     },
-    survivalDM(c) {
-        if (c.attributes.intelligence >= 7) {
-            return 2;
-        }
-        return 0;
-    },
-    commissionDM(c) {
-        if (c.attributes.socialStanding >= 9) {
-            return 1;
-        }
-        return 0;
-    },
-    promotionDM(c) {
-        if (c.attributes.education >= 8) {
-            return 1;
-        }
-        return 0;
-    },
-    personalDevelopment(c, i) {
-        switch (i) {
-            case 1:
-                c.modifyAttribute("strength", 1);
-                break;
-            case 2:
-                c.modifyAttribute("dexterity", 1);
-                break;
-            case 3:
-                c.modifyAttribute("endurance", 1);
-                break;
-            case 4:
-                c.modifyAttribute("intelligence", 1);
-                break;
-            case 5:
-                c.modifyAttribute("education", 1);
-                break;
-            case 6:
-                c.modifyAttribute("socialStanding", 1);
-                break;
-        }
-    },
-    benefitsTable(c, i) {
-        switch (i) {
-            case 1:
-                c.items.add("Low Psg");
-                break;
-            case 2:
-                c.modifyAttribute("intelligence", 1);
-                break;
-            case 3:
-                c.modifyAttribute("education", 2);
-                break;
-            case 4:
-                c.addWeapon("blade");
-                break;
-            case 5:
-                c.items.add("Travellers'");
-                break;
-            case 6:
-                c.items.add("High Psg");
-                break;
-            case 7:
-                c.modifyAttribute("socialStanding", 2);
-                break;
-        }
-    },
-    rankAndServiceSkills(c) {
-        if (c.rank === 5 || c.rank === 6) {
-            // Navy Captain / Admiral
-            c.modifyAttribute("socialStanding", 1);
-        }
-    },
-};
+} satisfies Career;
 
-const Marines: Career = {
+const Marines = {
     name: "Marines",
     memberName: "Marine",
     military: true,
@@ -200,93 +175,37 @@ const Marines: Career = {
         "Leader",
         "Admin",
     ],
-    enlistmentDM(c) {
-        let dm = 0;
-        if (c.attributes.intelligence >= 8) {
-            dm += 1;
-        }
-        if (c.attributes.strength >= 8) {
-            dm += 2;
-        }
-        return dm;
+    enlistmentDMs: [
+        { attribute: "intelligence", threshold: 8, bonus: 1 },
+        { attribute: "strength", threshold: 8, bonus: 2 },
+    ],
+    survivalDMs: [{ attribute: "endurance", threshold: 8, bonus: 2 }],
+    commissionDMs: [{ attribute: "education", threshold: 7, bonus: 1 }],
+    promotionDMs: [{ attribute: "socialStanding", threshold: 8, bonus: 1 }],
+    personalDevelopment: [
+        strPlus1,
+        dexPlus1,
+        endPlus1,
+        skillEffect("Gambling"),
+        skillEffect("Brawling"),
+        skillEffect("Blade Cbt"),
+    ],
+    benefits: [
+        itemEffect("Low Psg"),
+        attributeEffect("intelligence", 2),
+        attributeEffect("education", 1),
+        weaponEffect("blade"),
+        itemEffect("Travellers'"),
+        itemEffect("High Psg"),
+        attributeEffect("socialStanding", 2),
+    ],
+    rankRewards: {
+        0: [skillEffect("Cutlass")],
+        1: [skillEffect("Revolver")],
     },
-    survivalDM(c) {
-        if (c.attributes.endurance >= 8) {
-            return 2;
-        }
-        return 0;
-    },
-    commissionDM(c) {
-        if (c.attributes.education >= 7) {
-            return 1;
-        }
-        return 0;
-    },
-    promotionDM(c) {
-        if (c.attributes.socialStanding >= 8) {
-            return 1;
-        }
-        return 0;
-    },
-    personalDevelopment(c, i) {
-        switch (i) {
-            case 1:
-                c.modifyAttribute("strength", 1);
-                break;
-            case 2:
-                c.modifyAttribute("dexterity", 1);
-                break;
-            case 3:
-                c.modifyAttribute("endurance", 1);
-                break;
-            case 4:
-                c.addSkill("Gambling");
-                break;
-            case 5:
-                c.addSkill("Brawling");
-                break;
-            case 6:
-                c.addSkill("Blade Cbt");
-                break;
-        }
-    },
-    benefitsTable(c, i) {
-        switch (i) {
-            case 1:
-                c.items.add("Low Psg");
-                break;
-            case 2:
-                c.modifyAttribute("intelligence", 2);
-                break;
-            case 3:
-                c.modifyAttribute("education", 1);
-                break;
-            case 4:
-                c.addWeapon("blade");
-                break;
-            case 5:
-                c.items.add("Travellers'");
-                break;
-            case 6:
-                c.items.add("High Psg");
-                break;
-            case 7:
-                c.modifyAttribute("socialStanding", 2);
-                break;
-        }
-    },
-    rankAndServiceSkills(c) {
-        if (c.rank === 0) {
-            // Marine
-            c.addSkill("Cutlass");
-        } else if (c.rank === 1) {
-            // Marine Lt
-            c.addSkill("Revolver");
-        }
-    },
-};
+} satisfies Career;
 
-const Army: Career = {
+const Army = {
     name: "Army",
     memberName: "Army",
     military: true,
@@ -331,93 +250,37 @@ const Army: Career = {
         "Leader",
         "Admin",
     ],
-    enlistmentDM(c) {
-        let dm = 0;
-        if (c.attributes.dexterity >= 6) {
-            dm += 1;
-        }
-        if (c.attributes.endurance >= 5) {
-            dm += 2;
-        }
-        return dm;
+    enlistmentDMs: [
+        { attribute: "dexterity", threshold: 6, bonus: 1 },
+        { attribute: "endurance", threshold: 5, bonus: 2 },
+    ],
+    survivalDMs: [{ attribute: "education", threshold: 6, bonus: 2 }],
+    commissionDMs: [{ attribute: "endurance", threshold: 7, bonus: 1 }],
+    promotionDMs: [{ attribute: "education", threshold: 7, bonus: 1 }],
+    personalDevelopment: [
+        strPlus1,
+        dexPlus1,
+        endPlus1,
+        skillEffect("Gambling"),
+        attributeEffect("education", 1),
+        skillEffect("Brawling"),
+    ],
+    benefits: [
+        itemEffect("Low Psg"),
+        attributeEffect("intelligence", 1),
+        attributeEffect("education", 2),
+        weaponEffect("gun"),
+        itemEffect("High Psg"),
+        itemEffect("Mid Psg"),
+        attributeEffect("socialStanding", 1),
+    ],
+    rankRewards: {
+        0: [skillEffect("Rifle")],
+        1: [skillEffect("SMG")],
     },
-    survivalDM(c) {
-        if (c.attributes.education >= 6) {
-            return 2;
-        }
-        return 0;
-    },
-    commissionDM(c) {
-        if (c.attributes.endurance >= 7) {
-            return 1;
-        }
-        return 0;
-    },
-    promotionDM(c) {
-        if (c.attributes.education >= 7) {
-            return 1;
-        }
-        return 0;
-    },
-    personalDevelopment(c, i) {
-        switch (i) {
-            case 1:
-                c.modifyAttribute("strength", 1);
-                break;
-            case 2:
-                c.modifyAttribute("dexterity", 1);
-                break;
-            case 3:
-                c.modifyAttribute("endurance", 1);
-                break;
-            case 4:
-                c.addSkill("Gambling");
-                break;
-            case 5:
-                c.modifyAttribute("education", 1);
-                break;
-            case 6:
-                c.addSkill("Brawling");
-                break;
-        }
-    },
-    benefitsTable(c, i) {
-        switch (i) {
-            case 1:
-                c.items.add("Low Psg");
-                break;
-            case 2:
-                c.modifyAttribute("intelligence", 1);
-                break;
-            case 3:
-                c.modifyAttribute("education", 2);
-                break;
-            case 4:
-                c.addWeapon("gun");
-                break;
-            case 5:
-                c.items.add("High Psg");
-                break;
-            case 6:
-                c.items.add("Mid Psg");
-                break;
-            case 7:
-                c.modifyAttribute("socialStanding", 1);
-                break;
-        }
-    },
-    rankAndServiceSkills(c) {
-        if (c.rank === 0) {
-            // Army
-            c.addSkill("Rifle");
-        } else if (c.rank === 1) {
-            // Army Lt
-            c.addSkill("SMG");
-        }
-    },
-};
+} satisfies Career;
 
-const Scouts: Career = {
+const Scouts = {
     name: "Scouts",
     memberName: "Scout",
     military: false,
@@ -454,89 +317,36 @@ const Scouts: Career = {
         "Pilot",
         "Jack-o-T",
     ],
-    enlistmentDM(c) {
-        let dm = 0;
-        if (c.attributes.intelligence >= 6) {
-            dm += 1;
-        }
-        if (c.attributes.strength >= 8) {
-            dm += 2;
-        }
-        return dm;
+    enlistmentDMs: [
+        { attribute: "intelligence", threshold: 6, bonus: 1 },
+        { attribute: "strength", threshold: 8, bonus: 2 },
+    ],
+    survivalDMs: [{ attribute: "endurance", threshold: 9, bonus: 2 }],
+    commissionDMs: [],
+    promotionDMs: [],
+    personalDevelopment: [
+        strPlus1,
+        dexPlus1,
+        endPlus1,
+        attributeEffect("intelligence", 1),
+        attributeEffect("education", 1),
+        skillEffect("Gun Cbt"),
+    ],
+    benefits: [
+        itemEffect("Low Psg"),
+        attributeEffect("intelligence", 2),
+        attributeEffect("education", 2),
+        weaponEffect("blade"),
+        weaponEffect("gun"),
+        { kind: "ship", ship: "scoutCourier" },
+        { kind: "none" },
+    ],
+    rankRewards: {
+        0: [skillEffect("Pilot")],
     },
-    survivalDM(c) {
-        if (c.attributes.endurance >= 9) {
-            return 2;
-        }
-        return 0;
-    },
-    commissionDM(_c) {
-        return 0;
-    },
-    promotionDM(_c) {
-        return 0;
-    },
-    personalDevelopment(c, i) {
-        switch (i) {
-            case 1:
-                c.modifyAttribute("strength", 1);
-                break;
-            case 2:
-                c.modifyAttribute("dexterity", 1);
-                break;
-            case 3:
-                c.modifyAttribute("endurance", 1);
-                break;
-            case 4:
-                c.modifyAttribute("intelligence", 1);
-                break;
-            case 5:
-                c.modifyAttribute("education", 1);
-                break;
-            case 6:
-                c.addSkill("Gun Cbt");
-                break;
-        }
-    },
-    benefitsTable(c, i) {
-        switch (i) {
-            case 1:
-                c.items.add("Low Psg");
-                break;
-            case 2:
-                c.modifyAttribute("intelligence", 2);
-                break;
-            case 3:
-                c.modifyAttribute("education", 2);
-                break;
-            case 4:
-                c.addWeapon("blade");
-                break;
-            case 5:
-                c.addWeapon("gun");
-                break;
-            case 6:
-                if (!c.ship) {
-                    c.ship = createScoutCourier(randomShipName(c.random));
-                    c.record(
-                        `Character received a Scout/Courier, the ${c.ship.name}`,
-                    );
-                }
-                break;
-            case 7:
-                // no benefit
-                break;
-        }
-    },
-    rankAndServiceSkills(c) {
-        if (c.rank === 0) {
-            // Scout
-            c.addSkill("Pilot");
-        }
-    },
-};
+} satisfies Career;
 
-const Merchants: Career = {
+const Merchants = {
     name: "Merchants",
     memberName: "Merchant",
     military: false,
@@ -580,102 +390,36 @@ const Merchants: Career = {
         "Pilot",
         "Admin",
     ],
-    enlistmentDM(c) {
-        let dm = 0;
-        if (c.attributes.strength >= 7) {
-            dm += 1;
-        }
-        if (c.attributes.intelligence >= 6) {
-            dm += 2;
-        }
-        return dm;
+    enlistmentDMs: [
+        { attribute: "strength", threshold: 7, bonus: 1 },
+        { attribute: "intelligence", threshold: 6, bonus: 2 },
+    ],
+    survivalDMs: [{ attribute: "intelligence", threshold: 7, bonus: 2 }],
+    commissionDMs: [{ attribute: "intelligence", threshold: 6, bonus: 1 }],
+    promotionDMs: [{ attribute: "intelligence", threshold: 9, bonus: 1 }],
+    personalDevelopment: [
+        strPlus1,
+        dexPlus1,
+        endPlus1,
+        attributeEffect("strength", 1),
+        skillEffect("Blade Cbt"),
+        skillEffect("Bribery"),
+    ],
+    benefits: [
+        itemEffect("Low Psg"),
+        attributeEffect("intelligence", 1),
+        attributeEffect("education", 1),
+        weaponEffect("gun"),
+        weaponEffect("blade"),
+        itemEffect("Low Psg"),
+        { kind: "ship", ship: "freeTrader", mortgagePayments: true },
+    ],
+    rankRewards: {
+        4: [skillEffect("Pilot")],
     },
-    survivalDM(c) {
-        if (c.attributes.intelligence >= 7) {
-            return 2;
-        }
-        return 0;
-    },
-    commissionDM(c) {
-        if (c.attributes.intelligence >= 6) {
-            return 1;
-        }
-        return 0;
-    },
-    promotionDM(c) {
-        if (c.attributes.intelligence >= 9) {
-            return 1;
-        }
-        return 0;
-    },
-    personalDevelopment(c, i) {
-        switch (i) {
-            case 1:
-                c.modifyAttribute("strength", 1);
-                break;
-            case 2:
-                c.modifyAttribute("dexterity", 1);
-                break;
-            case 3:
-                c.modifyAttribute("endurance", 1);
-                break;
-            case 4:
-                c.modifyAttribute("strength", 1);
-                break;
-            case 5:
-                c.addSkill("Blade Cbt");
-                break;
-            case 6:
-                c.addSkill("Bribery");
-                break;
-        }
-    },
-    benefitsTable(c, i) {
-        switch (i) {
-            case 1:
-                c.items.add("Low Psg");
-                break;
-            case 2:
-                c.modifyAttribute("intelligence", 1);
-                break;
-            case 3:
-                c.modifyAttribute("education", 1);
-                break;
-            case 4:
-                c.addWeapon("gun");
-                break;
-            case 5:
-                c.addWeapon("blade");
-                break;
-            case 6:
-                c.items.add("Low Psg");
-                break;
-            case 7:
-                if (!c.ship) {
-                    c.ship = createFreeTrader(randomShipName(c.random));
-                    c.record(
-                        `Character received a Free Trader, the ${c.ship.name}`,
-                    );
-                } else if (c.ship.mortgage) {
-                    // pay off mortgage
-                    c.ship.age += 10;
-                    c.ship.mortgage.maturity -= 10;
-                    if (c.ship.mortgage.maturity <= 0) {
-                        c.ship.mortgage = undefined;
-                    }
-                }
-                break;
-        }
-    },
-    rankAndServiceSkills(c) {
-        if (c.rank === 4) {
-            // Merchant 1st Officer
-            c.addSkill("Pilot");
-        }
-    },
-};
+} satisfies Career;
 
-const Other: Career = {
+const Other = {
     name: "Other",
     memberName: null,
     military: false,
@@ -712,74 +456,41 @@ const Other: Career = {
         "Streetwise",
         "Jack-o-T",
     ],
-    enlistmentDM(_c) {
-        return 0;
-    },
-    survivalDM(c) {
-        if (c.attributes.intelligence >= 9) {
-            return 2;
-        }
-        return 0;
-    },
-    commissionDM(_c) {
-        return 0;
-    },
-    promotionDM(_c) {
-        return 0;
-    },
-    personalDevelopment(c, i) {
-        switch (i) {
-            case 1:
-                c.modifyAttribute("strength", 1);
-                break;
-            case 2:
-                c.modifyAttribute("dexterity", 1);
-                break;
-            case 3:
-                c.modifyAttribute("endurance", 1);
-                break;
-            case 4:
-                c.addSkill("Blade Cbt");
-                break;
-            case 5:
-                c.addSkill("Brawling");
-                break;
-            case 6:
-                c.modifyAttribute("socialStanding", 1);
-                break;
-        }
-    },
-    benefitsTable(c, i) {
-        switch (i) {
-            case 1:
-                c.items.add("Low Psg");
-                break;
-            case 2:
-                c.modifyAttribute("intelligence", 1);
-                break;
-            case 3:
-                c.modifyAttribute("education", 1);
-                break;
-            case 4:
-                c.addWeapon("gun");
-                break;
-            case 5:
-                c.items.add("High Psg");
-                break;
-            case 6:
-                // no benefit
-                break;
-            case 7:
-                // no benefit
-                break;
-        }
-    },
-    rankAndServiceSkills(_c) {
-        // no skills
-    },
-};
+    enlistmentDMs: [],
+    survivalDMs: [],
+    commissionDMs: [],
+    promotionDMs: [],
+    personalDevelopment: [
+        strPlus1,
+        dexPlus1,
+        endPlus1,
+        skillEffect("Blade Cbt"),
+        skillEffect("Brawling"),
+        attributeEffect("socialStanding", 1),
+    ],
+    benefits: [
+        itemEffect("Low Psg"),
+        attributeEffect("intelligence", 1),
+        attributeEffect("education", 1),
+        weaponEffect("gun"),
+        itemEffect("High Psg"),
+        { kind: "none" },
+        { kind: "none" },
+    ],
+    rankRewards: {},
+} satisfies Career;
 
-export { Army, type Career, Marines, Merchants, Navy, Other, Scouts };
+/**
+ * Grants the rank rewards of the character's current rank (automatic service
+ * skills and similar).
+ */
+export function applyRankRewards(c: Character): void {
+    for (const effect of c.career.rankRewards[c.rank] ?? []) {
+        applyEffect(c, effect);
+    }
+}
+
+export { Army, Marines, Merchants, Navy, Other, Scouts };
 export const careers: Career[] = [
     Navy,
     Marines,
