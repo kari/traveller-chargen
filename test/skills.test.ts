@@ -23,6 +23,27 @@ test("Add a zero skill", () => {
     expect(s.toString()).toBe("Brawling-3");
 });
 
+test("level() reads skill levels and defaults to zero", () => {
+    const s = new Skills([["Gambling", 1]]);
+    expect(s.level("Gambling")).toBe(1);
+    expect(s.level("Brawling")).toBe(0);
+    expect(s.has("Gambling")).toBe(true);
+    expect(s.has("Brawling")).toBe(false);
+    // unknown skills print at level 0 instead of -undefined
+    expect(s.toString("Brawling")).toBe("Brawling-0");
+});
+
+test("sorted() breaks ties alphabetically and does not mutate the map", () => {
+    const s = new Skills([
+        ["Sword", 2],
+        ["Gambling", 2],
+        ["Brawling", 3],
+    ]);
+    expect(s.sorted()).toEqual(["Brawling", "Gambling", "Sword"]);
+    // insertion order is preserved in the map itself
+    expect(s.list).toEqual(["Sword", "Gambling", "Brawling"]);
+});
+
 test("Test skill sorting and filtering", () => {
     const s = new Skills();
     s.increase("Gambling");

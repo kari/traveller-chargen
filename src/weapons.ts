@@ -88,7 +88,7 @@ export function weaponPreferences(
     }
     const owned: SkillName[] = [];
     for (const w of weapons) {
-        if (items.list.includes(w)) {
+        if (items.has(w)) {
             owned.push(w);
         }
     }
@@ -230,9 +230,7 @@ export function resolveSkill(
     }
 }
 
-const weaponStrDM: Partial<
-    Record<SkillName, [bonus: number, penalty: number] | undefined>
-> = {
+const weaponStrDM: Partial<Record<SkillName, [number, number]>> = {
     Dagger: [8, 3],
     Blade: [9, 4],
     Foil: [10, 4],

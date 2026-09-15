@@ -5,7 +5,7 @@ import { generateCharacter } from "./character";
 import { DomView } from "./dom";
 import type { SkillName } from "./domain_types";
 import { ImperialDate } from "./imperial_date";
-import { ehex } from "./utils";
+import { ehex, numberFormat } from "./utils";
 import { weaponSkills } from "./weapons";
 
 function resetSheets() {
@@ -98,10 +98,7 @@ function rollCharacter(): Character {
     if (c.retired) {
         view.checked("retired-yes", true);
         if (c.career.retirementPay) {
-            view.text(
-                "box-14b",
-                `Cr${new Intl.NumberFormat().format(c.retirementPay)}`,
-            );
+            view.text("box-14b", `Cr${numberFormat.format(c.retirementPay)}`);
         }
     } else {
         view.checked("retired-no", true);
@@ -119,7 +116,7 @@ function rollCharacter(): Character {
     );
     view.text("box-17", c.skills.toString(equipmentSkills));
 
-    if (Object.keys(additionalSkills).length > 0) {
+    if (additionalSkills.length > 0) {
         const sortedSkills = c.skills.sorted(additionalSkills);
 
         view.text("box-18a", c.skills.toString(sortedSkills[0]));
@@ -170,7 +167,7 @@ function rollCharacter(): Character {
     }
 
     if (c.credits > 0) {
-        view.text("box-26", `Cr${new Intl.NumberFormat().format(c.credits)}`);
+        view.text("box-26", `Cr${numberFormat.format(c.credits)}`);
     }
 
     view.text("box-27", c.items.toString());
@@ -188,13 +185,10 @@ function rollCharacter(): Character {
         // 7: Laid Down
         // 8: First Flight
 
-        view.text(
-            "s-box-9",
-            `MCr${new Intl.NumberFormat().format(c.ship.cost)}`,
-        );
+        view.text("s-box-9", `MCr${numberFormat.format(c.ship.cost)}`);
         // 10: Occupation
 
-        view.text("s-box-11a", new Intl.NumberFormat().format(c.ship.tonnage));
+        view.text("s-box-11a", numberFormat.format(c.ship.tonnage));
 
         if (c.ship.hullStandard) {
             view.checked("std-hull-yes", true);

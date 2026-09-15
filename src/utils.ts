@@ -3,6 +3,13 @@
  */
 
 /**
+ * Shared formatter for credit and tonnage amounts.
+ */
+export const numberFormat = new Intl.NumberFormat("en-us", {
+    maximumFractionDigits: 2,
+});
+
+/**
  * Returns a value between min and max (inclusive)
  *
  * @param value - Value to be clamped

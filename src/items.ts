@@ -1,56 +1,58 @@
 import type { ItemName } from "./domain_types";
 
 export class Items {
-    private items: Partial<Record<ItemName, number>> = {};
+    private items: Map<ItemName, number>;
 
-    toString(): string {
-        return Object.keys(this.items)
-            .map((i) => `${this.items[i as ItemName] ?? 0} ${i}`)
-            .join(", ");
+    constructor(items?: Iterable<readonly [ItemName, number]>) {
+        this.items = new Map(items);
+    }
+
+    has(item: ItemName): boolean {
+        return this.items.has(item);
+    }
+
+    count(item: ItemName): number {
+        return this.items.get(item) ?? 0;
     }
 
     get list(): ItemName[] {
-        return Object.keys(this.items) as ItemName[];
+        return [...this.items.keys()];
+    }
+
+    toString(): string {
+        return this.list.map((i) => `${this.count(i)} ${i}`).join(", ");
     }
 
     convertPassages(): number {
-        const passagePrices: Record<
-            Extract<ItemName, "Low Psg" | "Mid Psg" | "High Psg">,
-            number
-        > = {
+        const passagePrices = {
             "Low Psg": 1_000,
             "Mid Psg": 8_000,
             "High Psg": 10_000,
-        };
-        const passages = this.list.filter((x) =>
-            Object.keys(passagePrices).includes(x),
-        );
-        let credits = 0;
+        } as const;
+        type PassageName = keyof typeof passagePrices;
 
-        for (const p of passages) {
-            const price = passagePrices[p as keyof typeof passagePrices];
-            const quantity = this.items[p];
-            if (price !== undefined && quantity !== undefined) {
+        let credits = 0;
+        for (const [item, quantity] of this.items) {
+            if (item in passagePrices) {
+                const price = passagePrices[item as PassageName];
                 credits += (price * quantity * 9) / 10;
+                this.items.delete(item);
             }
-            delete this.items[p]; // FIXME: rebuild map instead
         }
 
         return credits;
     }
 
     add(item: ItemName) {
-        if (this.list.includes(item) && item !== "Travellers'") {
-            this.items[item] = (this.items[item] ?? 0) + 1;
+        // note: Travellers' membership is never stacked
+        if (item === "Travellers'") {
+            this.items.set(item, 1);
         } else {
-            this.items[item] = 1;
+            this.items.set(item, this.count(item) + 1);
         }
     }
 
     get hasTravellers(): boolean {
-        if (this.list.includes("Travellers'")) {
-            return true;
-        }
-        return false;
+        return this.items.has("Travellers'");
     }
 }

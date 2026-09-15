@@ -34,7 +34,7 @@ test("generates the same subsector names from the same seed", () => {
     const second = new Subsector(12345);
 
     expect(first.name).toBe(second.name);
-    expect(first.sector.name).toBe(second.sector.name);
+    expect(first.sectorName).toBe(second.sectorName);
 });
 
 test("uses an injected random source", () => {

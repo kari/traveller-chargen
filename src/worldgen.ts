@@ -26,7 +26,7 @@ function rollSubsector(): Subsector {
     view.data("seed", "seed", s.seed.toString());
     view.text("box-2", s.name);
     view.text("t6-box-1", s.name);
-    view.text("box-3", s.sector.name);
+    view.text("box-3", s.sectorName);
 
     function addWorldNode(text: string) {
         const worlds = view.element("world-list");

@@ -7,12 +7,8 @@ import { Random } from "./random";
 import { type Ship, shipToString } from "./ships";
 import { Skills } from "./skills";
 import { World } from "./subsector";
-import { clamp, ehex } from "./utils";
+import { clamp, ehex, numberFormat } from "./utils";
 import { chooseWeaponItem, resolveSkill } from "./weapons";
-
-const numberFormat = new Intl.NumberFormat("en-us", {
-    maximumFractionDigits: 2,
-});
 
 interface Attributes {
     strength: number;

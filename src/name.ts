@@ -8,7 +8,7 @@ const names = {
     male: male_names,
     female: female_names,
     last: last_names,
-};
+} satisfies Record<"male" | "female" | "last", readonly string[]>;
 
 export class Name {
     title?: string | undefined;

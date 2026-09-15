@@ -18,18 +18,17 @@ export class ImperialDate {
     constructor(date: Date);
     constructor(dayOfYear: number, year: number);
     constructor(dateOrDay?: number | Date, year?: number) {
-        if (year !== undefined && dateOrDay !== undefined) {
-            this.dayOfYear = dateOrDay as number;
-            this.year = year;
-        } else if (dateOrDay !== undefined) {
-            const date = dateOrDay as Date;
+        if (dateOrDay instanceof Date) {
             const temporal = new Temporal.PlainDate(
-                date.getFullYear(),
-                date.getMonth() + 1,
-                date.getDate(),
+                dateOrDay.getFullYear(),
+                dateOrDay.getMonth() + 1,
+                dateOrDay.getDate(),
             );
             this.dayOfYear = temporal.dayOfYear;
             this.year = temporal.year;
+        } else if (dateOrDay !== undefined && year !== undefined) {
+            this.dayOfYear = dateOrDay;
+            this.year = year;
         } else {
             const temporal = Temporal.Now.plainDateISO();
             this.dayOfYear = temporal.dayOfYear;

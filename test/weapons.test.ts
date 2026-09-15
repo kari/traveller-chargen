@@ -15,18 +15,8 @@ import {
     weaponStrRequirements,
 } from "../src/weapons";
 
-/** Reads a single skill's level; null when the skill is unknown. */
-function levelOf(skills: Skills, skill: SkillName): number | null {
-    const value = Number(skills.toString(skill).split("-").at(-1));
-    return Number.isNaN(value) ? null : value;
-}
-
 function skillLevels(skills: Skills): Map<SkillName, number> {
-    const levels = new Map<SkillName, number>();
-    for (const skill of skills.list) {
-        levels.set(skill, levelOf(skills, skill) ?? 0);
-    }
-    return levels;
+    return new Map(skills.list.map((name) => [name, skills.level(name)]));
 }
 
 // --- weaponStrRequirements ---
@@ -72,8 +62,7 @@ test("weaponPreferences lists known weapon skills and owned weapons", () => {
 // Cutlass 11/6, Broadsword 12/7, Halberd 10/5, Pike 10/6.
 
 test("chooseWeaponSkill increases a known preferred weapon", () => {
-    const skills = new Skills();
-    skills.increase("Sword"); // STR 10/5: preferred and proficient at strength 12
+    const skills = new Skills([["Sword", 1]]); // STR 10/5: preferred at strength 12
     const random = new Random(42);
     expect(chooseWeaponSkill("blade", 12, skills, new Items(), random)).toBe(
         "Sword",
@@ -81,8 +70,7 @@ test("chooseWeaponSkill increases a known preferred weapon", () => {
 });
 
 test("chooseWeaponSkill increases a known proficient weapon when it is not preferred", () => {
-    const skills = new Skills();
-    skills.increase("Foil"); // STR 10/4: not preferred at strength 9, not avoided
+    const skills = new Skills([["Foil", 1]]); // STR 10/4: not preferred at strength 9, not avoided
     const random = new Random(42);
     expect(chooseWeaponSkill("blade", 9, skills, new Items(), random)).toBe(
         "Foil",
@@ -157,8 +145,7 @@ test("chooseVehicleSkill picks from all vehicle skills when none are known", () 
 // identical to the second branch's. Not testable; candidate for removal.
 
 test("chooseWeaponItem returns a skilled preferred weapon that is not owned", () => {
-    const skills = new Skills();
-    skills.increase("Sword");
+    const skills = new Skills([["Sword", 1]]);
     const items = new Items();
     const random = new Random(42);
     expect(chooseWeaponItem("blade", 12, skills, items, random)).toEqual({
@@ -168,8 +155,7 @@ test("chooseWeaponItem returns a skilled preferred weapon that is not owned", ()
 });
 
 test("chooseWeaponItem returns a skilled proficient weapon that is not owned", () => {
-    const skills = new Skills();
-    skills.increase("Foil");
+    const skills = new Skills([["Foil", 1]]);
     const random = new Random(42);
     expect(chooseWeaponItem("blade", 9, skills, new Items(), random)).toEqual({
         item: "Foil",
@@ -289,13 +275,8 @@ test("Character.addWeapon grants exactly one new weapon, learning it at level 0 
     expect(newWeapons).toHaveLength(1);
     const weapon = newWeapons[0] as SkillName;
     expect(weaponSkills.blade).toContain(weapon);
-    if ((before.get(weapon) ?? 0) > 0) {
-        // already skilled: level is unchanged
-        expect(levelOf(c.skills, weapon)).toBe(before.get(weapon));
-    } else {
-        // unskilled: learned at level 0
-        expect(levelOf(c.skills, weapon)).toBe(0);
-    }
+    // skilled weapons keep their level, unskilled ones are learned at level 0
+    expect(c.skills.level(weapon)).toBe(before.get(weapon) ?? 0);
 });
 
 // --- determinism ---

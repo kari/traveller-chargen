@@ -1,45 +1,51 @@
 import type { SkillName } from "./domain_types";
 
 export class Skills {
-    private skills: Partial<Record<SkillName, number>> = {};
+    private skills: Map<SkillName, number>;
+
+    constructor(skills?: Iterable<readonly [SkillName, number]>) {
+        this.skills = new Map(skills);
+    }
+
+    /** Skill level, 0 for unknown skills (Traveller zero-level convention). */
+    level(skill: SkillName): number {
+        return this.skills.get(skill) ?? 0;
+    }
+
+    has(skill: SkillName): boolean {
+        return this.skills.has(skill);
+    }
 
     get list(): SkillName[] {
-        return Object.keys(this.skills) as SkillName[];
+        return [...this.skills.keys()];
     }
 
     filter(subset: readonly SkillName[]): SkillName[] {
         return this.list.filter((s) => subset.includes(s));
     }
 
-    // FIXME: no sorting
     toString(subset?: readonly SkillName[] | SkillName): string {
         if (subset === undefined) {
-            return this.list.map((s) => `${s}-${this.skills[s]}`).join(", ");
+            return this.list.map((s) => `${s}-${this.level(s)}`).join(", ");
         }
         if (typeof subset === "string") {
-            return `${subset}-${this.skills[subset]}`;
+            return `${subset}-${this.level(subset)}`;
         }
         return this.list
             .filter((s) => subset.includes(s))
-            .map((s) => `${s}-${this.skills[s]}`)
+            .map((s) => `${s}-${this.level(s)}`)
             .join(", ");
     }
 
-    // sorts by skill value (descending)
-    // FIXME: should return 0 for equal
-    // FIXME: mutates array before returning!
-    // FIXME: sort secondarily by name
+    // sorts by skill level (descending), secondarily by name
     sorted(subset?: readonly SkillName[]): SkillName[] {
-        if (subset === undefined) {
-            return this.list.sort((a, b) =>
-                (this.skills[a] ?? 0) < (this.skills[b] ?? 0) ? 1 : -1,
-            );
-        }
-        return this.list
-            .filter((s) => subset.includes(s))
-            .sort((a, b) =>
-                (this.skills[a] ?? 0) < (this.skills[b] ?? 0) ? 1 : -1,
-            );
+        const selected =
+            subset === undefined
+                ? this.list
+                : this.list.filter((s) => subset.includes(s));
+        return selected.toSorted(
+            (a, b) => this.level(b) - this.level(a) || a.localeCompare(b),
+        );
     }
 
     addZeroSkill(skill: SkillName) {
@@ -47,10 +53,6 @@ export class Skills {
     }
 
     increase(skill: SkillName, by = 1) {
-        if (this.list.includes(skill)) {
-            this.skills[skill] = (this.skills[skill] ?? 0) + by;
-        } else {
-            this.skills[skill] = by;
-        }
+        this.skills.set(skill, this.level(skill) + by);
     }
 }

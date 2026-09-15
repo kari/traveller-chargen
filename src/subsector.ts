@@ -3,27 +3,40 @@ import names from "./names/worlds";
 import { Random } from "./random";
 import { clamp, ehex } from "./utils";
 
-enum TravelZoneType {
-    Amber = "A",
-    Red = "R",
-}
+export const TravelZoneType = {
+    Amber: "A",
+    Red: "R",
+} as const;
+export type TravelZoneType =
+    (typeof TravelZoneType)[keyof typeof TravelZoneType];
 
-enum TradeClassification {
-    Agricultural = "Ag",
-    NonAgricultural = "Na",
-    Industrial = "In",
-    NonIndustrial = "Ni",
-    Rich = "Ri",
-    Poor = "Po",
-    Water = "Wa",
-    Desert = "De",
-    Vacuum = "Va",
-    AsteroidBelt = "As",
-    IceCapped = "Ic",
-    SubsectorCapital = "Cp",
-}
+const TradeClassification = {
+    Agricultural: "Ag",
+    NonAgricultural: "Na",
+    Industrial: "In",
+    NonIndustrial: "Ni",
+    Rich: "Ri",
+    Poor: "Po",
+    Water: "Wa",
+    Desert: "De",
+    Vacuum: "Va",
+    AsteroidBelt: "As",
+    IceCapped: "Ic",
+    SubsectorCapital: "Cp",
+} as const;
+type TradeClassification =
+    (typeof TradeClassification)[keyof typeof TradeClassification];
 
 type Starport = "A" | "B" | "C" | "D" | "E" | "X";
+
+const scoutBaseDMs: Record<Starport, number> = {
+    A: -3,
+    B: -2,
+    C: -1,
+    D: 0,
+    E: 0,
+    X: 0,
+};
 
 class World {
     readonly name: string;
@@ -329,19 +342,7 @@ class Hex {
             this.starport = Hex.rollStarport(random);
 
             // Scout base presence
-            let scoutBaseDM = 0;
-            switch (this.starport) {
-                case "A":
-                    scoutBaseDM = -3;
-                    break;
-                case "B":
-                    scoutBaseDM = -2;
-                    break;
-                case "C":
-                    scoutBaseDM = -1;
-                    break;
-            }
-            if (random.roll(2) + scoutBaseDM >= 7) {
+            if (random.roll(2) + scoutBaseDMs[this.starport] >= 7) {
                 this.scoutBase = true;
             }
             // Naval base presence
@@ -380,9 +381,7 @@ class Subsector {
     random: Random;
     hexes: Hex[] = [];
     name: string;
-    sector: {
-        name: string;
-    };
+    sectorName: string;
 
     constructor(seedOrRandom?: number | Random) {
         this.random =
@@ -402,11 +401,8 @@ class Subsector {
         this.name =
             subsectorName.substring(0, 1).toUpperCase() +
             subsectorName.substring(1);
-        this.sector = {
-            name:
-                sectorName.substring(0, 1).toUpperCase() +
-                sectorName.substring(1),
-        };
+        this.sectorName =
+            sectorName.substring(0, 1).toUpperCase() + sectorName.substring(1);
 
         // create subsector 8x10 hexes
         for (let i = 1; i <= 8; i++) {
@@ -426,4 +422,4 @@ function generateSubsector(seedOrRandom?: number | Random): Subsector {
     return new Subsector(seedOrRandom);
 }
 
-export { generateSubsector, Hex, Subsector, TravelZoneType, World };
+export { generateSubsector, Hex, Subsector, World };

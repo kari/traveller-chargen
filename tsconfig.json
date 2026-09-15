@@ -2,10 +2,10 @@
   "compilerOptions": {
     /* Visit https://aka.ms/tsconfig to read more about this file */
 
-    "target": "ES2022",                                  /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */
-    "lib": ["ES2022", "DOM"],                            /* Specify the library files available to the browser application. */
+    "target": "ES2023",                                  /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */
+    "lib": ["ES2023", "DOM", "DOM.Iterable"],            /* Specify the library files available to the browser application. */
 
-    "module": "ESNext",                                  /* Preserve native ES modules for Vite. */
+    "module": "preserve",                                /* Preserve native ES modules for Vite. */
     "moduleResolution": "Bundler",                       /* Resolve modules using Vite-compatible bundler rules. */
     "types": ["node"],                                  /* Include Node types for the repository scripts. */
     "noEmit": true,                                      /* Vite performs the application build; tsc only typechecks. */

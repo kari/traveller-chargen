@@ -1,6 +1,14 @@
 import { expect, test } from "vitest";
 import { Items } from "../src/items";
 
+test("has() and count() read the item map", () => {
+    const i = new Items([["Dagger", 1]]);
+    expect(i.has("Dagger")).toBe(true);
+    expect(i.count("Dagger")).toBe(1);
+    expect(i.has("Sword")).toBe(false);
+    expect(i.count("Sword")).toBe(0);
+});
+
 test("Add items", () => {
     const i = new Items();
     i.add("Low Psg");

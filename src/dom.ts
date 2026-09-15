@@ -1,5 +1,9 @@
 export class DomView {
-    constructor(private readonly document: Document) {}
+    private readonly document: Document;
+
+    constructor(document: Document) {
+        this.document = document;
+    }
 
     text(id: string, value: string): void {
         this.required(id).textContent = value;
