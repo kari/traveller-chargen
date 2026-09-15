@@ -133,251 +133,123 @@ export class Character {
         );
     }
 
+    /**
+     * Runs the term loop of the character's career: survival, commission,
+     * promotion, skills and training, aging, reenlistment and retirement,
+     * followed by retirement pay and mustering out.
+     */
     private doCareer() {
         let activeDuty = true;
         do {
-            this.age += 4;
-            this.terms += 1;
-            this.record(`Starting term ${this.terms} of service`);
-            let eligibleSkills = 0;
+            this.startTerm();
+            let eligibleSkills = this.skillEligibility();
 
-            if (this.terms === 1) {
-                eligibleSkills += 2;
-            } else if (this.career.name === "Scouts") {
-                eligibleSkills += 2;
-            } else {
-                eligibleSkills += 1;
+            if (!this.surviveTerm()) {
+                return; // a dead character does not muster out
             }
 
-            // survival
-            if (
-                this.random.roll() + this.career.survivalDM(this) <
-                this.career.survival
-            ) {
-                this.dead = true;
-                activeDuty = false;
-                this.record("Character didn't survive the term of service");
-                return;
+            eligibleSkills += this.commissionTerm();
+            eligibleSkills += this.promoteTerm();
+            this.train(eligibleSkills);
+
+            if (!this.ageAndMaybeDie()) {
+                return; // a dead character does not muster out
             }
 
-            // commission
-            if (
-                this.commissioned === false &&
-                (this.drafted === false || this.terms > 1) &&
-                this.career.commission !== null &&
-                this.random.roll() + this.career.commissionDM(this) >=
-                    this.career.commission
-            ) {
-                this.commissioned = true;
-                this.rank = 1;
-                this.record(
-                    `Character was commissioned to ${
-                        this.career.ranks?.[this.rank]
-                    }`,
-                );
-                this.career.rankAndServiceSkills(this); // automatic skills for rank = 1
-                eligibleSkills += 1;
-            }
-
-            // promotion
-            if (
-                this.commissioned === true &&
-                this.career.promotion &&
-                this.career.ranks &&
-                this.rank < this.career.ranks.length - 1 &&
-                this.random.roll() + this.career.promotionDM(this) >=
-                    this.career.promotion
-            ) {
-                this.rank += 1;
-                this.record(
-                    `Character was promoted to rank ${this.rank} (${
-                        this.career.ranks?.[this.rank]
-                    })`,
-                );
-                this.career.rankAndServiceSkills(this);
-                eligibleSkills += 1;
-            }
-
-            // skills and training
-            while (eligibleSkills > 0) {
-                eligibleSkills -= 1;
-                if (this.attrAvg <= 7) {
-                    this.career.personalDevelopment(this, this.random.roll(1));
-                } else {
-                    switch (this.random.roll(1)) {
-                        case 1:
-                        case 2:
-                            this.career.personalDevelopment(
-                                this,
-                                this.random.roll(1),
-                            );
-                            break;
-                        case 3:
-                        case 4:
-                            this.addSkill(
-                                rollTable(
-                                    this.career.skillsTable,
-                                    this.random.roll(1),
-                                ),
-                            );
-                            break;
-                        case 5:
-                        case 6:
-                            if (this.attributes.education >= 8) {
-                                if (this.random.roll(1) >= 3) {
-                                    this.addSkill(
-                                        rollTable(
-                                            this.career.advancedEducationTable8,
-                                            this.random.roll(1),
-                                        ),
-                                    );
-                                } else {
-                                    this.addSkill(
-                                        rollTable(
-                                            this.career.advancedEducationTable,
-                                            this.random.roll(1),
-                                        ),
-                                    );
-                                }
-                            } else {
-                                this.addSkill(
-                                    rollTable(
-                                        this.career.advancedEducationTable,
-                                        this.random.roll(1),
-                                    ),
-                                );
-                            }
-                            break;
-                    }
-                }
-            }
-
-            // aging
-            this.aging();
-            if (this.dead) {
-                this.record(`Character died of old age at ${this.age}`);
-                activeDuty = false;
-                return;
-            }
-
-            // reenlistment throw
-            const reenlistmentThrow = this.random.roll();
-            if (reenlistmentThrow === 12) {
-                this.record(
-                    `Reenlistment throw 12: compulsory reenlistment after ${this.terms} terms`,
-                );
-            }
-
-            // failed reenlistment
-            if (reenlistmentThrow < this.career.reenlist) {
-                activeDuty = false;
-                this.record(
-                    `Character failed reenlistment throw ${this.career.reenlist}+, career is over after ${this.terms} terms of service`,
-                );
-            } else if (
-                reenlistmentThrow !== 12 &&
-                this.terms < 7 &&
-                this.random.roll() >= 10
-            ) {
-                activeDuty = false;
-                this.record(
-                    `Character chose not to reenlist after ${this.terms} terms.`,
-                );
-            }
-
-            // retiring
-            if (
-                (this.terms >= 7 && reenlistmentThrow !== 12) ||
-                this.terms >= 10
-            ) {
-                // forced retirement
-                this.record(
-                    `Character was forced to retire after ${this.terms} terms of service`,
-                );
-                activeDuty = false;
-                this.retired = true;
-            } else if (!activeDuty && this.terms >= 5) {
-                // failed reenlistment, but eligible for retirement
-                this.retired = true;
-                this.record(
-                    `Character chose to retire after ${this.terms} terms of service.`,
-                );
-            } else if (
-                this.terms >= 5 &&
-                reenlistmentThrow !== 12 &&
-                activeDuty
-            ) {
-                // voluntary retirement terms >= 5
-                // FIXME: add behavior for voluntary retirement
-                if (this.random.roll() + (this.terms - 7) >= 10) {
-                    this.retired = true;
-                    activeDuty = false;
-                    this.record(
-                        `Character voluntarily retired after ${this.terms} terms.`,
-                    );
-                }
-            }
+            activeDuty = this.resolveReenlistment() === "continue";
         } while (activeDuty === true);
 
-        // retirement pay
-        if (this.retired && this.career.retirementPay) {
-            const retirementPay = [4_000, 6_000, 8_000, 10_000]; // retirement pay is 2_000 + 2_000 * terms 5+
-            if (this.terms <= 8) {
-                const pay = retirementPay[this.terms - 5];
-                if (pay === undefined)
-                    throw new RangeError(`Invalid retirementPay index`);
-                this.retirementPay = pay;
-            } else {
-                this.retirementPay += 10_000 + (this.terms - 8) * 2_000;
-            }
-        }
+        this.receiveRetirementPay();
+        this.musterOut();
+    }
 
-        // mustering out
-        let benefits = this.terms;
-        switch (this.rank) {
-            case 1:
-            case 2:
-                benefits += 1;
-                break;
-            case 3:
-            case 4:
-                benefits += 2;
-                break;
-            case 5:
-            case 6:
-                benefits += 3;
-                break;
-        }
-        const benefitsDM = this.rank >= 5 ? 1 : 0;
-        const cashDM = this.skills.list.includes("Gambling") ? 1 : 0;
+    /** Starts a new term of service: ages the character by four years. */
+    private startTerm() {
+        this.age += 4;
+        this.terms += 1;
+        this.record(`Starting term ${this.terms} of service`);
+    }
 
-        let cashTableRolls = 0;
-        while (benefits > 0) {
-            benefits -= 1;
-            if (
-                cashTableRolls > 0 &&
-                (cashTableRolls >= 3 ||
-                    this.attrAvg <= 7 ||
-                    this.random.roll(1) >= 3)
-            ) {
-                // benefits
-                this.career.benefitsTable(
-                    this,
-                    this.random.roll(1) + benefitsDM,
-                );
-            } else if (cashTableRolls < 3) {
-                // cash table
-                this.credits += rollTable(
-                    this.career.cashTable,
-                    this.random.roll(1) + cashDM,
-                );
-                cashTableRolls += 1;
-            }
+    /** First term and Scouts service grant an extra skill eligibility. */
+    private skillEligibility(): number {
+        if (this.terms === 1) {
+            return 2;
         }
+        if (this.career.name === "Scouts") {
+            return 2;
+        }
+        return 1;
+    }
 
-        if (this.ship) {
-            this.credits += this.items.convertPassages();
+    /** Survival phase: throws for survival. Returns false if the character died. */
+    private surviveTerm(): boolean {
+        if (
+            this.random.roll() + this.career.survivalDM(this) <
+            this.career.survival
+        ) {
+            this.dead = true;
+            this.record("Character didn't survive the term of service");
+            return false;
         }
+        return true;
+    }
+
+    /**
+     * Commission phase: a first commission grants rank 1. A commission
+     * grants an extra skill eligibility.
+     */
+    private commissionTerm(): number {
+        if (
+            this.commissioned ||
+            (this.drafted && this.terms <= 1) ||
+            this.career.commission === null
+        ) {
+            return 0;
+        }
+        if (
+            this.random.roll() + this.career.commissionDM(this) >=
+            this.career.commission
+        ) {
+            this.commissioned = true;
+            this.rank = 1;
+            this.record(
+                `Character was commissioned to ${
+                    this.career.ranks?.[this.rank]
+                }`,
+            );
+            this.career.rankAndServiceSkills(this); // automatic skills for rank = 1
+            return 1;
+        }
+        return 0;
+    }
+
+    /**
+     * Promotion phase: promotes the character one rank. A promotion grants
+     * an extra skill eligibility.
+     */
+    private promoteTerm(): number {
+        if (
+            !this.commissioned ||
+            !this.career.promotion ||
+            !this.career.ranks ||
+            this.rank >= this.career.ranks.length - 1
+        ) {
+            return 0;
+        }
+        if (
+            this.random.roll() + this.career.promotionDM(this) >=
+            this.career.promotion
+        ) {
+            this.rank += 1;
+            this.record(
+                `Character was promoted to rank ${this.rank} (${
+                    this.career.ranks?.[this.rank]
+                })`,
+            );
+            this.career.rankAndServiceSkills(this);
+            return 1;
+        }
+        return 0;
     }
 
     modifyAttribute(attribute: Attribute, amount = 1): number {
@@ -447,6 +319,77 @@ export class Character {
         )}`;
     }
 
+    /** Skills and training phase: spends the term's skill eligibilities. */
+    private train(eligibleSkills: number) {
+        while (eligibleSkills > 0) {
+            eligibleSkills -= 1;
+            if (this.attrAvg <= 7) {
+                this.career.personalDevelopment(this, this.random.roll(1));
+            } else {
+                switch (this.random.roll(1)) {
+                    case 1:
+                    case 2:
+                        this.career.personalDevelopment(
+                            this,
+                            this.random.roll(1),
+                        );
+                        break;
+                    case 3:
+                    case 4:
+                        this.addSkill(
+                            rollTable(
+                                this.career.skillsTable,
+                                this.random.roll(1),
+                            ),
+                        );
+                        break;
+                    case 5:
+                    case 6:
+                        this.trainAdvancedEducation();
+                        break;
+                }
+            }
+        }
+    }
+
+    /** Throws on the advanced education tables; EDU 8+ grants the better table on 3+. */
+    private trainAdvancedEducation() {
+        if (this.attributes.education >= 8) {
+            if (this.random.roll(1) >= 3) {
+                this.addSkill(
+                    rollTable(
+                        this.career.advancedEducationTable8,
+                        this.random.roll(1),
+                    ),
+                );
+            } else {
+                this.addSkill(
+                    rollTable(
+                        this.career.advancedEducationTable,
+                        this.random.roll(1),
+                    ),
+                );
+            }
+        } else {
+            this.addSkill(
+                rollTable(
+                    this.career.advancedEducationTable,
+                    this.random.roll(1),
+                ),
+            );
+        }
+    }
+
+    /** Aging phase: throws for aging effects. Returns false if the character died. */
+    private ageAndMaybeDie(): boolean {
+        this.aging();
+        if (this.dead) {
+            this.record(`Character died of old age at ${this.age}`);
+            return false;
+        }
+        return true;
+    }
+
     protected aging() {
         if (this.age < 34) {
             return;
@@ -513,6 +456,136 @@ export class Character {
             } else {
                 this.dead = true;
             }
+        }
+    }
+
+    /**
+     * Reenlistment phase: resolves reenlistment and retirement. Returns
+     * "continue" when the character serves another term, "leaveService" when
+     * the career ends (with or without retirement).
+     */
+    private resolveReenlistment(): "continue" | "leaveService" {
+        const reenlistmentThrow = this.random.roll();
+        if (reenlistmentThrow === 12) {
+            this.record(
+                `Reenlistment throw 12: compulsory reenlistment after ${this.terms} terms`,
+            );
+        }
+
+        let reenlisted = true;
+
+        // failed reenlistment
+        if (reenlistmentThrow < this.career.reenlist) {
+            reenlisted = false;
+            this.record(
+                `Character failed reenlistment throw ${this.career.reenlist}+, career is over after ${this.terms} terms of service`,
+            );
+        } else if (
+            reenlistmentThrow !== 12 &&
+            this.terms < 7 &&
+            this.random.roll() >= 10
+        ) {
+            reenlisted = false;
+            this.record(
+                `Character chose not to reenlist after ${this.terms} terms.`,
+            );
+        }
+
+        // retiring
+        if ((this.terms >= 7 && reenlistmentThrow !== 12) || this.terms >= 10) {
+            // forced retirement
+            this.record(
+                `Character was forced to retire after ${this.terms} terms of service`,
+            );
+            this.retired = true;
+            return "leaveService";
+        }
+        if (!reenlisted) {
+            if (this.terms >= 5) {
+                // failed reenlistment, but eligible for retirement
+                this.retired = true;
+                this.record(
+                    `Character chose to retire after ${this.terms} terms of service.`,
+                );
+            }
+            return "leaveService";
+        }
+        if (this.terms >= 5 && reenlistmentThrow !== 12) {
+            // voluntary retirement terms >= 5
+            // FIXME: add behavior for voluntary retirement
+            if (this.random.roll() + (this.terms - 7) >= 10) {
+                this.retired = true;
+                this.record(
+                    `Character voluntarily retired after ${this.terms} terms.`,
+                );
+                return "leaveService";
+            }
+        }
+        return "continue";
+    }
+
+    /** Retirement pay phase: pension careers pay their retired characters. */
+    private receiveRetirementPay() {
+        if (!this.retired || !this.career.retirementPay) {
+            return;
+        }
+        const retirementPay = [4_000, 6_000, 8_000, 10_000]; // retirement pay is 2_000 + 2_000 * terms 5+
+        if (this.terms <= 8) {
+            const pay = retirementPay[this.terms - 5];
+            if (pay === undefined)
+                throw new RangeError(`Invalid retirementPay index`);
+            this.retirementPay = pay;
+        } else {
+            this.retirementPay += 10_000 + (this.terms - 8) * 2_000;
+        }
+    }
+
+    /** Mustering out phase: rolls the cash and benefits tables, converts passages. */
+    private musterOut() {
+        let benefits = this.terms;
+        switch (this.rank) {
+            case 1:
+            case 2:
+                benefits += 1;
+                break;
+            case 3:
+            case 4:
+                benefits += 2;
+                break;
+            case 5:
+            case 6:
+                benefits += 3;
+                break;
+        }
+        const benefitsDM = this.rank >= 5 ? 1 : 0;
+        const cashDM = this.skills.has("Gambling") ? 1 : 0;
+
+        let cashTableRolls = 0;
+        while (benefits > 0) {
+            benefits -= 1;
+            if (
+                cashTableRolls > 0 &&
+                (cashTableRolls >= 3 ||
+                    this.attrAvg <= 7 ||
+                    this.random.roll(1) >= 3)
+            ) {
+                // benefits
+                this.career.benefitsTable(
+                    this,
+                    this.random.roll(1) + benefitsDM,
+                );
+            } else if (cashTableRolls < 3) {
+                // cash table
+                this.credits += rollTable(
+                    this.career.cashTable,
+                    this.random.roll(1) + cashDM,
+                );
+                cashTableRolls += 1;
+            }
+        }
+
+        if (this.ship) {
+            this.credits += this.items.convertPassages();
         }
     }
 

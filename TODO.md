@@ -35,7 +35,7 @@ Possibly along the road there's a need for SHIPGEN as well.
 - fix checkboxes, <https://www.htmhell.dev/adventcalendar/2023/2/>
 - Refactor `character.ts` (~1000 lines)
   - [x] move weapon tables (`weaponSkills`, `weaponStrDM`, `vehicleSkills`) to `weapons.ts`
-  - split `doCareer()` into per-phase methods (survival, commission, promotion, skills, aging, reenlistment, mustering out)
+  - [x] split `doCareer()` into per-phase methods (survival, commission, promotion, skills, aging, reenlistment, mustering out)
 - Make `careers.ts` data-driven
   - extract shared personal development / benefits table logic, keep only per-career differences as data
 
