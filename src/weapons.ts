@@ -92,12 +92,6 @@ export function weaponPreferences(
             owned.push(w);
         }
     }
-    // console.group();
-    // console.debug(`Avoid: ${avoid.join(", ")}`);
-    // console.debug(`Prefer: ${prefer.join(", ")}`);
-    // console.debug(`Known: ${known.join(", ")}`);
-    // console.debug(`Owned: ${owned.join(", ")}`);
-    // console.groupEnd();
 
     return { avoid: avoid, prefer: prefer, known: known, owned: owned };
 }

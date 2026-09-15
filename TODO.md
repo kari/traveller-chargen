@@ -11,8 +11,9 @@ Possibly along the road there's a need for SHIPGEN as well.
 ## Common TODOs
 
 - Control logging
-  - collect generation events into a `.history` array (on `Character` / `Subsector`) instead of `console.log` / `console.debug` / `console.warn`
-  - UI can then render the history; tests stay silent
+  - [x] collect generation events into a `.history` array on `Character` (milestone life events only)
+  - [ ] same for `Subsector`
+  - [ ] UI renders the history (chargen CLI prints it; browser UI pending)
 
 ## CHARGEN
 
@@ -33,7 +34,7 @@ Possibly along the road there's a need for SHIPGEN as well.
   - timeout
 - fix checkboxes, <https://www.htmhell.dev/adventcalendar/2023/2/>
 - Refactor `character.ts` (~1000 lines)
-  - move weapon tables (`weaponSkills`, `weaponStrDM`, `vehicleSkills`) to `weapons.ts`
+  - [x] move weapon tables (`weaponSkills`, `weaponStrDM`, `vehicleSkills`) to `weapons.ts`
   - split `doCareer()` into per-phase methods (survival, commission, promotion, skills, aging, reenlistment, mustering out)
 - Make `careers.ts` data-driven
   - extract shared personal development / benefits table logic, keep only per-career differences as data

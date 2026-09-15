@@ -28,6 +28,9 @@ type Attribute = keyof Attributes;
 export type Gender = "male" | "female";
 
 export class Character {
+    /** Important life events, in generation order. */
+    readonly history: string[] = [];
+
     random: Random;
 
     age: number;
@@ -61,8 +64,6 @@ export class Character {
             seedOrRandom instanceof Random
                 ? seedOrRandom
                 : new Random(seedOrRandom);
-        // console.debug(`Using seed ${this.random.seed} to generate a character`);
-
         this.age = 18;
 
         this.attributes = {
@@ -73,8 +74,6 @@ export class Character {
             education: this.random.roll(),
             socialStanding: this.random.roll(),
         };
-
-        // console.debug(`Initial UPP ${this.upp}`);
 
         this.gender = this.random.pick(["male", "female"]);
         this.name = new Name(
@@ -96,16 +95,15 @@ export class Character {
             1105 - this.age,
         ); // FIXME: this might not always be correct, should ensure date of preparation - birthdate >= age
 
-        // console.log((this.dead ? "✝ " : "") + this.toString());
-        // if (this.skills.list.length > 0) {
-        //     console.log(this.skills.toString());
-        // }
-        // if (this.items.list.length > 0) {
-        //     console.log(this.items.toString());
-        // }
-        // if (this.ship) {
-        //     console.log(shipToString(this.ship));
-        // }
+        this.record((this.dead ? "✝ " : "") + this.toString());
+        if (this.ship) {
+            this.record(shipToString(this.ship));
+        }
+    }
+
+    /** Records an important life event in the generation history. */
+    record(message: string): void {
+        this.history.push(message);
     }
 
     toString(): string {
@@ -142,44 +140,27 @@ export class Character {
     private doCareer() {
         let activeDuty = true;
         do {
-            console.log(`Starting term ${this.terms + 1} of service`);
-
             this.age += 4;
             this.terms += 1;
+            this.record(`Starting term ${this.terms} of service`);
             let eligibleSkills = 0;
 
             if (this.terms === 1) {
                 eligibleSkills += 2;
-                // console.debug(
-                //     `Earned 2 skill eligibility from first service term (total ${eligibleSkills})`,
-                // );
             } else if (this.career.name === "Scouts") {
                 eligibleSkills += 2;
-                // console.debug(
-                //     `Earned 2 skill eligibility from Scouts service term (total ${eligibleSkills})`,
-                // );
             } else {
                 eligibleSkills += 1;
-                // console.debug(
-                //     `Earned 1 skill eligibility from service term (total ${eligibleSkills})`,
-                // );
             }
 
             // survival
-            // console.debug(
-            //     `Survival throw ${
-            //         this.career.survival
-            //     }, DM ${this.career.survivalDM(this)}, need to roll ${
-            //         this.career.survival - this.career.survivalDM(this)
-            //     }+`,
-            // );
             if (
                 this.random.roll() + this.career.survivalDM(this) <
                 this.career.survival
             ) {
                 this.dead = true;
                 activeDuty = false;
-                console.log("Character didn't survive the term of service");
+                this.record("Character didn't survive the term of service");
                 return;
             }
 
@@ -193,16 +174,13 @@ export class Character {
             ) {
                 this.commissioned = true;
                 this.rank = 1;
-                console.log(
+                this.record(
                     `Character was commissioned to ${
                         this.career.ranks?.[this.rank]
                     }`,
                 );
                 this.career.rankAndServiceSkills(this); // automatic skills for rank = 1
                 eligibleSkills += 1;
-                // console.debug(
-                //     `Earned 1 skill eligibility from commission (total ${eligibleSkills})`,
-                // );
             }
 
             // promotion
@@ -215,27 +193,19 @@ export class Character {
                     this.career.promotion
             ) {
                 this.rank += 1;
-                // console.debug(
-                //     `Character was promoted to rank ${this.rank} (${
-                //         this.career.ranks?.[this.rank]
-                //     })`,
-                // );
+                this.record(
+                    `Character was promoted to rank ${this.rank} (${
+                        this.career.ranks?.[this.rank]
+                    })`,
+                );
                 this.career.rankAndServiceSkills(this);
                 eligibleSkills += 1;
-                // console.debug(
-                //     `Earned 1 skill eligibility from promotion (total ${eligibleSkills})`,
-                // );
             }
 
             // skills and training
             while (eligibleSkills > 0) {
                 eligibleSkills -= 1;
                 if (this.attrAvg <= 7) {
-                    // console.debug(
-                    //     `Avg. skill ${numberFormat.format(
-                    //         this.attrAvg,
-                    //     )}, focusing on personal development`,
-                    // );
                     this.career.personalDevelopment(this, this.random.roll(1));
                 } else {
                     switch (this.random.roll(1)) {
@@ -289,18 +259,23 @@ export class Character {
             // aging
             this.aging();
             if (this.dead) {
-                console.log(`Character died of old age at ${this.age}`);
+                this.record(`Character died of old age at ${this.age}`);
                 activeDuty = false;
                 return;
             }
 
             // reenlistment throw
             const reenlistmentThrow = this.random.roll();
+            if (reenlistmentThrow === 12) {
+                this.record(
+                    `Reenlistment throw 12: compulsory reenlistment after ${this.terms} terms`,
+                );
+            }
 
             // failed reenlistment
             if (reenlistmentThrow < this.career.reenlist) {
                 activeDuty = false;
-                console.log(
+                this.record(
                     `Character failed reenlistment throw ${this.career.reenlist}+, career is over after ${this.terms} terms of service`,
                 );
             } else if (
@@ -309,7 +284,7 @@ export class Character {
                 this.random.roll() >= 10
             ) {
                 activeDuty = false;
-                console.log(
+                this.record(
                     `Character chose not to reenlist after ${this.terms} terms.`,
                 );
             }
@@ -320,7 +295,7 @@ export class Character {
                 this.terms >= 10
             ) {
                 // forced retirement
-                console.log(
+                this.record(
                     `Character was forced to retire after ${this.terms} terms of service`,
                 );
                 activeDuty = false;
@@ -328,7 +303,7 @@ export class Character {
             } else if (!activeDuty && this.terms >= 5) {
                 // failed reenlistment, but eligible for retirement
                 this.retired = true;
-                console.log(
+                this.record(
                     `Character chose to retire after ${this.terms} terms of service.`,
                 );
             } else if (
@@ -337,12 +312,11 @@ export class Character {
                 activeDuty
             ) {
                 // voluntary retirement terms >= 5
-                // console.debug("Character is eligible for voluntary retirement");
                 // FIXME: add behavior for voluntary retirement
                 if (this.random.roll() + (this.terms - 7) >= 10) {
                     this.retired = true;
                     activeDuty = false;
-                    console.log(
+                    this.record(
                         `Character voluntarily retired after ${this.terms} terms.`,
                     );
                 }
@@ -360,11 +334,6 @@ export class Character {
             } else {
                 this.retirementPay += 10_000 + (this.terms - 8) * 2_000;
             }
-            // console.debug(
-            //     `Character is eligible to retirement pay of ${numberFormat.format(
-            //         this.retirementPay,
-            //     )}`,
-            // );
         }
 
         // mustering out
@@ -385,9 +354,6 @@ export class Character {
         }
         const benefitsDM = this.rank >= 5 ? 1 : 0;
         const cashDM = this.skills.list.includes("Gambling") ? 1 : 0;
-        // console.debug(
-        //     `Character is eligible to ${benefits} benefits, with benefits DM ${benefitsDM} and cash table DM ${cashDM}`,
-        // );
 
         let cashTableRolls = 0;
         while (benefits > 0) {
@@ -399,7 +365,6 @@ export class Character {
                     this.random.roll(1) >= 3)
             ) {
                 // benefits
-                // console.debug("Character rolls for benefits table");
                 this.career.benefitsTable(
                     this,
                     this.random.roll(1) + benefitsDM,
@@ -411,9 +376,6 @@ export class Character {
                     this.random.roll(1) + cashDM,
                 );
                 cashTableRolls += 1;
-                // console.debug(
-                //     `Character rolls for cash table (${cashTableRolls})`,
-                // );
             }
         }
 
@@ -425,15 +387,6 @@ export class Character {
     modifyAttribute(attribute: Attribute, amount = 1): number {
         const oldValue = this.attributes[attribute];
         this.attributes[attribute] = clamp(oldValue + amount, 0, 15);
-        // console.debug(
-        //     `Modifying ${attribute} by ${
-        //         amount > 0 ? "+" : ""
-        //     }${amount}, new value ${this.attributes[attribute]} ${
-        //         oldValue + amount !== this.attributes[attribute]
-        //             ? "(clamped)"
-        //             : ""
-        //     }`,
-        // );
 
         if (
             attribute === "socialStanding" &&
@@ -466,11 +419,12 @@ export class Character {
             throw new Error("No eligible career found");
         }
 
+        const enlistmentRoll = this.random.roll();
         if (
-            this.random.roll() + preferredCareer.enlistmentDM(this) >=
+            enlistmentRoll + preferredCareer.enlistmentDM(this) >=
             preferredCareer.enlistment
         ) {
-            console.log(`Character was accepted to ${preferredCareer.name}`);
+            this.record(`Character was accepted to ${preferredCareer.name}`);
 
             return preferredCareer;
         }
@@ -480,8 +434,8 @@ export class Character {
         if (draftedService === undefined)
             throw new Error(`No service for draft roll ${draft}`);
 
-        console.log(
-            `Character was rejected from ${preferredCareer.name} and was drafted to ${draftedService.name}`,
+        this.record(
+            `Character was rejected from ${preferredCareer.name} and was drafted to ${draftedService.name} (draft roll ${draft})`,
         );
 
         return draftedService;
@@ -503,45 +457,35 @@ export class Character {
         }
         if (this.age < 50) {
             if (this.random.roll() < 8) {
-                // console.debug("Character fails aging STR throw");
                 this.modifyAttribute("strength", -1);
             }
             if (this.random.roll() < 7) {
-                // console.debug("Character fails aging DEX throw");
                 this.modifyAttribute("dexterity", -1);
             }
             if (this.random.roll() < 8) {
-                // console.debug("Character fails aging END throw");
                 this.modifyAttribute("endurance", -1);
             }
         } else if (this.age < 66) {
             if (this.random.roll() < 9) {
-                // console.debug("Character fails aging STR throw");
                 this.modifyAttribute("strength", -1);
             }
             if (this.random.roll() < 8) {
-                // console.debug("Character fails aging DEX throw");
                 this.modifyAttribute("dexterity", -1);
             }
             if (this.random.roll() < 9) {
-                // console.debug("Character fails aging END throw");
                 this.modifyAttribute("endurance", -1);
             }
         } else {
             if (this.random.roll() < 9) {
-                // console.debug("Character fails aging STR throw");
                 this.modifyAttribute("strength", -2);
             }
             if (this.random.roll() < 9) {
-                // console.debug("Character fails aging DEX throw");
                 this.modifyAttribute("dexterity", -2);
             }
             if (this.random.roll() < 9) {
-                // console.debug("Character fails aging END throw");
                 this.modifyAttribute("endurance", -2);
             }
             if (this.random.roll() < 9) {
-                // console.debug("Character fails aging INT throw");
                 this.modifyAttribute("intelligence", -1);
             }
         }

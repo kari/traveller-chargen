@@ -518,6 +518,9 @@ const Scouts: Career = {
             case 6:
                 if (!c.ship) {
                     c.ship = createScoutCourier(randomShipName(c.random));
+                    c.record(
+                        `Character received a Scout/Courier, the ${c.ship.name}`,
+                    );
                 }
                 break;
             case 7:
@@ -650,6 +653,9 @@ const Merchants: Career = {
             case 7:
                 if (!c.ship) {
                     c.ship = createFreeTrader(randomShipName(c.random));
+                    c.record(
+                        `Character received a Free Trader, the ${c.ship.name}`,
+                    );
                 } else if (c.ship.mortgage) {
                     // pay off mortgage
                     c.ship.age += 10;

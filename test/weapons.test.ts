@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, expect, test, vi } from "vitest";
+import { expect, test } from "vitest";
 import { Character } from "../src/character";
 import type { SkillName } from "../src/domain_types";
 import { Items } from "../src/items";
@@ -14,7 +14,6 @@ import {
     weaponSkills,
     weaponStrRequirements,
 } from "../src/weapons";
-
 
 /** Reads a single skill's level; null when the skill is unknown. */
 function levelOf(skills: Skills, skill: SkillName): number | null {

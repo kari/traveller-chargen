@@ -370,7 +370,6 @@ class Hex {
                 this.travelZone = TravelZoneType.Amber;
             }
         } // else an empty hex
-        // console.log(this.toString());
     }
 }
 
@@ -391,7 +390,6 @@ class Subsector {
                 ? seedOrRandom
                 : new Random(seedOrRandom);
         this.seed = this.random.seed;
-        // console.debug(`Using seed ${this.seed} to generate a new subsector`);
 
         const namegen = new NameGenerator(names, 3, 0.01, true, () =>
             this.random.real(0, 1),

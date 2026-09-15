@@ -227,7 +227,8 @@ function rollCharacter(): Character {
 }
 
 if (typeof window === "undefined") {
-    const _c = generateCharacter();
+    const c = generateCharacter();
+    console.log(c.history.join("\n"));
 } else {
     document.getElementById("reroll")?.addEventListener("click", (_event) => {
         resetSheets();
