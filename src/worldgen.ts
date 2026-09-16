@@ -136,6 +136,9 @@ function rollSubsector(): Subsector {
         const worldName = draw.text(
             h.world.population >= 9 ? h.world.name.toUpperCase() : h.world.name,
         );
+        if (s.capital === h) {
+            worldName.fill("red");
+        }
 
         const mask = draw.mask();
         mask.add(
@@ -219,7 +222,7 @@ function rollSubsector(): Subsector {
 
         if (h.travelZone) {
             const zoneColor =
-                h.travelZone === TravelZoneType.Red ? "red" : "grey"; // red/orange
+                h.travelZone === TravelZoneType.Red ? "red" : "orange"; // red/orange
             const travelZone = draw
                 .circle(100)
                 .center(x, y)

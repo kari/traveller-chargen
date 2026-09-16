@@ -54,7 +54,7 @@ Possibly along the road there's a need for SHIPGEN as well.
 
 - Create communication routes
   - trade routes using ant colony optimization, <https://en.wikipedia.org/wiki/Ant_colony_optimization_algorithms>
-- Select subsector capital world
+- [x] Select subsector capital world
 - Look into Book 7 for trade codes?
   - Also look at the thread for some clarifications
 - Generate possible ships to encounter when entering system?

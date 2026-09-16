@@ -10,7 +10,7 @@ export const TravelZoneType = {
 export type TravelZoneType =
     (typeof TravelZoneType)[keyof typeof TravelZoneType];
 
-const TradeClassification = {
+export const TradeClassification = {
     Agricultural: "Ag",
     NonAgricultural: "Na",
     Industrial: "In",
@@ -24,10 +24,19 @@ const TradeClassification = {
     IceCapped: "Ic",
     SubsectorCapital: "Cp",
 } as const;
-type TradeClassification =
+export type TradeClassification =
     (typeof TradeClassification)[keyof typeof TradeClassification];
 
-type Starport = "A" | "B" | "C" | "D" | "E" | "X";
+export type Starport = "A" | "B" | "C" | "D" | "E" | "X";
+
+const starportRank: Record<Starport, number> = {
+    A: 5,
+    B: 4,
+    C: 3,
+    D: 2,
+    E: 1,
+    X: 0,
+};
 
 const scoutBaseDMs: Record<Starport, number> = {
     A: -3,
@@ -37,6 +46,66 @@ const scoutBaseDMs: Record<Starport, number> = {
     E: 0,
     X: 0,
 };
+
+export interface WorldProfile {
+    starport: Starport;
+    planetaryAthmosphere: number;
+    population: number;
+    planetaryGovernment: number;
+    lawLevel: number;
+    rollForAmber?: () => number;
+}
+
+/**
+ * Whether a world profile looks dangerous enough for an Amber zone
+ * (corrosive/insidious atmosphere, no/charismatic/impersonal rule,
+ * no law or extreme law). Mirrors the post-CT codified predicate.
+ */
+export function hasDangerousProfile(world: WorldProfile): boolean {
+    return (
+        world.planetaryAthmosphere >= 10 ||
+        world.planetaryGovernment === 0 ||
+        world.planetaryGovernment === 7 ||
+        world.planetaryGovernment === 10 ||
+        world.lawLevel === 0 ||
+        world.lawLevel >= 9
+    );
+}
+
+/**
+ * Whether a world profile has a functioning government and law, as
+ * preferred for a subsector capital.
+ */
+export function isWellGoverned(world: WorldProfile): boolean {
+    return !(
+        world.planetaryGovernment === 0 ||
+        world.planetaryGovernment === 7 ||
+        world.planetaryGovernment === 10 ||
+        world.lawLevel === 0 ||
+        world.lawLevel >= 9
+    );
+}
+
+/**
+ * Assigns a travel zone to a world: Red for an interdicted sizable
+ * population with no starport, Amber for dangerous profiles confirmed
+ * by a rarity roll (2d6 >= 11, ~8%), nothing otherwise. Red takes
+ * precedence over Amber. The rarity gate keeps Amber zones exceptional
+ * rather than every third world.
+ */
+export function assignTravelZone(
+    world: WorldProfile,
+    random: Random,
+): TravelZoneType | undefined {
+    if (world.starport === "X" && world.population >= 4) {
+        return TravelZoneType.Red;
+    }
+    const rarityRoll = world.rollForAmber?.() ?? random.roll();
+    if (hasDangerousProfile(world) && rarityRoll >= 11) {
+        return TravelZoneType.Amber;
+    }
+    return undefined;
+}
 
 class World {
     readonly name: string;
@@ -49,6 +118,21 @@ class World {
     readonly lawLevel: number;
     readonly technologicalLevel: number;
     readonly tradeClassifications: readonly TradeClassification[];
+
+    /**
+     * Adds a trade classification to the world (used post-construction for
+     * derived remarks such as the subsector capital). Duplicate additions
+     * are ignored.
+     */
+    addTradeClassification(classification: TradeClassification): void {
+        if (!this.mutableTradeClassifications().includes(classification)) {
+            this.mutableTradeClassifications().push(classification);
+        }
+    }
+
+    private mutableTradeClassifications(): TradeClassification[] {
+        return this.tradeClassifications as TradeClassification[];
+    }
 
     get uwp(): string {
         return `${this.starport}${[
@@ -274,7 +358,7 @@ class Hex {
     navalBase = false;
     scoutBase = false;
     gasGiant = false;
-    travelZone?: TravelZoneType;
+    travelZone: TravelZoneType | undefined;
     systemName?: string;
 
     toString(): string {
@@ -336,6 +420,7 @@ class Hex {
 
     constructor(column: number, row: number, random: Random) {
         this.coordinates = [column, row];
+        this.travelZone = undefined;
         if (random.roll(1) >= 4) {
             // this hex has a world
 
@@ -362,19 +447,60 @@ class Hex {
             this.systemName = this.world.name;
 
             // travel advisory, https://www.traveller-srd.com/core-rules/world-creation/
-            if (
-                this.world.planetaryAthmosphere >= 10 ||
-                [0, 7, 10].includes(this.world.planetaryGovernment) ||
-                this.world.lawLevel === 0 ||
-                this.world.lawLevel >= 9
-            ) {
-                this.travelZone = TravelZoneType.Amber;
-            }
+            // Red for interdicted sizable populations; Amber for dangerous
+            // profiles confirmed by a rarity roll (Red takes precedence).
+            // NOTE: further Red codes remain at the discretion of the Referee.
+            this.travelZone = assignTravelZone(this.world, random);
         } // else an empty hex
     }
 }
 
 type Coordinate = [column: number, row: number];
+
+/**
+ * Compares two inhabited hexes for capital candidacy: highest population,
+ * then highest tech level, then best starport. Returns a positive number
+ * when `a` outranks `b`.
+ */
+function compareCapitalCandidates(a: Hex, b: Hex): number {
+    const worldA = a.world;
+    const worldB = b.world;
+    if (worldA === undefined || worldB === undefined) {
+        throw new Error("Capital candidates must have worlds");
+    }
+    return (
+        worldA.population - worldB.population ||
+        worldA.technologicalLevel - worldB.technologicalLevel ||
+        starportRank[worldA.starport] - starportRank[worldB.starport]
+    );
+}
+
+/**
+ * Selects the subsector capital: the inhabited world with the highest
+ * population, breaking ties by tech level then starport quality. Worlds
+ * with extreme government (0, 7, 10) or law (0, 9+) are excluded when
+ * better-governed candidates exist. Exact ties are broken with the
+ * provided random source. Returns undefined when no inhabited world exists.
+ */
+export function selectCapital(hexes: Hex[], random: Random): Hex | undefined {
+    const inhabited = hexes.filter(
+        (h) => h.world !== undefined && h.world.population > 0,
+    );
+    if (inhabited.length === 0) {
+        return undefined;
+    }
+    const governed = inhabited.filter(
+        (h) => h.world !== undefined && isWellGoverned(h.world),
+    );
+    const candidates = governed.length > 0 ? governed : inhabited;
+    const best = candidates.reduce((a, b) =>
+        compareCapitalCandidates(b, a) > 0 ? b : a,
+    );
+    const tied = candidates.filter(
+        (h) => compareCapitalCandidates(h, best) === 0,
+    );
+    return random.pick(tied);
+}
 
 class Subsector {
     seed: number;
@@ -382,6 +508,7 @@ class Subsector {
     hexes: Hex[] = [];
     name: string;
     sectorName: string;
+    capital?: Hex;
 
     constructor(seedOrRandom?: number | Random) {
         this.random =
@@ -413,8 +540,15 @@ class Subsector {
 
         // FIXME: create communication routes
 
-        // FIXME: choose subsector capital (add trade classification to that world)
-        // capital has high population, high tech level, some government and some law and is a hub of communication routes
+        // Subsector capital: highest population, then highest tech level,
+        // then best starport (some government and some law preferred).
+        const capital = selectCapital(this.hexes, this.random);
+        if (capital?.world !== undefined) {
+            capital.world.addTradeClassification(
+                TradeClassification.SubsectorCapital,
+            );
+            this.capital = capital;
+        }
     }
 }
 
