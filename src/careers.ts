@@ -9,12 +9,15 @@ export type D7Table<T> = readonly [T, T, T, T, T, T, T];
 
 export interface Career {
     name: string;
+    /** Rank 0 title shown for members (null for the rankless Other career). */
     memberName: string | null;
     military: boolean;
     enlistment: number;
     draft: number;
     survival: number;
+    /** Commission throw, or null when the career has no officers. */
     commission: number | null;
+    /** Promotion throw, or null when the career has no ranks. */
     promotion: number | null;
     reenlist: number;
     ranks: readonly (string | null)[] | null;
@@ -22,6 +25,7 @@ export interface Career {
     skillsTable: D6Table<SkillName>;
     advancedEducationTable: D6Table<SkillName>;
     advancedEducationTable8: D6Table<SkillName>;
+    /** Pays a pension on retirement (military + Merchants careers). */
     retirementPay: boolean;
     enlistmentDMs: readonly DmRule[];
     survivalDMs: readonly DmRule[];

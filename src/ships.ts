@@ -1,6 +1,7 @@
 import names from "./names/ships";
 import type { Random } from "./random";
 
+/** A mustering-out ship (Scout/Courier or Free Trader). */
 export interface Ship {
     name: string;
     type: string;
@@ -20,14 +21,17 @@ export interface Ship {
     lowBerths: number;
 }
 
+/** One-line ship summary for the generation history. */
 export function shipToString(ship: Ship): string {
     return `${ship.name} (type: ${ship.type})`;
 }
 
+/** Picks a random ship name from the name list. */
 export function randomShipName(random: Random) {
     return random.pick(names);
 }
 
+/** Standard 100-ton Scout/Courier (Book 2), granted free on mustering out. */
 export function createScoutCourier(name: string): Ship {
     return {
         name: name,
@@ -48,6 +52,7 @@ export function createScoutCourier(name: string): Ship {
     };
 }
 
+/** Standard 200-ton Free Trader (Book 2) with a 40-year mortgage. */
 export function createFreeTrader(name: string): Ship {
     return {
         name: name,
@@ -69,6 +74,7 @@ export function createFreeTrader(name: string): Ship {
     };
 }
 
+/** Ship mortgage: monthly payment with remaining term in years. */
 export class Mortgage {
     monthlyPayment: number;
     maturity: number;

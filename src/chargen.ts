@@ -1,4 +1,4 @@
-// Traveller Character Generator
+// Traveller Character Generator: fills TAS Form 2 (+ Form 3 for ships) in the browser, prints history on the CLI.
 
 import type { Character } from "./character";
 import { generateCharacter } from "./character";

@@ -1,3 +1,4 @@
+/** All skills in Books 1-3, including weapon and vehicle skills. */
 export type SkillName =
     | "Admin"
     | "Air/Raft"
@@ -51,6 +52,7 @@ export type SkillName =
     | "Winged Craft"
     | "Ship's Boat";
 
+/** A character's skills as name-to-level, the bottom of the domain graph. */
 export class Skills {
     private skills: Map<SkillName, number>;
 
@@ -88,7 +90,7 @@ export class Skills {
             .join(", ");
     }
 
-    // sorts by skill level (descending), secondarily by name
+    /** Sorts selected skills by level (descending), secondarily by name. */
     sorted(subset?: readonly SkillName[]): SkillName[] {
         const selected =
             subset === undefined
@@ -99,6 +101,7 @@ export class Skills {
         );
     }
 
+    /** Records a skill at level 0 without improving it (Book 1 basic training). */
     addZeroSkill(skill: SkillName) {
         this.increase(skill, 0);
     }

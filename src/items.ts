@@ -1,5 +1,9 @@
 import type { SkillName } from "./skills";
 
+/**
+ * Mustering-out gear: passages, TAS membership, and weapon skills (weapons
+ * are both items and skills in this model).
+ */
 export type ItemName =
     | "High Psg"
     | "Low Psg"
@@ -7,6 +11,7 @@ export type ItemName =
     | "Travellers'"
     | SkillName;
 
+/** A character's mustering-out possessions as item-to-count. */
 export class Items {
     private items: Map<ItemName, number>;
 
@@ -30,6 +35,12 @@ export class Items {
         return this.list.map((i) => `${this.count(i)} ${i}`).join(", ");
     }
 
+    /**
+     * Sells all passages at 90% of face value (Book 1: passages convert to
+     * cash when the character owns a ship).
+     *
+     * @returns credits gained
+     */
     convertPassages(): number {
         const passagePrices = {
             "Low Psg": 1_000,

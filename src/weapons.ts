@@ -2,6 +2,10 @@ import type { Items } from "./items";
 import type { Random } from "./random";
 import type { Skills, SkillName } from "./skills";
 
+/**
+ * Weapon skill groupings. "weapon" means long guns; "gun" is the union of
+ * long guns and pistols (Book 1 "Gun Cbt" covers both).
+ */
 export type WeaponCategory = "blade" | "pistol" | "weapon" | "gun";
 
 const bladeSkills: readonly SkillName[] = [
@@ -41,6 +45,7 @@ export const weaponSkills: Record<WeaponCategory, readonly SkillName[]> = {
     gun: [...longGunSkills, ...pistolSkills],
 };
 
+/** Vehicle skills granted by the "Vehicle" pseudo-skill table entry. */
 export const vehicleSkills: readonly SkillName[] = [
     "Ground Car",
     "Watercraft",
@@ -49,6 +54,11 @@ export const vehicleSkills: readonly SkillName[] = [
     "Grav Belt",
 ];
 
+/**
+ * How a character's strength and experience relate to a weapon group:
+ * weapons too heavy to use well, weapons light enough to prefer, weapons
+ * already known, and weapons already owned.
+ */
 export interface WeaponPreferences {
     avoid: SkillName[];
     prefer: SkillName[];
@@ -56,6 +66,10 @@ export interface WeaponPreferences {
     owned: SkillName[];
 }
 
+/**
+ * Classifies each weapon in the group by usability (from STR requirements)
+ * and familiarity (known skills, owned items).
+ */
 export function weaponPreferences(
     type: "blade" | "gun",
     strength: number,
@@ -95,6 +109,11 @@ export function weaponPreferences(
     return { avoid: avoid, prefer: prefer, known: known, owned: owned };
 }
 
+/**
+ * Picks which weapon skill a training roll improves: known preferred
+ * weapons first, then known usable ones, then unknown preferred or usable
+ * weapons, falling back to any weapon in the group. Returns exactly one skill.
+ */
 export function chooseWeaponSkill(
     type: "blade" | "gun",
     strength: number,
@@ -140,6 +159,10 @@ export function chooseWeaponSkill(
     // FIXME: choose the one(s) with lowest STR requirement!
 }
 
+/**
+ * Picks a vehicle skill: a known one when the character has any, otherwise
+ * a random vehicle skill.
+ */
 export function chooseVehicleSkill(skills: Skills, random: Random): SkillName {
     // FIXME: Currently first chooses a random skill and then only ever improves that one.
     const known: SkillName[] = [];
@@ -157,6 +180,12 @@ export function chooseVehicleSkill(skills: Skills, random: Random): SkillName {
 }
 
 // NOTE: might not need hasSkill if receiving function checks for skill?
+/**
+ * Picks which weapon a benefit grants, preferring skilled usable weapons
+ * the character doesn't own yet. Never picks a weapon twice (throws when
+ * every weapon in the group is already owned). hasSkill tells the caller
+ * whether the skill is already known, so it can add it at level 0 if not.
+ */
 export function chooseWeaponItem(
     type: "blade" | "gun",
     strength: number,
@@ -210,6 +239,10 @@ export function chooseWeaponItem(
     return { item: randomWeapon, hasSkill: false };
 }
 
+/**
+ * Resolves pseudo-skills from career tables ("Blade Cbt", "Gun Cbt",
+ * "Vehicle") to concrete skills; concrete skills pass through unchanged.
+ */
 export function resolveSkill(
     skill: SkillName,
     strength: number,
@@ -253,6 +286,11 @@ const weaponStrDM: Partial<Record<SkillName, [number, number]>> = {
     "Laser Rifle": [11, 6],
 };
 
+/**
+ * STR thresholds for a weapon as [bonus, penalty]: strength at or above
+ * bonus makes it a preferred weapon, at or below penalty incurs the
+ * Book 1 -1 to hit. Throws for non-weapon skills.
+ */
 export function weaponStrRequirements(
     weapon: SkillName,
 ): [bonus: number, penalty: number] {

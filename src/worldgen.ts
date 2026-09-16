@@ -1,4 +1,4 @@
-// Traveller Subsector Generator
+// Traveller Subsector Generator: lists worlds and draws the hex map in the browser.
 
 import { SVG } from "@svgdotjs/svg.js";
 import { DomView } from "./dom";

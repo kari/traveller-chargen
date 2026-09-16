@@ -1,5 +1,5 @@
 /**
- * Set of general utilites
+ * General utilities
  */
 
 /**

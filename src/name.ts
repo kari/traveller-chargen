@@ -10,6 +10,7 @@ const names = {
     last: last_names,
 } satisfies Record<"male" | "female" | "last", readonly string[]>;
 
+/** Character name with noble title/prefix from social standing (Book 1). */
 export class Name {
     title?: string | undefined;
     first: string;
@@ -17,6 +18,10 @@ export class Name {
     prefix?: string | undefined;
     last: string;
 
+    /**
+     * Full name with noble title and prefix (set `title` false for the
+     * plain name, e.g. TAS Form 2 box 2).
+     */
     toString(title = true): string {
         if (title) {
             return `${this.title ? `${this.title} ` : ""}${this.first} ${
@@ -43,6 +48,7 @@ export class Name {
         return null;
     }
 
+    /** Assigns the noble title for SOC 11+ (Baron prefix fallback at SOC 12). */
     addTitle(socialStanding: number, gender: Gender, random: Random): void {
         switch (socialStanding) {
             case 11: // Knight

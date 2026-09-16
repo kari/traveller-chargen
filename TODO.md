@@ -10,10 +10,7 @@ Possibly along the road there's a need for SHIPGEN as well.
 
 ## Common TODOs
 
-- Control logging
-  - [x] collect generation events into a `.history` array on `Character` (milestone life events only)
-  - [ ] same for `Subsector`
-  - [ ] UI renders the history (chargen CLI prints it; browser UI pending)
+- [ ] UI renders the character's history (chargen CLI prints it; browser UI pending)
 
 ## CHARGEN
 
@@ -33,11 +30,6 @@ Possibly along the road there's a need for SHIPGEN as well.
   - async function
   - timeout
 - fix checkboxes, <https://www.htmhell.dev/adventcalendar/2023/2/>
-- Refactor `character.ts` (~1000 lines)
-  - [x] move weapon tables (`weaponSkills`, `weaponStrDM`, `vehicleSkills`) to `weapons.ts`
-  - [x] split `doCareer()` into per-phase methods (survival, commission, promotion, skills, aging, reenlistment, mustering out)
-- Make `careers.ts` data-driven
-  - [x] extract shared personal development / benefits table logic, keep only per-career differences as data (`career_effects.ts`)
 
 ## WORLDGEN
 
@@ -53,10 +45,8 @@ Possibly along the road there's a need for SHIPGEN as well.
 ### Todo
 
 - Create communication routes
-  - trade routes using ant colony optimization, <https://en.wikipedia.org/wiki/Ant_colony_optimization_algorithms>
-- [x] Select subsector capital world
+  - trade routes using gravity algorithm 
 - Look into Book 7 for trade codes?
-  - Also look at the thread for some clarifications
+  - Also look at the thread above for some clarifications
 - Generate possible ships to encounter when entering system?
-- Spin out to its own project?
 - Extract world generation from the `World` constructor into pure functions (e.g. `generateWorldProfile(random)`)

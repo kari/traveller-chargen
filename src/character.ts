@@ -23,6 +23,12 @@ export type Attribute = keyof Attributes;
 
 export type Gender = "male" | "female";
 
+/**
+ * A Classic Traveller (Books 1-3) character, generated on construction:
+ * attributes, name, homeworld, career terms, skills, mustering-out
+ * benefits, and possibly a ship. Milestone life events accumulate in
+ * history in generation order.
+ */
 export class Character {
     /** Important life events, in generation order. */
     readonly history: string[] = [];
@@ -102,6 +108,7 @@ export class Character {
         this.history.push(message);
     }
 
+    /** TAS Form 2 one-line summary (rank title, name, UPP, age, terms). */
     toString(): string {
         return `${this.retired ? "Retired " : ""}${
             this.career.memberName
@@ -181,7 +188,12 @@ export class Character {
         return 1;
     }
 
-    /** Survival phase: throws for survival. Returns false if the character died. */
+    /**
+     * Survival throw with the career DM: failure kills the character and
+     * ends the career immediately.
+     *
+     * @returns false when the character died
+     */
     private surviveTerm(): boolean {
         if (
             this.random.roll() + dm(this.career.survivalDMs, this.attributes) <
@@ -254,6 +266,12 @@ export class Character {
         return 0;
     }
 
+    /**
+     * Changes an attribute by amount, re-checking the noble title when
+     * social standing changes (Book 1: SOC 11+ confers a title).
+     *
+     * @returns the new attribute value
+     */
     modifyAttribute(attribute: Attribute, amount = 1): number {
         const oldValue = this.attributes[attribute];
         this.attributes[attribute] = clamp(oldValue + amount, 0, 15);
@@ -272,6 +290,11 @@ export class Character {
         return this.attributes[attribute];
     }
 
+    /**
+     * Tries to enlist, applying the -1 DM per prior career; falls back to
+     * the draft (which always succeeds) when rejected everywhere. The
+     * first career is chosen by preference order, later ones at random.
+     */
     protected enlist(): Career {
         const throws = careers.map(
             (c) => c.enlistment - dm(c.enlistmentDMs, this.attributes),
@@ -325,6 +348,11 @@ export class Character {
     }
 
     /** Skills and training phase: spends the term's skill eligibilities. */
+    /**
+     * Training phase: spends each eligibility on personal development,
+     * service skills, or advanced education (EDU 8+), then trains the rank
+     * skill for the term's commission or promotion.
+     */
     private train(eligibleSkills: number) {
         while (eligibleSkills > 0) {
             eligibleSkills -= 1;
@@ -367,6 +395,7 @@ export class Character {
     }
 
     /** Throws on the advanced education tables; EDU 8+ grants the better table on 3+. */
+    /** Advanced education roll: EDU 8+ picks a table, EDU 12+ may use table 8. */
     private trainAdvancedEducation() {
         if (this.attributes.education >= 8) {
             if (this.random.roll(1) >= 3) {
@@ -395,6 +424,12 @@ export class Character {
     }
 
     /** Aging phase: throws for aging effects. Returns false if the character died. */
+    /**
+     * Aging phase: from term four on, an 8+ throw avoids attribute loss;
+     * saves against aging death start at term eight (Book 1).
+     *
+     * @returns false when the character died
+     */
     private ageAndMaybeDie(): boolean {
         this.aging();
         if (this.dead) {
@@ -478,6 +513,13 @@ export class Character {
      * "continue" when the character serves another term, "leaveService" when
      * the career ends (with or without retirement).
      */
+    /**
+     * Reenlistment phase: a throw of 12 forces another term; a failed
+     * throw ends service (retiring with a pension when eligible, else
+     * mustering out). The character may also leave voluntarily.
+     *
+     * @returns "continue" when another term is served
+     */
     private resolveReenlistment(): "continue" | "leaveService" {
         const reenlistmentThrow = this.random.roll();
         if (reenlistmentThrow === 12) {
@@ -539,6 +581,10 @@ export class Character {
     }
 
     /** Retirement pay phase: pension careers pay their retired characters. */
+    /**
+     * Retirement pay phase: pension careers pay retired characters by
+     * terms served (Book 1: Cr2000 + Cr2000 per term from term five).
+     */
     private receiveRetirementPay(): number | undefined {
         if (!this.retired || !this.career.retirementPay || this.terms < 5) {
             return;
@@ -547,6 +593,11 @@ export class Character {
     }
 
     /** Mustering out phase: rolls the cash and benefits tables, converts passages. */
+    /**
+     * Mustering-out phase: rank bonus rolls split between the cash and
+     * benefits tables (max three cash rolls, +1 benefits DM at rank 5+),
+     * then passages convert to cash when the character owns a ship.
+     */
     private musterOut() {
         let benefits = this.terms;
         switch (this.rank) {
@@ -598,6 +649,10 @@ export class Character {
         }
     }
 
+    /**
+     * Improves a skill, resolving career-table pseudo-skills ("Blade Cbt",
+     * "Gun Cbt", "Vehicle") to concrete skills first.
+     */
     addSkill(name: SkillName) {
         this.skills.increase(
             resolveSkill(
@@ -610,6 +665,10 @@ export class Character {
         );
     }
 
+    /**
+     * Grants a weapon benefit, adding the weapon skill at level 0 when the
+     * character doesn't know it yet.
+     */
     addWeapon(type: "blade" | "gun") {
         const { item, hasSkill } = chooseWeaponItem(
             type,
@@ -629,6 +688,9 @@ export function generateCharacter(seedOrRandom?: number | Random): Character {
     return new Character(seedOrRandom);
 }
 
+/**
+ * Looks up a 1-based table entry by die roll (throws when out of range).
+ */
 function rollTable<T>(table: readonly T[], roll: number): T {
     const value = table[roll - 1];
     if (value === undefined)

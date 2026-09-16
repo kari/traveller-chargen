@@ -1,3 +1,4 @@
+/** Minimal DOM helper for filling the character sheet and subsector pages. */
 export class DomView {
     private readonly document: Document;
 
