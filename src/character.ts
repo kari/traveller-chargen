@@ -539,19 +539,11 @@ export class Character {
     }
 
     /** Retirement pay phase: pension careers pay their retired characters. */
-    private receiveRetirementPay() {
-        if (!this.retired || !this.career.retirementPay) {
+    private receiveRetirementPay(): number | undefined {
+        if (!this.retired || !this.career.retirementPay || this.terms < 5) {
             return;
         }
-        const retirementPay = [4_000, 6_000, 8_000, 10_000]; // retirement pay is 2_000 + 2_000 * terms 5+
-        if (this.terms <= 8) {
-            const pay = retirementPay[this.terms - 5];
-            if (pay === undefined)
-                throw new RangeError(`Invalid retirementPay index`);
-            this.retirementPay = pay;
-        } else {
-            this.retirementPay += 10_000 + (this.terms - 8) * 2_000;
-        }
+        return 2_000 + (this.terms - 4) * 2_000;
     }
 
     /** Mustering out phase: rolls the cash and benefits tables, converts passages. */
