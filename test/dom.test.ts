@@ -18,7 +18,9 @@ test("writes through the DOM adapter", () => {
     expect(document.getElementById("flag")).toHaveProperty("checked", true);
     expect(document.getElementById("value")).toHaveProperty("hidden", true);
     expect(document.getElementById("value")?.classList).toContain("active");
-    expect(document.getElementById("value")?.dataset["seed"]).toBe("123");
+    expect(document.getElementById("value")?.getAttribute("data-seed")).toBe(
+        "123",
+    );
 });
 
 test("fails clearly for missing or mistyped required elements", () => {

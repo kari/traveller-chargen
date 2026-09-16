@@ -153,6 +153,7 @@ class World {
 
     constructor(random: Random, starport?: Starport) {
         this.starport = starport ?? Hex.rollStarport(random);
+        // FIXME: training the Markov chains each time a Subsector is created is slow, especially for tests. Would require model serialization support in upstream library.
         const namegen = new NameGenerator(names, 3, 0.01, true, () =>
             random.real(0, 1),
         );

@@ -76,35 +76,15 @@ export function weaponPreferences(
     skills: Skills,
     items: Items,
 ): WeaponPreferences {
-    const avoid: SkillName[] = [];
     const weapons = weaponSkills[type];
-
-    // FIXME: convert for loops into filters
-    for (const w of weapons) {
-        const [, penalty] = weaponStrRequirements(w);
-        if (strength <= penalty) {
-            avoid.push(w);
-        }
-    }
-    const prefer: SkillName[] = [];
-    for (const w of weapons) {
-        const [bonus] = weaponStrRequirements(w);
-        if (strength >= bonus) {
-            prefer.push(w);
-        }
-    }
-    const known: SkillName[] = [];
-    for (const skill of skills.list) {
-        if (weapons.includes(skill)) {
-            known.push(skill);
-        }
-    }
-    const owned: SkillName[] = [];
-    for (const w of weapons) {
-        if (items.has(w)) {
-            owned.push(w);
-        }
-    }
+    const avoid = weapons.filter(
+        (w) => strength <= weaponStrRequirements(w)[1],
+    );
+    const prefer = weapons.filter(
+        (w) => strength >= weaponStrRequirements(w)[0],
+    );
+    const known = skills.list.filter((skill) => weapons.includes(skill));
+    const owned = weapons.filter((w) => items.has(w));
 
     return { avoid: avoid, prefer: prefer, known: known, owned: owned };
 }
