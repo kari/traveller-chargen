@@ -33,7 +33,7 @@ export class Random {
     pick<Type>(arr: ArrayLike<Type>): Type {
         const picked = arr[this.integer(0, arr.length - 1)];
         if (picked === undefined)
-            throw new RangeError(`"Cannot pick from an empty collection"`);
+            throw new RangeError(`Cannot pick from an empty collection`);
         return picked;
     }
 

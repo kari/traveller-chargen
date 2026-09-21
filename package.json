@@ -1,17 +1,20 @@
 {
   "name": "traveller-chargen",
   "type": "module",
+  "engines": {
+  	"node": ">=24.0.0"
+  },
   "scripts": {
     "start": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "clean": "npx rimraf build dist",
+    "clean": "rm -rf dist",
     "test": "vitest",
     "test:run": "vitest run",
     "coverage": "vitest run --coverage",
     "typecheck": "tsc --noEmit",
     "format:check": "biome format src test",
-    "lint": "biome lint src test --skip=lint/style/noDescendingSpecificity",
+    "lint": "biome lint src test",
     "check": "npm run typecheck && npm run format:check && npm run lint && npm run test:run && npm run build"
   },
   "dependencies": {
@@ -24,8 +27,8 @@
     "temporal-polyfill": "^1.0.4"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.5.12",
-    "@types/node": "^22.10.2",
+    "@biomejs/biome": "2.5.14",
+    "@types/node": "^24.0.0",
     "@vitest/coverage-v8": "^5.0.0",
     "jsdom": "^30.0.1",
     "typescript": "^7.0.2",

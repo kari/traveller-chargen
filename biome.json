@@ -3,5 +3,11 @@
     "formatter": {
         "indentStyle": "space",
         "indentWidth": 4
+    },
+    "linter": {
+        "enabled": true,
+        "rules": {
+            "preset": "recommended"
+        }
     }
 }
