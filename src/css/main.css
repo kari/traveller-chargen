@@ -1,26 +1,29 @@
 @import "@picocss/pico/css/pico.red.css";
 @import "@ksilvennoinen/urw-classico/700-italic.css";
-@import "@ksilvennoinen/urw-classicsans";
+@import "@ksilvennoinen/urw-classicsans/400.css";
 @import "@ksilvennoinen/urw-classicsans/400-italic.css";
 @import "@ksilvennoinen/urw-classicsans/700.css";
 @import "@ksilvennoinen/urw-classicsans/700-italic.css";
 
+/* Pico v2 uses the --pico-* prefix; the unprefixed --font-family has no effect. */
 :root {
-    --font-family:
+    --pico-font-family:
         "URW Classic Sans", "Helvetica Neue", Arial, Helvetica, sans-serif;
 }
+
+/* General layout */
 
 main {
     position: relative;
 }
 
 main h1 {
-    font-family: "Optima", "URW Classico", "Optane", serif;
+    font-family: "Optima", "URW Classico", serif;
     font-style: italic;
-    font-weight: bold;
+    font-weight: 700;
     text-transform: uppercase;
-    text-align: right;
-    border-top: 3px solid red;
+    text-align: end;
+    border-block-start: 3px solid red;
 }
 
 button {
@@ -28,25 +31,21 @@ button {
     width: auto;
 }
 
+/* Form sheets */
+
 .outer-form {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
 }
 
-div.outer-form h3 {
-    padding-left: 0.5em;
+.outer-form h3 {
+    padding-inline-start: 0.5em;
 }
 
-div.outer-form div.barcode {
-    text-align: right;
-    padding-right: 0.5em;
+.outer-form .barcode {
+    text-align: end;
+    padding-inline-end: 0.5em;
     font-size: 42px;
-}
-
-div.outer-form.deceased .form {
-    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' version='1.1' width='500px' height='400px'><text transform='translate(20, 100) rotate(45)' fill='red' font-size='80'>DECEASED</text></svg>");
-    background-repeat: repeat;
-    background-position: center;
 }
 
 .form {
@@ -54,6 +53,12 @@ div.outer-form.deceased .form {
     border: 5px solid;
     display: grid;
     grid-template-columns: repeat(4, 1fr);
+}
+
+.outer-form.deceased .form {
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' version='1.1' width='500px' height='400px'><text transform='translate(20, 100) rotate(45)' fill='red' font-size='80'>DECEASED</text></svg>");
+    background-repeat: repeat;
+    background-position: center;
 }
 
 #tas-form-2 .form {
@@ -79,31 +84,27 @@ div.outer-form.deceased .form {
 .form > div {
     border: 1px solid;
     grid-column: span 2;
-    padding-left: 0.5em;
-    padding-bottom: 0.25em;
+    padding-inline-start: 0.5em;
+    padding-block-end: 0.25em;
 }
 
-.form div.padding-left {
-    padding-left: 0.5em;
+.form .padding-left {
+    padding-inline-start: 0.5em;
 }
 
-.form div h2 {
-    margin-bottom: 0;
+.form h2 {
+    margin-block-end: 0;
     text-transform: uppercase;
 }
 
-.form div h4 {
-    margin-bottom: 0;
+.form h4 {
+    margin-block-end: 0;
     font-style: italic;
     font-weight: 400;
 }
 
-.form div > div {
-    border: none;
-    padding-left: 0;
-    padding-bottom: 0;
-}
-
+/* These utility classes must keep their element qualifier so they out-rank
+   ".form > div" in the cascade (they override its grid-column and border). */
 div.span-1 {
     grid-column: span 1;
 }
@@ -121,50 +122,63 @@ div.span-4 {
 }
 
 div.border-left-0 {
-    border-left: 0;
+    border-inline-start: 0;
 }
 
 div.border-right-0 {
-    border-right: 0;
+    border-inline-end: 0;
 }
 
-div.upp {
+/* Scoped with .form so its padding reset out-ranks ".form > div". */
+.form .upp {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    padding-left: 0;
-    padding-bottom: 0;
-    /* FIXME: lower row should have padding-bottom: 0.25em */
+    padding-inline-start: 0;
+    padding-block-end: 0;
 }
 
-div.upp div {
+.upp div {
     grid-column: span 1;
 }
 
-div.upp div.border-right {
-    border-right: 2px solid;
+.upp div.border-right {
+    border-inline-end: 2px solid;
     grid-row: span 2;
 }
 
-div.tonnage {
+/* Stat value cells: the lower row of the 7x2 UPP grid. */
+.upp div:nth-last-child(-n + 6) {
+    padding-block-end: 0.25em;
+}
+
+/* Reset for cells nested inside form cells. Placed after the lower-specificity
+   `div` rules above to avoid descending-specificity warnings. */
+.form div div {
+    border: none;
+    padding-inline-start: 0;
+    padding-block-end: 0;
+}
+
+.tonnage {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     grid-template-rows: repeat(2, 1fr);
 }
 
-div.form div.label {
+.form .label {
     font-size: 80%;
 }
 
-div.form label {
+.form label {
     display: inline;
-    margin-right: 1em;
+    margin-inline-end: 1em;
     font-size: 80%;
 }
 
-div.form input[type="checkbox"] {
+/* Custom square checkboxes (TAS form style) */
+.form input[type="checkbox"] {
     appearance: none;
-    margin: 0;
-    margin-right: 0.25em;
+    margin: 0 0.25em 0 0;
     font: inherit;
     color: currentColor;
     width: 1em;
@@ -173,20 +187,13 @@ div.form input[type="checkbox"] {
     border-radius: 0;
 }
 
-div.form input[type="checkbox"]::before {
-    width: 0.65em;
-    height: 0.65em;
-}
-
-div.form input[type="checkbox"]:checked {
+.form input[type="checkbox"]:checked {
     background-image: none;
 }
 
-div.form input[type="checkbox"]:checked::before {
+.form input[type="checkbox"]:checked::before {
     content: "";
-    margin-top: 0.1em;
-    margin-bottom: 0.1em;
-    margin-left: 0.1em;
+    margin: 0.1em 0 0.1em 0.1em;
     width: 0.6em;
     height: 0.6em;
     background-color: currentColor;
@@ -195,72 +202,75 @@ div.form input[type="checkbox"]:checked::before {
     clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
 }
 
-div.form input[type="checkbox"]:disabled {
+.form input[type="checkbox"]:disabled {
     color: currentColor;
     background-color: transparent;
 }
 
-div.form div.world {
+/* World list (TAS Form 7) */
+.form .world {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    border-bottom: 0;
-    border-left: 0;
-    border-right: 0;
-    padding-left: 0;
-    padding-bottom: 0;
+    border-block-end: 0;
+    border-inline-start: 0;
+    border-inline-end: 0;
+    padding-inline-start: 0;
+    padding-block-end: 0;
 }
 
-div.form div.world > div {
+.form .world > div {
     grid-column: span 1;
     grid-row: span 2;
-    padding-left: 0.5em;
-    border-bottom: 1px solid;
+    padding-inline-start: 0.5em;
+    border-block-end: 1px solid;
     display: flex;
     align-items: center;
 }
 
-div.align-bottom {
+.align-bottom {
     display: flex;
     align-items: flex-end;
 }
 
-div.form div.world > div:nth-child(4n) {
-    border-right: 1px solid;
+.form .world > div:nth-child(4n) {
+    border-inline-end: 1px solid;
 }
 
-div.form div.world > div:nth-child(4n + 1) {
-    border-left: 1px solid;
+.form .world > div:nth-child(4n + 1) {
+    border-inline-start: 1px solid;
 }
 
-div.world > div.boxed {
+.world > div.boxed {
     padding: 0.5em;
-    padding-bottom: 0.5em;
 }
-div.boxed div {
-    margin-top: 0.25em;
-    margin-bottom: 0.25em;
 
+/* Boxed monospace characters (UWP codes). At (0,2,0) this intentionally
+   out-ranks the nested-cell reset ".form div div" (0,1,2) so every
+   character cell keeps its box borders and padding. */
+.boxed .box {
     font-family: Courier, "Courier New", monospace;
     font-size: 85%;
     display: inline;
-    border-left: 1px solid;
-    border-bottom: 1px solid;
+    border-inline-start: 1px solid;
+    border-block-end: 1px solid;
     padding: 0.25em;
 }
 
-div.boxed div:last-child {
-    border-right: 1px solid;
+.boxed .box:last-child {
+    border-inline-end: 1px solid;
 }
 
-div#map-grid {
-    border-top-width: 4px;
+#map-grid {
+    border-block-start-width: 4px;
     padding: 0;
 }
 
+/* Footer */
+
 main + footer {
     padding: 3em;
-    padding-top: 0;
-    padding-bottom: 2rem;
+    padding-block-start: 0;
+    padding-block-end: 2rem;
 }
 
 main + footer p {

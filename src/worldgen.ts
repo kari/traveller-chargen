@@ -43,6 +43,7 @@ function rollSubsector(): Subsector {
         for (const l of text) {
             const box = document.createElement("div");
             const boxText = document.createTextNode(l);
+            box.classList.add("box");
             box.appendChild(boxText);
             div.appendChild(box);
         }
