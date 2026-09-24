@@ -580,16 +580,15 @@ export class Character {
         return "continue";
     }
 
-    /** Retirement pay phase: pension careers pay their retired characters. */
     /**
      * Retirement pay phase: pension careers pay retired characters by
      * terms served (Book 1: Cr2000 + Cr2000 per term from term five).
      */
-    private receiveRetirementPay(): number | undefined {
+    private receiveRetirementPay(): void {
         if (!this.retired || !this.career.retirementPay || this.terms < 5) {
             return;
         }
-        return 2_000 + (this.terms - 4) * 2_000;
+        this.retirementPay = 2_000 + (this.terms - 4) * 2_000;
     }
 
     /** Mustering out phase: rolls the cash and benefits tables, converts passages. */
