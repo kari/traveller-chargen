@@ -1,6 +1,12 @@
-import { expect, test } from "vitest";
+import { beforeAll, expect, test } from "vitest";
 import { Character, generateCharacter } from "../src/character";
 import { Random } from "../src/random";
+import { loadShipNames } from "../src/ships";
+
+beforeAll(async () => {
+    // a mustered-out ship needs the lazily loaded ship names
+    await loadShipNames();
+});
 
 test("Create a character", () => {
     const c = new Character();

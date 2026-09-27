@@ -5,6 +5,7 @@ import { generateCharacter } from "./character";
 import { DomView } from "./dom";
 import { ImperialDate } from "./imperial_date";
 import type { SkillName } from "./skills";
+import { loadShipNames } from "./ships";
 import { ehex, numberFormat } from "./utils";
 import { weaponSkills } from "./weapons";
 
@@ -221,23 +222,33 @@ function rollCharacter(): Character {
 }
 
 if (typeof window === "undefined") {
-    const c = generateCharacter();
-    console.log(c.history.join("\n"));
+    void (async () => {
+        await loadShipNames(); // a mustered-out ship needs a name
+        const c = generateCharacter();
+        console.log(c.history.join("\n"));
+    })();
 } else {
-    document.getElementById("reroll")?.addEventListener("click", (_event) => {
-        resetSheets();
-        rollCharacter();
-    });
+    void loadShipNames(); // start fetching alongside the page, off the critical path
+
+    document
+        .getElementById("reroll")
+        ?.addEventListener("click", async (_event) => {
+            await loadShipNames();
+            resetSheets();
+            rollCharacter();
+        });
     document
         .getElementById("roll-ship")
-        ?.addEventListener("click", (_event) => {
+        ?.addEventListener("click", async (_event) => {
+            await loadShipNames();
             let c: Character;
             do {
                 resetSheets();
                 c = rollCharacter();
             } while (!c.ship);
         });
-    window.addEventListener("load", (_event) => {
+    window.addEventListener("load", async (_event) => {
+        await loadShipNames();
         rollCharacter(); // FIXME: preferably roll an alive character
     });
 }

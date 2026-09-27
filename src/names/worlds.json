@@ -1,9 +1,4 @@
-// Source: Traveller RPG Wiki (CC-BY-NC 3.0)
-// <https://wiki.travellerrpg.com/Canon_World_%26_System_Reference_Log>
-
-export { names as default };
-
-const names: string[] = [
+[
     "aazuni",
     "abarre",
     "acorn",
@@ -1196,5 +1191,5 @@ const names: string[] = [
     "zupilak",
     "zurr",
     "zurrian",
-    "zykoca",
-];
+    "zykoca"
+]

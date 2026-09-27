@@ -1,5 +1,27 @@
-import names from "./names/ships";
 import type { Random } from "./random";
+
+let shipNames: readonly string[] | undefined;
+let shipNamesPromise: Promise<readonly string[]> | undefined;
+
+/**
+ * Loads the ship name list once. The ~9000 names are kept out of the
+ * eagerly loaded bundles: await this before generating characters.
+ */
+export function loadShipNames(): Promise<readonly string[]> {
+    shipNamesPromise ??= import("./names/ships.json").then((module) => {
+        shipNames = module.default;
+        return shipNames;
+    });
+    return shipNamesPromise;
+}
+
+/** Picks a random ship name from the name list. */
+export function randomShipName(random: Random) {
+    if (shipNames === undefined) {
+        throw new Error("Ship names not loaded: await loadShipNames() first");
+    }
+    return random.pick(shipNames);
+}
 
 /** A mustering-out ship (Scout/Courier or Free Trader). */
 export interface Ship {
@@ -24,11 +46,6 @@ export interface Ship {
 /** One-line ship summary for the generation history. */
 export function shipToString(ship: Ship): string {
     return `${ship.name} (type: ${ship.type})`;
-}
-
-/** Picks a random ship name from the name list. */
-export function randomShipName(random: Random) {
-    return random.pick(names);
 }
 
 /** Standard 100-ton Scout/Courier (Book 2), granted free on mustering out. */

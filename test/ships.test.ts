@@ -1,9 +1,20 @@
 import { expect, test } from "vitest";
+import { Random } from "../src/random";
 import {
     createFreeTrader,
     createScoutCourier,
+    loadShipNames,
+    randomShipName,
     shipToString,
 } from "../src/ships";
+
+test("loads the ship names lazily and picks deterministically", async () => {
+    const names = await loadShipNames();
+    expect(names.length).toBeGreaterThan(1_000);
+    expect(randomShipName(new Random(12345))).toBe(
+        randomShipName(new Random(12345)),
+    );
+});
 
 test("a new Scout/Courier", () => {
     const name = "SS Test IV";

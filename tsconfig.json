@@ -11,6 +11,7 @@
     "noEmit": true,                                      /* Vite performs the application build; tsc only typechecks. */
     "isolatedModules": true,                              /* Ensure each file can be transpiled independently by Vite. */
     "verbatimModuleSyntax": true,                         /* Require type-only imports to be explicit. */
+    "resolveJsonModule": true,                            /* Type-check the JSON name data imports. */
     "esModuleInterop": true,                             /* Emit additional JavaScript to ease support for importing CommonJS modules. This enables 'allowSyntheticDefaultImports' for type compatibility. */
     "forceConsistentCasingInFileNames": true,            /* Ensure that casing is correct in imports. */
     "strict": true,                                      /* Enable all strict type-checking options. */

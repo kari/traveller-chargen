@@ -1,7 +1,7 @@
 import type { Gender } from "./character";
-import female_names from "./names/female";
-import last_names from "./names/last_name";
-import male_names from "./names/male";
+import female_names from "./names/female.json";
+import last_names from "./names/last_name.json";
+import male_names from "./names/male.json";
 import type { Random } from "./random";
 
 const names = {

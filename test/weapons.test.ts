@@ -1,7 +1,8 @@
-import { expect, test } from "vitest";
+import { beforeAll, expect, test } from "vitest";
 import { Character } from "../src/character";
 import { Items } from "../src/items";
 import { Random } from "../src/random";
+import { loadShipNames } from "../src/ships";
 import { type SkillName, Skills } from "../src/skills";
 import {
     chooseVehicleSkill,
@@ -13,6 +14,11 @@ import {
     weaponSkills,
     weaponStrRequirements,
 } from "../src/weapons";
+
+beforeAll(async () => {
+    // character construction can muster out a ship, which needs names
+    await loadShipNames();
+});
 
 function skillLevels(skills: Skills): Map<SkillName, number> {
     return new Map(skills.list.map((name) => [name, skills.level(name)]));
