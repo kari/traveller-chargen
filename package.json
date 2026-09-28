@@ -13,8 +13,8 @@
     "test:run": "vitest run",
     "coverage": "vitest run --coverage",
     "typecheck": "tsc --noEmit",
-    "format:check": "biome format src test",
-    "lint": "biome lint src test",
+    "format:check": "biome format src test *.config.ts",
+    "lint": "biome lint src test *.config.ts",
     "check": "npm run typecheck && npm run format:check && npm run lint && npm run test:run && npm run build"
   },
   "dependencies": {
