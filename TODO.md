@@ -56,8 +56,14 @@ Consumer side of the separately developed
 [markov-namegen](https://github.com/kari/markov-namegen) library; these
 start upstream.
 
-- [ ] Model serialization support in the library
-- [ ] Precompute the worlds model at build time once models serialize
-  (drops the runtime training and the world word list from the bundle)
-- [ ] Per-call random source injection in the library, replacing the
-  swappable-random workaround in `subsector.ts`
+- [x] Model serialization support in the library (shipped in 2.1.0; verified
+  here that a serialize/deserialize round-trip generates byte-identical names)
+- [x] Per-call random source injection in the library (shipped in 2.2.0);
+  the swappable-random workaround in `subsector.ts` is gone — the shared
+  generator now takes each caller's seeded source per `generateNames` call
+
+Evaluating 2.1.0 serialization for precomputing the worlds model: the
+round-trip is faithful, but the serialized model is 1.3 MB raw / 82 kB
+gzipped against the 11.4 kB (5 kB gzipped) word list, while the memoized
+training costs ~7 ms once per session. Shipping the model would grow the
+worldgen payload ~16x to save nothing perceptible — rejected.

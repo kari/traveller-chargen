@@ -108,25 +108,14 @@ export function assignTravelZone(
 }
 
 /**
- * Shared Markov generator for world names. Training the chains is expensive
- * and the upstream library cannot serialize models, so a single generator is
- * trained lazily per session and reused. The random source is swapped per
- * call: each world draws from its own seeded generator, preserving seed
- * determinism.
+ * Shared Markov generator for world names, trained lazily once per session
+ * (training is expensive). Generation draws from each caller's own seeded
+ * random source via per-call injection, preserving seed determinism.
  */
 let worldNamegen: NameGenerator | undefined;
-let worldNamegenRandom: Random | undefined;
 
-function worldNameGenerator(random: Random): NameGenerator {
-    worldNamegen ??= new NameGenerator(names, 3, 0.01, true, () => {
-        if (worldNamegenRandom === undefined) {
-            throw new Error(
-                "World name generator used without a random source",
-            );
-        }
-        return worldNamegenRandom.real(0, 1);
-    });
-    worldNamegenRandom = random;
+function worldNameGenerator(): NameGenerator {
+    worldNamegen ??= new NameGenerator(names, 3, 0.01, true);
     return worldNamegen;
 }
 
@@ -356,15 +345,11 @@ class World {
 
     constructor(random: Random, starport?: Starport) {
         this.starport = starport ?? Hex.rollStarport(random);
-        const generatedName = worldNameGenerator(random).generateNames(
-            1,
-            4,
-            12,
-            "",
-            "",
-            "",
-            "",
-        )[0];
+        const generatedName = worldNameGenerator().generateNames(1, {
+            minLength: 4,
+            maxLength: 12,
+            random: () => random.real(0, 1),
+        })[0];
         if (generatedName === undefined) {
             throw new Error("World name generation failed");
         }
@@ -573,15 +558,11 @@ class Subsector {
                 : new Random(seedOrRandom);
         this.seed = this.random.seed;
 
-        const sector_names = worldNameGenerator(this.random).generateNames(
-            2,
-            4,
-            12,
-            "",
-            "",
-            "",
-            "",
-        );
+        const sector_names = worldNameGenerator().generateNames(2, {
+            minLength: 4,
+            maxLength: 12,
+            random: () => this.random.real(0, 1),
+        });
         const [subsectorName, sectorName] = sector_names;
         if (subsectorName === undefined || sectorName === undefined)
             throw new Error("Subsector name generation failed");
