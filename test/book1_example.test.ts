@@ -1,7 +1,8 @@
 import { beforeAll, expect, test } from "vitest";
 import { Character } from "../src/character";
 import { loadShipNames } from "../src/ships";
-import { jamisonRolls, ScriptedRandom } from "./jamison";
+import { jamisonRolls } from "./jamison";
+import { ScriptedRandom } from "./scripted_random";
 
 beforeAll(async () => {
     // the merchant ship benefit needs the lazily loaded ship names

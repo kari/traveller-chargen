@@ -1,7 +1,7 @@
 import { NameGenerator } from "@ksilvennoinen/markov-namegen";
 import names from "./names/worlds.json";
 import { Random } from "./random";
-import { clamp, ehex } from "./utils";
+import { capitalize, clamp, ehex } from "./utils";
 
 export const TravelZoneType = {
     Amber: "A",
@@ -368,9 +368,7 @@ class World {
         if (generatedName === undefined) {
             throw new Error("World name generation failed");
         }
-        this.name =
-            generatedName.substring(0, 1).toUpperCase() +
-            generatedName.substring(1); // FIXME: add capitalization function to handle spaces etc.
+        this.name = capitalize(generatedName);
 
         const profile = rollWorldProfile(random);
         this.planetarySize = profile.planetarySize;
@@ -588,11 +586,8 @@ class Subsector {
         if (subsectorName === undefined || sectorName === undefined)
             throw new Error("Subsector name generation failed");
 
-        this.name =
-            subsectorName.substring(0, 1).toUpperCase() +
-            subsectorName.substring(1);
-        this.sectorName =
-            sectorName.substring(0, 1).toUpperCase() + sectorName.substring(1);
+        this.name = capitalize(subsectorName);
+        this.sectorName = capitalize(sectorName);
 
         // create subsector 8x10 hexes
         for (let i = 1; i <= 8; i++) {

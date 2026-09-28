@@ -1,12 +1,15 @@
 // Traveller Subsector Generator: lists worlds and draws the hex map in the browser.
 
-import { SVG } from "@svgdotjs/svg.js";
+import { type Svg, SVG } from "@svgdotjs/svg.js";
 import { DomView } from "./dom";
 import { ImperialDate } from "./imperial_date";
-import type { Subsector } from "./subsector";
+import type { Hex, Subsector } from "./subsector";
 import { generateSubsector, TravelZoneType } from "./subsector";
 
 type Point2D = readonly [x: number, y: number];
+
+/** Hex side length in SVG units. */
+const HEX_SIZE = 100;
 
 function resetSheets() {
     const view = new DomView(document);
@@ -15,19 +18,42 @@ function resetSheets() {
     view.element("map-grid").replaceChildren();
 }
 
-function rollSubsector(): Subsector {
-    const s = generateSubsector();
-    const view = new DomView(document);
+// https://www.redblobgames.com/grids/hexagons/#basics
+function hexCorner(x: number, y: number, size: number, i: number): number[] {
+    const angle_deg = 60 * i;
+    const angle_rad = (Math.PI / 180) * angle_deg;
 
-    const today = new ImperialDate();
+    return [x + size * Math.cos(angle_rad), y + size * Math.sin(angle_rad)];
+}
 
-    view.text("box-1", today.toString());
-    view.text("t6-box-2", today.toString());
-    view.data("seed", "seed", s.seed.toString());
-    view.text("box-2", s.name);
-    view.text("t6-box-1", s.name);
-    view.text("box-3", s.sectorName);
+// https://www.redblobgames.com/grids/hexagons/#hex-to-pixel
+function hexToPixel(q: number, r: number): Point2D {
+    // odd-q offset
+    const x = ((HEX_SIZE * 3) / 2) * q + HEX_SIZE;
+    const y =
+        HEX_SIZE * Math.sqrt(3) * (r + 0.5 * (q & 1)) +
+        (Math.sqrt(3) / 2) * HEX_SIZE;
 
+    return [x, y];
+}
+
+function hexCorners(x: number, y: number, size: number): number[] {
+    const edges: number[] = [];
+    for (let i = 0; i <= 5; i++) {
+        edges.push(...hexCorner(x, y, size, i));
+    }
+    return edges;
+}
+
+function starPoints(radius: number): number[] {
+    return Array.from({ length: 5 }, (_, k) => {
+        const angle = (4 * Math.PI * k) / 5 + Math.PI / 2;
+        return [radius * Math.cos(angle), -radius * Math.sin(angle)] as const;
+    }).flat();
+}
+
+/** Lists the subsector's worlds (name, hex, UWP, trade classifications). */
+function renderWorldList(s: Subsector, view: DomView): void {
     function addWorldNode(text: string) {
         const worlds = view.element("world-list");
         const div = document.createElement("div");
@@ -59,52 +85,10 @@ function rollSubsector(): Subsector {
         addBoxedWorldNode(h.world.uwp);
         addWorldNode(h.world.tradeClassificationsToString()); // FIXME: remarks
     }
+}
 
-    // https://www.redblobgames.com/grids/hexagons/#basics
-    function hexCorner(
-        x: number,
-        y: number,
-        size: number,
-        i: number,
-    ): number[] {
-        const angle_deg = 60 * i;
-        const angle_rad = (Math.PI / 180) * angle_deg;
-
-        return [x + size * Math.cos(angle_rad), y + size * Math.sin(angle_rad)];
-    }
-
-    // https://www.redblobgames.com/grids/hexagons/#hex-to-pixel
-    function hexToPixel(q: number, r: number): Point2D {
-        // odd-q offset
-        const x = ((size * 3) / 2) * q + size;
-        const y =
-            size * Math.sqrt(3) * (r + 0.5 * (q & 1)) +
-            (Math.sqrt(3) / 2) * size;
-
-        return [x, y];
-    }
-
-    function drawHex(x: number, y: number, size: number) {
-        const edges: number[] = [];
-        for (let i = 0; i <= 5; i++) {
-            edges.push(...hexCorner(x, y, size, i));
-        }
-        return edges;
-    }
-
-    function drawStar(radius: number): number[] {
-        return Array.from({ length: 5 }, (_, k) => {
-            const angle = (4 * Math.PI * k) / 5 + Math.PI / 2;
-            return [
-                radius * Math.cos(angle),
-                -radius * Math.sin(angle),
-            ] as const;
-        }).flat();
-    }
-
-    // FIXME: refactor into "drawTemplateGrid" and draw it before new Subsector() and in resetSheets()
-    const draw = SVG().addTo(view.element("map-grid")).size("100%", "100%");
-    const size = 100;
+/** Draws the numbered hex grid template the worlds are placed on. */
+function drawTemplateGrid(draw: Svg, size: number): void {
     draw.viewbox(
         0,
         0,
@@ -118,126 +102,150 @@ function rollSubsector(): Subsector {
         for (let r = r_init; r <= r_max; r++) {
             // y index
             const [x, y] = hexToPixel(q, r);
-            draw.polygon(drawHex(x, y, size))
+            draw.polygon(hexCorners(x, y, size))
                 .fill("none")
                 .stroke({ width: 1, color: "currentColor" });
             const text = draw.text(`0000${(q + 1) * 100 + (r + 1)}`.slice(-4));
             text.center(x, y - 70);
         }
     }
+}
 
-    // FIXME: we already iterate over worlds above
+/** Draws one world's map symbols: name, starport, oceans/belt, bases, zone. */
+function drawWorld(draw: Svg, s: Subsector, h: Hex, size: number): void {
+    const world = h.world;
+    if (world === undefined) {
+        return; // only inhabited hexes are drawn
+    }
+    const [x, y] = hexToPixel(h.coordinates[0] - 1, h.coordinates[1] - 1);
+
+    const worldName = draw.text(
+        world.population >= 9 ? world.name.toUpperCase() : world.name,
+    );
+    if (s.capital === h) {
+        worldName.fill("red");
+    }
+
+    const mask = draw.mask();
+    mask.add(
+        draw
+            .circle(100)
+            .center(x, y)
+            .fill("none")
+            .stroke({ width: 5, color: "#fff" }),
+    );
+
+    const starportType = draw.text(h.starport);
+    // FIXME: if text.length() > side length (= size), decrease font size until fits
+    worldName.center(x, y + size - 30);
+    starportType.center(x, y - 50);
+    mask.add(
+        draw
+            .rect(starportType.length() + 10, starportType.length() + 10)
+            .fill("#000")
+            .center(x, y - 50),
+    );
+
+    // world symbol (full = ocean, empty = no ocean, asteroid belt)
+    const r = s.random;
+    if (world.planetarySize === 0) {
+        // Asteroid Belt
+        for (let i = 0; i <= r.integer(12, 18); i++) {
+            const dx = r.real(-20, 20);
+            const dy = r.real(-20, 20);
+            draw.circle(r.real(2, 5)).move(x + dx, y + dy);
+        }
+    } else if (world.hydrographicPercentage > 0) {
+        // has oceans
+        draw.circle(20).center(x, y); // .fill('grey')
+    } else {
+        // desert world
+        draw.circle(20)
+            .center(x, y)
+            .fill("none")
+            .stroke({ width: 1, color: "currentColor" });
+    }
+
+    if (h.gasGiant) {
+        const gasGiant = draw
+            .circle(10)
+            .center(x + (Math.sqrt(2) / 2) * 50, y - (Math.sqrt(2) / 2) * 50);
+        mask.add(gasGiant.clone().scale(2).fill("#000"));
+    }
+    if (h.scoutBase) {
+        draw.polygon("0,0 12,0 6,-10.392").center(
+            x - (Math.sqrt(2) / 2) * 50,
+            y + (Math.sqrt(2) / 2) * 50,
+        ); // height = sqrt(3)/2*side
+        mask.add(
+            draw
+                .circle(20)
+                .fill("#000")
+                .center(
+                    x - (Math.sqrt(2) / 2) * 50 + 1,
+                    y + (Math.sqrt(2) / 2) * 50 + 1,
+                ),
+        );
+    }
+    if (h.navalBase) {
+        draw.polygon(starPoints(8)).center(
+            x - (Math.sqrt(2) / 2) * 50,
+            y - (Math.sqrt(2) / 2) * 50,
+        );
+        mask.add(
+            draw
+                .circle(20)
+                .fill("#000")
+                .center(
+                    x - (Math.sqrt(2) / 2) * 50,
+                    y - (Math.sqrt(2) / 2) * 50 + 1,
+                ),
+        );
+    }
+
+    if (h.travelZone) {
+        const zoneColor =
+            h.travelZone === TravelZoneType.Red ? "red" : "orange"; // red/orange
+        const travelZone = draw
+            .circle(100)
+            .center(x, y)
+            .fill("none")
+            .stroke({ width: 5, color: zoneColor });
+
+        travelZone.maskWith(mask);
+    }
+
+    /* S12 Forms and charts
+    - subsector capital name in red
+    - worlds with water are grey/blue
+    - travel zone a circle around world (red or amber)
+    */
+}
+
+function rollSubsector(): Subsector {
+    const s = generateSubsector();
+    const view = new DomView(document);
+
+    const today = new ImperialDate();
+
+    view.text("box-1", today.toString());
+    view.text("t6-box-2", today.toString());
+    view.data("seed", "seed", s.seed.toString());
+    view.text("box-2", s.name);
+    view.text("t6-box-1", s.name);
+    view.text("box-3", s.sectorName);
+
+    renderWorldList(s, view);
+
+    const draw = SVG().addTo(view.element("map-grid"));
+    drawTemplateGrid(draw, HEX_SIZE);
+
+    // FIXME: draw the template grid before generation and in resetSheets()
     for (const h of s.hexes) {
         if (h.world === undefined) {
             continue;
         }
-
-        const [x, y] = hexToPixel(h.coordinates[0] - 1, h.coordinates[1] - 1);
-
-        const worldName = draw.text(
-            h.world.population >= 9 ? h.world.name.toUpperCase() : h.world.name,
-        );
-        if (s.capital === h) {
-            worldName.fill("red");
-        }
-
-        const mask = draw.mask();
-        mask.add(
-            draw
-                .circle(100)
-                .center(x, y)
-                .fill("none")
-                .stroke({ width: 5, color: "#fff" }),
-        );
-
-        const starportType = draw.text(h.starport);
-        // FIXME: if text.length() > side length (= size), decrease font size until fits
-        worldName.center(x, y + size - 30);
-        starportType.center(x, y - 50);
-        mask.add(
-            draw
-                .rect(starportType.length() + 10, starportType.length() + 10)
-                .fill("#000")
-                .center(x, y - 50),
-        );
-
-        // world symbol (full = ocean, empty = no ocean, asteroid belt)
-        const r = s.random;
-        if (h.world.planetarySize === 0) {
-            // Asteroid Belt
-            for (let i = 0; i <= r.integer(12, 18); i++) {
-                const dx = r.real(-20, 20);
-                const dy = r.real(-20, 20);
-                draw.circle(r.real(2, 5)).move(x + dx, y + dy);
-            }
-        } else if (h.world.hydrographicPercentage > 0) {
-            // has oceans
-            draw.circle(20).center(x, y); // .fill('grey')
-        } else {
-            // desert world
-            draw.circle(20)
-                .center(x, y)
-                .fill("none")
-                .stroke({ width: 1, color: "currentColor" });
-        }
-
-        if (h.gasGiant) {
-            const gasGiant = draw
-                .circle(10)
-                .center(
-                    x + (Math.sqrt(2) / 2) * 50,
-                    y - (Math.sqrt(2) / 2) * 50,
-                );
-            mask.add(gasGiant.clone().scale(2).fill("#000"));
-        }
-        if (h.scoutBase) {
-            draw.polygon("0,0 12,0 6,-10.392").center(
-                x - (Math.sqrt(2) / 2) * 50,
-                y + (Math.sqrt(2) / 2) * 50,
-            ); // height = sqrt(3)/2*side
-            mask.add(
-                draw
-                    .circle(20)
-                    .fill("#000")
-                    .center(
-                        x - (Math.sqrt(2) / 2) * 50 + 1,
-                        y + (Math.sqrt(2) / 2) * 50 + 1,
-                    ),
-            );
-        }
-        if (h.navalBase) {
-            draw.polygon(drawStar(8)).center(
-                x - (Math.sqrt(2) / 2) * 50,
-                y - (Math.sqrt(2) / 2) * 50,
-            );
-            mask.add(
-                draw
-                    .circle(20)
-                    .fill("#000")
-                    .center(
-                        x - (Math.sqrt(2) / 2) * 50,
-                        y - (Math.sqrt(2) / 2) * 50 + 1,
-                    ),
-            );
-        }
-
-        if (h.travelZone) {
-            const zoneColor =
-                h.travelZone === TravelZoneType.Red ? "red" : "orange"; // red/orange
-            const travelZone = draw
-                .circle(100)
-                .center(x, y)
-                .fill("none")
-                .stroke({ width: 5, color: zoneColor });
-
-            travelZone.maskWith(mask);
-        }
-
-        /* S12 Forms and charts
-        - subsector capital name in red
-        - worlds with water are grey/blue
-        - travel zone a circle around world (red or amber)
-        */
+        drawWorld(draw, s, h, HEX_SIZE);
     }
 
     return s;

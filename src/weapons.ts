@@ -90,6 +90,21 @@ export function weaponPreferences(
 }
 
 /**
+ * Picks randomly from the first non-empty candidate group, consuming
+ * exactly one draw (the pick) regardless of how many groups were skipped.
+ */
+function pickFromCandidates(
+    random: Random,
+    groups: readonly (readonly SkillName[])[],
+): SkillName {
+    const candidates = groups.find((group) => group.length > 0);
+    if (candidates === undefined) {
+        throw new RangeError("No weapon candidates to pick from");
+    }
+    return random.pick(candidates);
+}
+
+/**
  * Picks which weapon skill a training roll improves: known preferred
  * weapons first, then known usable ones, then unknown preferred or usable
  * weapons, falling back to any weapon in the group. Returns exactly one skill.
@@ -105,38 +120,14 @@ export function chooseWeaponSkill(
 
     // FIXME: will always increase skill in known (good) skills, and doesn't allow for range of skills
     // probably shouldn't level skill above -3
-    if (prefs.known.length > 0) {
-        const knownAndPrefer = prefs.known.filter((x) =>
-            prefs.prefer.includes(x),
-        );
-        if (knownAndPrefer.length > 0) {
-            // increase skill in a random preferred and known weapon
-            return random.pick(knownAndPrefer);
-        }
-        const knownAndProficient = prefs.known.filter(
-            (x) => !prefs.avoid.includes(x),
-        );
-        if (knownAndProficient.length > 0) {
-            // increase skill in a random weapon that doesn't incur STR penalty
-            return random.pick(knownAndProficient);
-        }
-        // else know only weapons that incur penalty, fall through
-    }
-    // player either knowns no weapon skills or all known incur penalty
-    if (prefs.prefer.length > 0) {
-        // get random skill in a preferred weapon
-        return random.pick(prefs.prefer);
-    } else {
-        const proficient = weaponSkills[type].filter(
-            (x) => !prefs.avoid.includes(x),
-        );
-        if (proficient.length > 0) {
-            // get random skill in a random weapon that doesn't incur STR penalty
-            return random.pick(proficient);
-        }
-    }
-    return random.pick(weaponSkills[type]); // pick random weapon, even if use incurs STR penalty
-    // FIXME: choose the one(s) with lowest STR requirement!
+    return pickFromCandidates(random, [
+        prefs.known.filter((x) => prefs.prefer.includes(x)),
+        prefs.known.filter((x) => !prefs.avoid.includes(x)),
+        prefs.prefer,
+        weaponSkills[type].filter((x) => !prefs.avoid.includes(x)),
+        [...weaponSkills[type]], // pick random weapon, even if use incurs STR penalty
+        // FIXME: choose the one(s) with lowest STR requirement!
+    ]);
 }
 
 /**
@@ -175,48 +166,18 @@ export function chooseWeaponItem(
 ): { item: SkillName; hasSkill: boolean } {
     // Note: will never pick a weapon twice
     const prefs = weaponPreferences(type, strength, skills, items);
+    const notOwned = (x: SkillName) => !prefs.owned.includes(x);
 
-    const preferAndKnown = prefs.known.filter((x) => prefs.prefer.includes(x));
-    const preferAndKnownAndNotOwned = preferAndKnown.filter(
-        (x) => !prefs.owned.includes(x),
-    );
-
-    if (preferAndKnownAndNotOwned.length > 0) {
-        // add a weapon that is preferred and skilled but not owned
-        return { item: random.pick(preferAndKnownAndNotOwned), hasSkill: true };
-    }
-    const proficientAndKnown = prefs.known.filter(
-        (x) => !prefs.avoid.includes(x),
-    );
-    const proficientAndKnownAndNotOwned = proficientAndKnown.filter(
-        (x) => !prefs.owned.includes(x),
-    );
-    if (proficientAndKnownAndNotOwned.length > 0) {
-        // add a weapon that doesn't incur STR penalty and skilled but not owned
-        return {
-            item: random.pick(proficientAndKnownAndNotOwned),
-            hasSkill: true,
-        };
-    }
-
-    // no known good weapons, pick a preferred or proficient weapon
-    const preferAndNotOwned = prefs.prefer.filter(
-        (x) => !prefs.owned.includes(x),
-    );
-    if (preferAndNotOwned.length > 0) {
-        return { item: random.pick(preferAndNotOwned), hasSkill: false };
-    }
-    const proficientAndNotOwned = prefs.known.filter(
-        (x) => !prefs.avoid.includes(x) && !prefs.owned.includes(x),
-    );
-    if (proficientAndNotOwned.length > 0) {
-        return { item: random.pick(proficientAndNotOwned), hasSkill: false };
-    }
-    // give a random weapon not owned
-    const randomWeapon = random.pick(
-        weaponSkills[type].filter((x) => !prefs.owned.includes(x)),
-    );
-    return { item: randomWeapon, hasSkill: false };
+    const item = pickFromCandidates(random, [
+        prefs.known.filter((x) => prefs.prefer.includes(x) && notOwned(x)),
+        prefs.known.filter((x) => !prefs.avoid.includes(x) && notOwned(x)),
+        prefs.prefer.filter(notOwned),
+        weaponSkills[type].filter(notOwned),
+    ]);
+    return {
+        item: item,
+        hasSkill: prefs.known.includes(item),
+    };
 }
 
 /**

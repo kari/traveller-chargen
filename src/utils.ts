@@ -72,3 +72,12 @@ export function ehex(value: number): string {
     }
     return symbol;
 }
+
+/**
+ * Capitalizes the first letter of a word.
+ *
+ * FIXME: handle spaces etc. (multi-word names)
+ */
+export function capitalize(value: string): string {
+    return value.substring(0, 1).toUpperCase() + value.substring(1);
+}

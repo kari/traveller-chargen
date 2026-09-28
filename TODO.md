@@ -1,37 +1,45 @@
 # TODO
 
-This project has three parts,
+Roadmap of planned features and larger refactors. Smaller in-place debt
+lives in `FIXME` comments in the code.
 
-- CHARGEN - for character (and their possible ship) generation
-- WORLDGEN - for subsector and world generation
-- NAMEGEN - for generating names using Markov chains, <https://github.com/kari/markov-namegen>
+This project has three parts:
+
+- CHARGEN — character (and their possible ship) generation
+- WORLDGEN — subsector and world generation
+- NAMEGEN — generating names using Markov chains, <https://github.com/kari/markov-namegen>
 
 Possibly along the road there's a need for SHIPGEN as well.
 
-## Common TODOs
-
-- [ ] UI renders the character's history (chargen CLI prints it; browser UI pending)
-
 ## CHARGEN
+
+### Features
+
+- [ ] UI renders the character's history (the CLI already prints it)
+- [ ] Personal history
+  - random charts for lore, look at throw / roll difference
+  - random stuff in TAS Form 2?
+- [ ] Dice icon to re-roll certain aspects (name, etc.)
+- [ ] Option to specify what to look for in generation
+  - async function
+  - timeout
+- [ ] Go through character generation in the book to find missing details
+- [ ] Fix checkboxes, <https://www.htmhell.dev/adventcalendar/2023/2/>
 
 ### References
 
 - <https://github.com/makhidkarun/travellercharactergenerator>
 - <https://travellertoolsdemo.azurewebsites.net/character>
 
-### Todo
-
-- Personal history
-  - random charts for lore, look at throw / roll difference
-  - random stuff in TAS Form 2?
-- Dice icon to re-roll certain aspects (name, etc.)
-- Go through character generation in the book to find missing details
-- Option to specify what to look for in generation
-  - async function
-  - timeout
-- fix checkboxes, <https://www.htmhell.dev/adventcalendar/2023/2/>
-
 ## WORLDGEN
+
+### Features
+
+- [ ] Create communication routes
+  - trade routes using gravity algorithm
+- [ ] Look into Book 7 for trade codes?
+  - also the trade code statistics thread under references for clarifications
+- [ ] Generate possible ships to encounter when entering system?
 
 ### References
 
@@ -42,11 +50,14 @@ Possibly along the road there's a need for SHIPGEN as well.
 - <https://travellermap.com>
   - <https://travellermap.com/doc/secondsurvey#remarks>
 
-### Todo
+## NAMEGEN
 
-- Create communication routes
-  - trade routes using gravity algorithm 
-- Look into Book 7 for trade codes?
-  - Also look at the thread above for some clarifications
-- Generate possible ships to encounter when entering system?
-- Extract world generation from the `World` constructor into pure functions (e.g. `generateWorldProfile(random)`)
+Consumer side of the separately developed
+[markov-namegen](https://github.com/kari/markov-namegen) library; these
+start upstream.
+
+- [ ] Model serialization support in the library
+- [ ] Precompute the worlds model at build time once models serialize
+  (drops the runtime training and the world word list from the bundle)
+- [ ] Per-call random source injection in the library, replacing the
+  swappable-random workaround in `subsector.ts`
