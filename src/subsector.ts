@@ -130,6 +130,186 @@ function worldNameGenerator(random: Random): NameGenerator {
     return worldNamegen;
 }
 
+/** The six profile characteristics of a world, as rolled (Book 3). */
+interface WorldMainProfile {
+    planetarySize: number;
+    planetaryAthmosphere: number;
+    hydrographicPercentage: number;
+    population: number;
+    planetaryGovernment: number;
+    lawLevel: number;
+}
+
+/**
+ * Rolls the world profile in Book 3 order: size, atmosphere, hydrographics,
+ * population, government, law level — each DM'd and clamped per the book.
+ */
+function rollWorldProfile(random: Random): WorldMainProfile {
+    const planetarySize = clamp(random.roll(2) - 2, 0, 10);
+
+    let planetaryAthmosphere = 0;
+    if (planetarySize !== 0) {
+        planetaryAthmosphere = random.roll(2) - 7 + planetarySize;
+    }
+    planetaryAthmosphere = clamp(planetaryAthmosphere, 0, 12);
+
+    let hydrographicPercentage: number;
+    if (planetarySize === 0) {
+        hydrographicPercentage = 0;
+    } else if (planetaryAthmosphere <= 1 || planetaryAthmosphere >= 10) {
+        // 0, 1, A+
+        hydrographicPercentage = random.roll(2) - 7 - 4 + planetaryAthmosphere;
+    } else {
+        hydrographicPercentage = random.roll(2) - 7 + planetaryAthmosphere;
+    }
+    hydrographicPercentage = clamp(hydrographicPercentage, 0, 10);
+
+    const population = clamp(random.roll(2) - 2, 0, 10);
+    const planetaryGovernment = clamp(random.roll(2) - 7 + population, 0, 13);
+    const lawLevel = clamp(random.roll(2) - 7 + planetaryGovernment, 0, 9);
+
+    return {
+        planetarySize: planetarySize,
+        planetaryAthmosphere: planetaryAthmosphere,
+        hydrographicPercentage: hydrographicPercentage,
+        population: population,
+        planetaryGovernment: planetaryGovernment,
+        lawLevel: lawLevel,
+    };
+}
+
+/** Technological level: starport and profile DMs on a 1D6 roll (Book 3). */
+function rollTechnologicalLevel(
+    random: Random,
+    starport: Starport,
+    profile: WorldMainProfile,
+): number {
+    let techLevelDM = 0;
+    switch (starport) {
+        case "A":
+            techLevelDM += 6;
+            break;
+        case "B":
+            techLevelDM += 4;
+            break;
+        case "C":
+            techLevelDM += 2;
+            break;
+        case "X":
+            techLevelDM -= 4;
+            break;
+    }
+
+    if (profile.planetarySize <= 1) {
+        techLevelDM += 2;
+    } else if (profile.planetarySize <= 4) {
+        techLevelDM += 1;
+    }
+
+    if (
+        profile.planetaryAthmosphere <= 3 ||
+        profile.planetaryAthmosphere >= 10
+    ) {
+        techLevelDM += 1;
+    }
+
+    if (profile.hydrographicPercentage === 9) {
+        techLevelDM += 1;
+    } else if (profile.hydrographicPercentage === 10) {
+        techLevelDM += 2;
+    }
+
+    if (profile.population > 0 && profile.population <= 5) {
+        techLevelDM += 1;
+    } else if (profile.population === 9) {
+        techLevelDM += 2;
+    } else if (profile.population === 10) {
+        techLevelDM += 4;
+    }
+
+    switch (profile.planetaryGovernment) {
+        case 0:
+            techLevelDM += 1;
+            break;
+        case 5:
+            techLevelDM += 5;
+            break;
+        case 13:
+            techLevelDM -= 2;
+            break;
+    }
+
+    return clamp(random.roll(1) + techLevelDM, 0, 20);
+}
+
+/** Trade classifications derived from the profile (Book 3/SRD rules). */
+function tradeClassificationsFor(
+    profile: WorldMainProfile,
+): TradeClassification[] {
+    const tradeClassifications: TradeClassification[] = [];
+
+    if (
+        profile.planetaryAthmosphere >= 4 &&
+        profile.planetaryAthmosphere <= 9 &&
+        profile.hydrographicPercentage >= 4 &&
+        profile.hydrographicPercentage <= 8 &&
+        profile.population >= 5 &&
+        profile.population <= 7
+    ) {
+        tradeClassifications.push(TradeClassification.Agricultural);
+    }
+    if (
+        profile.planetaryAthmosphere <= 3 &&
+        profile.hydrographicPercentage <= 3 &&
+        profile.population >= 6
+    ) {
+        tradeClassifications.push(TradeClassification.NonAgricultural);
+    }
+    if (
+        [0, 1, 2, 4, 7, 9].includes(profile.planetaryAthmosphere) &&
+        profile.population >= 9
+    ) {
+        tradeClassifications.push(TradeClassification.Industrial);
+    }
+    if (profile.population <= 6) {
+        tradeClassifications.push(TradeClassification.NonIndustrial);
+    }
+    if (
+        profile.planetaryGovernment >= 4 &&
+        profile.planetaryGovernment <= 9 &&
+        [6, 8].includes(profile.planetaryAthmosphere) &&
+        [6, 7, 8].includes(profile.population)
+    ) {
+        tradeClassifications.push(TradeClassification.Rich);
+    }
+    if (
+        [2, 3, 4, 5].includes(profile.planetaryAthmosphere) &&
+        profile.hydrographicPercentage <= 3
+    ) {
+        tradeClassifications.push(TradeClassification.Poor);
+    }
+    if (profile.hydrographicPercentage === 10) {
+        tradeClassifications.push(TradeClassification.Water);
+    }
+    if (profile.hydrographicPercentage === 0) {
+        tradeClassifications.push(TradeClassification.Desert);
+    }
+    if (profile.planetaryAthmosphere === 0) {
+        tradeClassifications.push(TradeClassification.Vacuum);
+    }
+    if (profile.planetarySize === 0) {
+        tradeClassifications.push(TradeClassification.AsteroidBelt);
+    }
+    if (
+        [0, 1].includes(profile.planetaryAthmosphere) &&
+        profile.hydrographicPercentage >= 1
+    ) {
+        tradeClassifications.push(TradeClassification.IceCapped);
+    }
+
+    return tradeClassifications;
+}
+
 class World {
     readonly name: string;
     readonly starport: Starport;
@@ -188,165 +368,23 @@ class World {
         if (generatedName === undefined) {
             throw new Error("World name generation failed");
         }
-        this.name = generatedName;
         this.name =
-            this.name.substring(0, 1).toUpperCase() + this.name.substring(1); // FIXME: add capitalization function to handle spaces etc.
+            generatedName.substring(0, 1).toUpperCase() +
+            generatedName.substring(1); // FIXME: add capitalization function to handle spaces etc.
 
-        this.planetarySize = clamp(random.roll(2) - 2, 0, 10);
-
-        if (this.planetarySize === 0) {
-            this.planetaryAthmosphere = 0;
-        } else {
-            this.planetaryAthmosphere = random.roll(2) - 7 + this.planetarySize;
-        }
-        this.planetaryAthmosphere = clamp(this.planetaryAthmosphere, 0, 12);
-
-        if (this.planetarySize === 0) {
-            this.hydrographicPercentage = 0;
-        } else if (
-            this.planetaryAthmosphere <= 1 ||
-            this.planetaryAthmosphere >= 10
-        ) {
-            // 0, 1, A+
-            this.hydrographicPercentage =
-                random.roll(2) - 7 - 4 + this.planetaryAthmosphere;
-        } else {
-            this.hydrographicPercentage =
-                random.roll(2) - 7 + this.planetaryAthmosphere;
-        }
-        this.hydrographicPercentage = clamp(this.hydrographicPercentage, 0, 10);
-
-        this.population = clamp(random.roll(2) - 2, 0, 10);
-
-        this.planetaryGovernment = clamp(
-            random.roll(2) - 7 + this.population,
-            0,
-            13,
+        const profile = rollWorldProfile(random);
+        this.planetarySize = profile.planetarySize;
+        this.planetaryAthmosphere = profile.planetaryAthmosphere;
+        this.hydrographicPercentage = profile.hydrographicPercentage;
+        this.population = profile.population;
+        this.planetaryGovernment = profile.planetaryGovernment;
+        this.lawLevel = profile.lawLevel;
+        this.technologicalLevel = rollTechnologicalLevel(
+            random,
+            this.starport,
+            profile,
         );
-
-        this.lawLevel = clamp(
-            random.roll(2) - 7 + this.planetaryGovernment,
-            0,
-            9,
-        );
-
-        let techLevelDM = 0;
-        switch (this.starport) {
-            case "A":
-                techLevelDM += 6;
-                break;
-            case "B":
-                techLevelDM += 4;
-                break;
-            case "C":
-                techLevelDM += 2;
-                break;
-            case "X":
-                techLevelDM -= 4;
-                break;
-        }
-
-        if (this.planetarySize <= 1) {
-            techLevelDM += 2;
-        } else if (this.planetarySize <= 4) {
-            techLevelDM += 1;
-        }
-
-        if (this.planetaryAthmosphere <= 3 || this.planetaryAthmosphere >= 10) {
-            techLevelDM += 1;
-        }
-
-        if (this.hydrographicPercentage === 9) {
-            techLevelDM += 1;
-        } else if (this.hydrographicPercentage === 10) {
-            techLevelDM += 2;
-        }
-
-        if (this.population > 0 && this.population <= 5) {
-            techLevelDM += 1;
-        } else if (this.population === 9) {
-            techLevelDM += 2;
-        } else if (this.population === 10) {
-            techLevelDM += 4;
-        }
-
-        switch (this.planetaryGovernment) {
-            case 0:
-                techLevelDM += 1;
-                break;
-            case 5:
-                techLevelDM += 5;
-                break;
-            case 13:
-                techLevelDM -= 2;
-                break;
-        }
-
-        this.technologicalLevel = clamp(random.roll(1) + techLevelDM, 0, 20);
-
-        const tradeClassifications: TradeClassification[] = [];
-
-        // Define trade classifications based on world's attributes
-        if (
-            this.planetaryAthmosphere >= 4 &&
-            this.planetaryAthmosphere <= 9 &&
-            this.hydrographicPercentage >= 4 &&
-            this.hydrographicPercentage <= 8 &&
-            this.population >= 5 &&
-            this.population <= 7
-        ) {
-            tradeClassifications.push(TradeClassification.Agricultural);
-        }
-        if (
-            this.planetaryAthmosphere <= 3 &&
-            this.hydrographicPercentage <= 3 &&
-            this.population >= 6
-        ) {
-            tradeClassifications.push(TradeClassification.NonAgricultural);
-        }
-        if (
-            [0, 1, 2, 4, 7, 9].includes(this.planetaryAthmosphere) &&
-            this.population >= 9
-        ) {
-            tradeClassifications.push(TradeClassification.Industrial);
-        }
-        if (this.population <= 6) {
-            tradeClassifications.push(TradeClassification.NonIndustrial);
-        }
-        if (
-            this.planetaryGovernment >= 4 &&
-            this.planetaryGovernment <= 9 &&
-            [6, 8].includes(this.planetaryAthmosphere) &&
-            [6, 7, 8].includes(this.population)
-        ) {
-            tradeClassifications.push(TradeClassification.Rich);
-        }
-        if (
-            [2, 3, 4, 5].includes(this.planetaryAthmosphere) &&
-            this.hydrographicPercentage <= 3
-        ) {
-            tradeClassifications.push(TradeClassification.Poor);
-        }
-        if (this.hydrographicPercentage === 10) {
-            tradeClassifications.push(TradeClassification.Water);
-        }
-        if (this.hydrographicPercentage === 0) {
-            tradeClassifications.push(TradeClassification.Desert);
-        }
-        if (this.planetaryAthmosphere === 0) {
-            tradeClassifications.push(TradeClassification.Vacuum);
-        }
-        if (this.planetarySize === 0) {
-            tradeClassifications.push(TradeClassification.AsteroidBelt);
-        }
-        if (
-            [0, 1].includes(this.planetaryAthmosphere) &&
-            this.hydrographicPercentage >= 1
-        ) {
-            tradeClassifications.push(TradeClassification.IceCapped);
-        }
-
-        this.tradeClassifications = tradeClassifications;
+        this.tradeClassifications = tradeClassificationsFor(profile);
         assertWorldBounds(this);
     }
 }
