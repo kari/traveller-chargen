@@ -1,6 +1,10 @@
 # Classic Traveller Chargen
 
-This is a character generator for [the 1981 edition of the classic Traveller role-playing game](https://preview.drivethrurpg.com/en/product/355200/classic-traveller-facsimile-edition), following Book 1 and Book 2 when a character earns a starship.
+[![CI](https://github.com/kari/traveller-chargen/actions/workflows/ci.yml/badge.svg)](https://github.com/kari/traveller-chargen/actions/workflows/ci.yml)
+
+This is a character and subsector generator for [the 1981 edition of the classic Traveller role-playing game](https://preview.drivethrurpg.com/en/product/355200/classic-traveller-facsimile-edition), following the three core rulebooks (Books 1-3), with additional details from Supplement 1 (1001 Characters), Supplement 12 (Forms and Charts), and The Traveller Book.
+
+A live instance runs at [ctgen.kalifi.org](https://ctgen.kalifi.org).
 
 The generator is opinionated because character generation includes multiple decision points. Its choices are not necessarily optimized, but should produce reasonable characters.
 
@@ -8,10 +12,16 @@ The generator is opinionated because character generation includes multiple deci
 
 - Character generation based on Classic Traveller Book 1
 - Starship generation for eligible Scout and Merchant characters
-- Subsector and world generation based on Book 3
-- Printable TAS-style character and ship forms
+- Subsector and world generation based on Book 3, drawn as a hex map
+- Printable TAS-style character, ship, and subsector forms
+- Fully seed-reproducible: the seed used is printed on the generated forms
+- Rule fidelity verified end-to-end against Book 1's own worked character example
+
+The generators automate the decisions a player would normally make; the procedures, house rules, and deviations from the books are documented in [docs/chargen.md](docs/chargen.md) and [docs/worldgen.md](docs/worldgen.md).
 
 ## Development
+
+Requires Node 24 (see `.node-version`).
 
 ```bash
 npm install
@@ -51,6 +61,10 @@ The generators use seeded pseudo-randomness internally, so generated results can
 ## See also
 
 - <https://github.com/makhidkarun/travellercharactergenerator>
+- <https://travellertoolsdemo.azurewebsites.net/character>
+- <https://donjon.bin.sh/scifi/tsg/>
+- <https://zhodani.space/stuff/generators/random-subsector-generator/>
+- <https://travellermap.com>, whose [Second Survey document](https://travellermap.com/doc/secondsurvey#remarks) describes the canonical sector data format
 
 ## License
 

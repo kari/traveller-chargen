@@ -26,11 +26,6 @@ Possibly along the road there's a need for SHIPGEN as well.
 - [ ] Go through character generation in the book to find missing details
 - [ ] Fix checkboxes, <https://www.htmhell.dev/adventcalendar/2023/2/>
 
-### References
-
-- <https://github.com/makhidkarun/travellercharactergenerator>
-- <https://travellertoolsdemo.azurewebsites.net/character>
-
 ## WORLDGEN
 
 ### Features
@@ -38,17 +33,8 @@ Possibly along the road there's a need for SHIPGEN as well.
 - [ ] Create communication routes
   - trade routes using gravity algorithm
 - [ ] Look into Book 7 for trade codes?
-  - also the trade code statistics thread under references for clarifications
+  - also the [trade code statistics thread](https://forum.mongoosepublishing.com/threads/traveller-trade-code-statistics.32998/) for clarifications
 - [ ] Generate possible ships to encounter when entering system?
-
-### References
-
-- <https://www.traveller-srd.com/core-rules/world-creation/>
-- <https://forum.mongoosepublishing.com/threads/traveller-trade-code-statistics.32998/>
-- <https://donjon.bin.sh/scifi/tsg/>
-- <https://zhodani.space/stuff/generators/random-subsector-generator/>
-- <https://travellermap.com>
-  - <https://travellermap.com/doc/secondsurvey#remarks>
 
 ## NAMEGEN
 
