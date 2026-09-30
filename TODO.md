@@ -62,8 +62,10 @@ start upstream.
   the swappable-random workaround in `subsector.ts` is gone — the shared
   generator now takes each caller's seeded source per `generateNames` call
 
-Evaluating 2.1.0 serialization for precomputing the worlds model: the
-round-trip is faithful, but the serialized model is 1.3 MB raw / 82 kB
-gzipped against the 11.4 kB (5 kB gzipped) word list, while the memoized
-training costs ~7 ms once per session. Shipping the model would grow the
-worldgen payload ~16x to save nothing perceptible — rejected.
+Evaluating serialization for precomputing the worlds model: round-trips are
+byte-identical (200/200 seeds) on both formats. The 2.1.0 dense model was
+1.3 MB raw / 82 kB gzipped; the 2.2.0 sparse model (format v2) is 94 kB raw /
+22 kB gzipped against the 11.4 kB (5.2 kB gzipped) word list, and
+deserialization (2.3 ms) is faster than training (7.1 ms) — but both happen
+once per session, so shipping the model still grows the worldgen payload
+~4x gzipped to save ~5 ms. Word list + training stays.
