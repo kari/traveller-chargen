@@ -290,8 +290,6 @@ export function resolveReenlistment(
         return { outcome: "leaveService", retired: false, messages: messages };
     }
     if (terms >= 5 && reenlistmentThrow !== 12) {
-        // voluntary retirement terms >= 5
-        // FIXME: add behavior for voluntary retirement
         if (random.roll() + (terms - 7) >= 10) {
             messages.push(
                 `Character voluntarily retired after ${terms} terms.`,

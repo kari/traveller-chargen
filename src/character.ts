@@ -326,7 +326,6 @@ export class Character {
         )}`;
     }
 
-    /** Skills and training phase: spends the term's skill eligibilities. */
     /**
      * Training phase: spends each eligibility on personal development,
      * service skills, or advanced education (EDU 8+), then trains the rank
@@ -374,7 +373,6 @@ export class Character {
         );
     }
 
-    /** Aging phase: throws for aging effects. Returns false if the character died. */
     /**
      * Aging phase: from term four on, an 8+ throw avoids attribute loss;
      * saves against aging death start at term eight (Book 1).
@@ -400,11 +398,6 @@ export class Character {
         return true;
     }
 
-    /**
-     * Reenlistment phase: resolves reenlistment and retirement. Returns
-     * "continue" when the character serves another term, "leaveService" when
-     * the career ends (with or without retirement).
-     */
     /**
      * Reenlistment phase: a throw of 12 forces another term; a failed
      * throw ends service (retiring with a pension when eligible, else
@@ -438,7 +431,6 @@ export class Character {
         this.retirementPay = 2_000 + (this.terms - 4) * 2_000;
     }
 
-    /** Mustering out phase: rolls the cash and benefits tables, converts passages. */
     /**
      * Mustering-out phase: rank bonus rolls split between the cash and
      * benefits tables (max three cash rolls, +1 benefits DM at rank 5+),

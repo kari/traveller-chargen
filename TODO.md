@@ -15,7 +15,7 @@ Possibly along the road there's a need for SHIPGEN as well.
 
 ### Features
 
-- [ ] UI renders the character's history (the CLI already prints it)
+- [ ] UI renders the character's history
 - [ ] Personal history
   - random charts for lore, look at throw / roll difference
   - random stuff in TAS Form 2?

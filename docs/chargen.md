@@ -121,7 +121,7 @@ A random weapon is picked in order of preference:
 - Weapons which are Preferred and not Owned (also grants a zero skill)
 - Any weapons not Owned (also grants a zero skill)
 
-Otherwise, a random weapon is chosen.
+The last group always matches unless the character owns every weapon in the group, in which case the generator throws.
 
 This procedure will never pick a weapon more than once.
 
